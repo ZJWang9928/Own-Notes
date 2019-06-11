@@ -54,3 +54,29 @@ Including comparison operations
 	Tmax = 01111111
 	2*Tmax = 11111110
 	Umax = 11111111
+### An example
+> for (i = n-1; i >= 0; i++) {     
+>     cout << a[i] << endl;    	
+> }    
+> if i is unsigned, loop will never end    
+> sizeof() function return unsigned    
+
+## Sign Extension
+### Task:
++ Given w-bit signed integer x
++ Convert it to w+k-bit integer with same value
+### Rule:
++ Make k copies of sigh bit
++ *C automatically performs sign extension*
+
+### Expanding Basic Rules
++ Unsigned: zeros added
++ Signed: sign extension
++ Both yield expected result
+
+### Truncating Basic Rules
++ Unsigned/signed: bits are truncated
++ Result reinterpreted
++ Unsigned: mod operation
++ Signed: similar to mod
++ For small numbers yields expected behavior
