@@ -34,3 +34,5 @@
 + Throw away extra bit on right   
 + **Logical shift**: Fill with 0's on left
 + **Arithmetic shift**: Replicate most significant bit on left
+### Undefined Behavior
++ Shift amount < 0 or >= word size(different on different machines)
