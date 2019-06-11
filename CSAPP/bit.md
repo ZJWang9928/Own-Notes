@@ -9,3 +9,9 @@
 > | -> Union
 > ^ -> Symmetric difference
 > ~ -> Complement
+    
+**&&, ||, !**    
++ View 0 as "false"
++ Anything nonzero as "true"
++ Always return 0 or 1
++ **Early termination**
