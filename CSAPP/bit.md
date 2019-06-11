@@ -49,4 +49,8 @@ If there is a mix of unsigned and signed in single expression,
 **signed values implicitly cast to unsigned**    
 Including comparison operations    
 
-
+### Tmin = -Tmax - 1
+### Umax = 2\*Tmax + 1
+	Tmax = 01111111
+	2*Tmax = 11111110
+	Umax = 11111111
