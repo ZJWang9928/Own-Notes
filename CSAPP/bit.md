@@ -11,7 +11,7 @@
 > ~ -> Complement    
     
      
-### &&, ||, !    
+## &&, ||, !    
 + View 0 as "false"
 + Anything nonzero as "true"
 + Always return 0 or 1
@@ -26,3 +26,6 @@
 + 0x96 && 0x55 -> 0x01
 + 0x96 || 0x55 -> 0x01
 + p && \*p (used to avoid null pointer accesss)
+
+## Shift Operations
+### x \<\< y
