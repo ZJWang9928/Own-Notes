@@ -43,3 +43,10 @@
 ### Uniqueness
 + Every bit pattern represents unique integer value
 + Each representable integer has unique bit encoding
+
+### Casting Surprises
+If there is a mix of unsigned and signed in single expression,   
+**signed values implicitly cast to unsigned**    
+Including comparison operations    
+
+
