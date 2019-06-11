@@ -38,3 +38,8 @@
 + Shift amount < 0 or >= word size(different on different machines)   
     
 ## Unsigned & Sighed Numeric Values
+### Equivalence
++ Same encodings for nonnegative values
+### Uniqueness
++ Every bit pattern represents unique integer value
++ Each representable integer has unique bit encoding
