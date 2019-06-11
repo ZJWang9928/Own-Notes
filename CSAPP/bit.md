@@ -10,8 +10,19 @@
 > ^ -> Symmetric difference    
 > ~ -> Complement    
     
-**&&, ||, !**    
+     
+### &&, ||, !    
 + View 0 as "false"
 + Anything nonzero as "true"
 + Always return 0 or 1
 + **Early termination**
+     
+### Examples(char data type)
++ !0x41 -> 0x00
++ !0x00 -> 0x01
++ !!0x41 -> 0x01
+     
+   
++ 0x96 && 0x55 -> 0x01
++ 0x96 || 0x55 -> 0x01
++ p && \*p (used to avoid null pointer accesss)
