@@ -20,12 +20,17 @@
 ### Examples(char data type)
 + !0x41 -> 0x00
 + !0x00 -> 0x01
-+ !!0x41 -> 0x01
-     
++ !!0x41 -> 0x01    
    
 + 0x96 && 0x55 -> 0x01
 + 0x96 || 0x55 -> 0x01
 + p && \*p (used to avoid null pointer accesss)
 
 ## Shift Operations
-### x \<\< y
+### Left Shift: x \<\< y
++ Fill with 0's on right   
++ Throw away extra bit on left   
+### Right Shift: x >> y
++ Throw away extra bit on right   
++ **Logical shift**: Fill with 0's on left
++ **Arithmetic shift**: Replicate most significant bit on left
