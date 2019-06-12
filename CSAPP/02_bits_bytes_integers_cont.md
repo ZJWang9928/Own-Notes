@@ -81,3 +81,9 @@ Discard k bits: w bits
 
 ## Negate a number (x -> -x)
 + complement and increment (contrast + 1)
+
+## Counting Down with Unsigned
+### Proper way to use unsigned as loop index
+> unsigned i;     
+> for (i = cnt-2; **i < cnt**; i--)   
+>     a[i] += a[i+1];
