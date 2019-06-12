@@ -20,3 +20,9 @@
 ### Code Forms:
 + Machine Code
 + Assembly Code
+
+## Assembly Characteristics: Data Types
++ Integer data of 1, 2, 4, or 8 bytes
++ Floating point data of 4, 8, or 10 bytes
++ Code: Byte sequences encoding series of instructions
++ No aggregate types such as arrays or structures
