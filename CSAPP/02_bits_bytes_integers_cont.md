@@ -74,3 +74,10 @@ Discard k bits: w bits
 ## Unsigned Power-of-2 Divide with Shift
 + u \>\> k gives floor(u / 2^k)
 + Use logical shift
+    
+## Unsigned Power-of-2 Divide with Shift
++ Use logical shift (\>\>\> in Java)
++ May add a bias
+
+## Negate a number (x -> -x)
++ complement and increment (contrast + 1)
