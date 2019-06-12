@@ -47,8 +47,8 @@ Discard Carry: w bits
 ### Unsigned Multiplication in C
 + UMULTw(u, v) = u * v mod 2^w   
 
-	5 * 5 = 25
-	0001|1001 = 9 = 25 mod 16
+	 5 * 5 = 25
+ 	 0001|1001 = 9 = 25 mod 16
     
 ### Signed Multiplication in C
 Operands: w bits    
