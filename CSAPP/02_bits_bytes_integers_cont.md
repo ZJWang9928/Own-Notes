@@ -86,4 +86,4 @@ Discard k bits: w bits
 ### Proper way to use unsigned as loop index
 > unsigned i;     
 > for (i = cnt-2; **i < cnt**; i--)   
->     a[i] += a[i+1];
+> > a[i] += a[i+1];
