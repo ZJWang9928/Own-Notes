@@ -1,4 +1,4 @@
-# Bits, Bytes and Integer
+# Bits, Bytes and Integers
 
 只有ENIAC使用十进制进行算术运算    
     
