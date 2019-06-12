@@ -63,12 +63,12 @@ Discard w bits: w bits
 	 ____|0110  6 (182)
 
 ## Power-of-2 Multiply with Shift
-### Opetarion
-+ u << k gives u * 2^k
-+ Both signed and unsigned    
 Operands: w bits    
 True Sum: w+k bits    
 Discard k bits: w bits    
+### Opetarion
++ u << k gives u * 2^k
++ Both signed and unsigned    
     
 ## Unsigned Power-of-2 Divide with Shift
 + u \>\> k gives floor(u / 2^k)
