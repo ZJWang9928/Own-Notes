@@ -50,7 +50,26 @@ Discard Carry: w bits
 	0001|1001 = 9 = 25 mod 16
     
 ### Signed Multiplication in C
+Operands: w bits    
+True Sum: 2\*w bits    
+Discard w bits: w bits    
 + Ignores high order w bits
 + Some of which are different for signed vs unsigned multiplication
-+ Lower bits are the same
-+ Whatever bit left in the sign-bit position will determine the sign regardless of the signs of the original two operands
++ **Lower bits are the same**
++ **Whatever bit left in the sign-bit position will determine the sign regardless of the signs of the original two operands**
+
+		 1101 -3 (13)
+		 1110 -2 (14)
+	____|0110  6 (182)
+
+## Power-of-2 Multiply with Shift
+### Opetarion
++ u << k gives u * 2^k
++ Both signed and unsigned
+Operands: w bits    
+True Sum: w+k bits    
+Discard k bits: w bits    
+    
+## Unsigned Power-of-2 Divide with Shift
++ u \>\> k gives floor(u / 2^k)
++ Use logical shift
