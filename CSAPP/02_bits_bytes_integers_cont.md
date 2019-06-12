@@ -87,3 +87,43 @@ Discard k bits: w bits
 > unsigned i;     
 > for (i = cnt-2; **i < cnt**; i--)   
 >	a[i] += a[i+1];
+**C Standard guarantees that unsigned addition will behave like modular arithmetic**    
++ 0-1 -> UMax
+### Even better
+> size\_t i;     
+> for (i = cnt-2; **i < cnt**; i--)   
+>	a[i] += a[i+1];
++ Data type size\_t defined as unsiged value with length = word size
++ Code will work even if cnt = UMax
++ What if cnt is signed and <0? 
+
+## Why Should I Use Unsigned?(cont.)
+### Perform Modular Arithmetic
++ Mult. arithmetic
+### When Using Bits to Represent Sets
++ Logical right shift, no sign extension
+
+## Byte-Oritented Memory Organization
+### Programs refer to data by address
++ Conceptually, envision it as a very large array of bytes(while in reality it's not)
++ An address is like an index into that array
+
+### Note: System provides private address spaces to each "precess"
++ Think of a precess as a program being executed
++ So, a program can clobber its own data, but not that of others
+
+### a Useful Trick: 2^10 is around 10^3
+
+## Machine Words
+### Any given computer has a "Word Size"
++ Nominal size of the integer-value data and of address
++ Machines still support multiple data formats
+
+## Word-Oritented Memory Organization
+### Addresses Specify Byte Locations
++ Address of first byte in a word
+
+### How are the bytes within a multi-byte word ordered in memory?
+**Conventions**    
++ Big Endian: Least significant byte has highest address(Sun, PPC Mac, Internet)
++ Little Endian: Least significant byte has lowest address(x86, ARM processors running Androidm iOS, Windows)
