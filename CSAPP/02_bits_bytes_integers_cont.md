@@ -60,12 +60,12 @@ Discard w bits: w bits
 
 		 1101 -3 (13)
 		 1110 -2 (14)
-	____|0110  6 (182)
+	 ____|0110  6 (182)
 
 ## Power-of-2 Multiply with Shift
 ### Opetarion
 + u << k gives u * 2^k
-+ Both signed and unsigned
++ Both signed and unsigned    
 Operands: w bits    
 True Sum: w+k bits    
 Discard k bits: w bits    
