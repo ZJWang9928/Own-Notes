@@ -45,7 +45,8 @@ Discard Carry: w bits
 ## Multiplication
 **Exact results can be bigger than w bits, so, maintaining exact results.**      
 ### Unsigned Multiplication in C
-+ UMULTw(u, v) = u * v mod 2^w
++ UMULTw(u, v) = u * v mod 2^w   
+
 	5 * 5 = 25
 	0001|1001 = 9 = 25 mod 16
     
