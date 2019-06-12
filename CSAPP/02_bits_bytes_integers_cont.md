@@ -44,5 +44,13 @@ Discard Carry: w bits
 
 ## Multiplication
 **Exact results can be bigger than w bits, so, maintaining exact results.**      
-### Unsigned case
+### Unsigned Multiplication in C
 + UMULTw(u, v) = u * v mod 2^w
+	5 * 5 = 25
+	0001|1001 = 9 = 25 mod 16
+    
+### Signed Multiplication in C
++ Ignores high order w bits
++ Some of which are different for signed vs unsigned multiplication
++ Lower bits are the same
++ Whatever bit left in the sign-bit position will determine the sign regardless of the signs of the original two operands
