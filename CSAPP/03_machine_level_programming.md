@@ -28,11 +28,12 @@
 + No aggregate types such as arrays or structures
 
 ## leaq Src, Dst
++ Load Effective Address
 + Src is address mode expression
 + Set Dst to address denoted by expression
-> SI=1000H , DS=5000H, (1000H)=1234H
-> LEA BX , [SI] --> BX=1000H
-> MOV BX , [SI] --> BX=1234H
+> SI=1000H , DS=5000H, (1000H)=1234H   
+> LEA BX , [SI] --> BX=1000H   
+> MOV BX , [SI] --> BX=1234H   
 ### Computing arithmetic expressions of the form x+k\*y(k=1,2,4,8)
 	Example
 	long m12(long x) {
