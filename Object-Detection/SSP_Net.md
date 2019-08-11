@@ -20,3 +20,4 @@ image --> conv layers --> spatial pyramid pooling --> fc layers --> output
 
 ## SPP-Net优势：
 只对原图进行卷积处理，引入SPP池化进行特征图候选框的维度统一    
+ 
