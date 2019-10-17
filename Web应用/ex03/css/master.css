@@ -1,0 +1,175 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: #666666;
+    background: #ffffff;
+}
+
+a {
+    text-decoration: none;
+}
+
+body.about li#about,
+body.about li#about a,
+body.about li#services,
+body.about li#services a,
+body.about li#portfolio,
+body.about li#portfolio a,
+body.about li#contact,
+body.about li#contact a {
+    background-position: 0 -100px;
+}
+
+body.about #header {
+    height: 150px;
+    background: #db6d16
+    url(../imgs/wolf2.png);
+}
+
+.ul1 {
+    text-decoration: none;
+}
+
+#page-container {
+    width: 760px;
+    margin: auto;
+}
+
+#main-nav {
+    height: 50px;
+    color: red;
+}
+
+#main-nav {
+    padding-left: 11px;
+}
+
+#main-nav {
+    padding-left: 11px;
+    overflow: hidden;
+}
+
+#main-nav ul {
+    margin: 0;
+    padding: 0;
+}
+
+#main-nav li {
+    float: left;
+}
+
+#main-nav li a {
+    display: block;
+    height: 0px !important;
+    padding: 50px 0 0 0;
+    overflow: hidden;
+    background-repeat: no-repeat;
+}
+
+#main-nav li a:hover {
+    background-position: 0 -50px;
+}
+
+#main-nav li a:visited {
+    background-position: 0 -100px;
+}
+
+
+#main-nav li#about, #main-nav li#about a {
+    width: 71px;
+    background-image: url(../imgs/nav1.png);
+}
+#main-nav li#services, #main-nav li#services a {
+    width: 84px;
+    background-image: url(../imgs/nav2.png);
+}
+#main-nav li#portfolio, #main-nav li#portfolio a {
+    width: 95px;
+    background-image: url(../imgs/nav.png);
+}
+#main-nav li#contact, #main-nav li#contact a {
+    width: 106px;
+    background-image: url(../imgs/nav3.png);
+}
+
+#header {
+    height: 150px;
+    background: #db6d16
+    url(../imgs/1.png);
+    color: white;
+}
+
+#sidebar-a {
+    float: right;
+    width: 280px;
+    line-height: 18px;
+}
+
+#sidebar-a .padding {
+    padding: 25px;
+}
+
+#content {
+    margin-right: 280px;
+    line-height: 18px;
+    width: 80%;
+}
+
+#content .padding {
+    padding: 25px;
+}
+
+#footer {
+    clear: both;
+    height: 66px;
+    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    color: #777373;
+    border-top: 1px solid #aca8a8;
+    padding: 13px 25px;
+    line-height: 18px;
+}
+
+#footer #altnav {
+    width: 350px;
+    float: right;
+    text-align: right;
+}
+
+#footer a {
+    color: #777373;
+    text-decoration: none;
+}
+
+#footer a:hover {
+    color: #db6d16;
+}
+
+.hidden {
+    display: none;
+}
+
+h1 {
+    margin: 0;
+    padding: 0;
+    float: right;
+    margin-top: 57px;
+    padding-right: 31px;
+}
+
+#content h2 {
+    margin: 0;
+    padding: 0;
+    padding-bottom: 15px;
+}
+
+#content p {
+    margin: 0;
+    padding: 0;
+    padding-bottom: 15px;
+}
