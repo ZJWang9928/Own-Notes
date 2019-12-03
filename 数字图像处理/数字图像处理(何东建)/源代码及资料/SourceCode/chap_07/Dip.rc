@@ -1,0 +1,1398 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Chinese (P.R.C.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#pragma code_page(936)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\Dip.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""l.chs\\afxres.rc""          // Standard components\r\n"
+    "#include ""l.chs\\afxprint.rc""        // printing/print preview resources\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\Dip.ico"
+IDR_DIPTYPE             ICON    DISCARDABLE     "res\\DipDoc.ico"
+IDI_LEDON               ICON    DISCARDABLE     "res\\LedOn.ico"
+IDI_LEDOFF              ICON    DISCARDABLE     "res\\LedOff.ico"
+IDI_MIDON               ICON    DISCARDABLE     "res\\midpoint.ico"
+IDI_MIDOFF              ICON    DISCARDABLE     "res\\ico00001.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR DISCARDABLE  16, 15
+BEGIN
+    BUTTON      ID_FILE_NEW
+    BUTTON      ID_FILE_OPEN
+    BUTTON      ID_FILE_SAVE
+    SEPARATOR
+    BUTTON      ID_EDIT_CUT
+    BUTTON      ID_EDIT_COPY
+    BUTTON      ID_EDIT_PASTE
+    SEPARATOR
+    BUTTON      ID_FILE_PRINT
+    SEPARATOR
+    BUTTON      ID_APP_ABOUT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "文件(&F)"
+    BEGIN
+        MENUITEM "新建(&N)\tCtrl+N",            ID_FILE_NEW
+        MENUITEM "打开(&O)...\tCtrl+O",         ID_FILE_OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "打印设置(&R)...",             ID_FILE_PRINT_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "最近文件",                    ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "退出(&X)",                    ID_APP_EXIT
+    END
+    POPUP "查看(&V)"
+    BEGIN
+        MENUITEM "工具栏(&T)",                  ID_VIEW_TOOLBAR
+        MENUITEM "状态栏(&S)",                  ID_VIEW_STATUS_BAR
+    END
+    POPUP "帮助(&H)"
+    BEGIN
+        MENUITEM "关于 Dip(&A)...",             ID_APP_ABOUT
+    END
+END
+
+IDR_DIPTYPE MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "文件(&F)"
+    BEGIN
+        MENUITEM "新建(&N)\tCtrl+N",            ID_FILE_NEW
+        MENUITEM "打开(&O)...\tCtrl+O",         ID_FILE_OPEN
+        MENUITEM "关闭(&C)",                    ID_FILE_CLOSE
+        MENUITEM "保存(&S)\tCtrl+S",            ID_FILE_SAVE
+        MENUITEM "另存为(&A)...",               ID_FILE_SAVE_AS
+        MENUITEM SEPARATOR
+        MENUITEM "打印(&P)...\tCtrl+P",         ID_FILE_PRINT
+        MENUITEM "打印预览(&V)",                ID_FILE_PRINT_PREVIEW
+        MENUITEM "打印设置(&R)...",             ID_FILE_PRINT_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "最近文件",                    ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "退出(&X)",                    ID_APP_EXIT
+    END
+    POPUP "编辑(&E)"
+    BEGIN
+        MENUITEM "撤消(&U)\tCtrl+Z",            ID_EDIT_UNDO
+        MENUITEM SEPARATOR
+        MENUITEM "剪切(&T)\tCtrl+X",            ID_EDIT_CUT
+        MENUITEM "复制(&C)\tCtrl+C",            ID_EDIT_COPY
+        MENUITEM "粘贴(&P)\tCtrl+V",            ID_EDIT_PASTE
+    END
+    POPUP "查看(&V)"
+    BEGIN
+        MENUITEM "工具栏(&T)",                  ID_VIEW_TOOLBAR
+        MENUITEM "状态栏(&S)",                  ID_VIEW_STATUS_BAR
+        MENUITEM SEPARATOR
+        MENUITEM "直方图(&H)",                  ID_VIEW_HIST
+    END
+    POPUP "点运算(&P)"
+    BEGIN
+        MENUITEM "图像反色(&I)",                ID_POINT_INVERT
+        MENUITEM "自动亮度(&O)",                ID_POINT_CONTAUTO
+        MENUITEM "线性变换(&L)...",             ID_POINT_LINER
+        MENUITEM SEPARATOR
+        MENUITEM "阈值变换(&T)...",             ID_POINT_THRE
+        MENUITEM "灰度拉伸(&S)...",             ID_POINT_STRE
+        MENUITEM SEPARATOR
+        MENUITEM "灰度均衡(&U)",                ID_POINT_EQUA
+        MENUITEM SEPARATOR
+        POPUP "通道操作(&G)"
+        BEGIN
+            MENUITEM "通道分离(S)",                 ID_CHANNEL_SPLIT
+            MENUITEM "通道合成...",                 ID_CHANNEL_COMBINE
+            MENUITEM SEPARATOR
+            MENUITEM "混    合(&M)",                ID_CHANNEL_MIXED
+            MENUITEM "红色分量(&R)",                ID_CHANNEL_RED
+            MENUITEM "绿色分量(&G)",                ID_CHANNEL_GREEN
+            MENUITEM "蓝色分量(&B)",                ID_CHANNEL_BLUE
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "伪彩色编码...",               ID_POINT_PSEUDOCOLOR
+    END
+    POPUP "区处理(&R)"
+    BEGIN
+        MENUITEM "图像平滑(&S)...",             ID_ENHA_SMOOTH
+        MENUITEM "中值滤波(&M)...",             ID_ENHA_MidianF
+        MENUITEM SEPARATOR
+        MENUITEM "梯度锐化(&G)",                ID_ENHA_GRADSHARP
+        MENUITEM "模板锐化(E)...",              ID_ENHA_TEMPSHARP
+        MENUITEM "拉普拉斯锐化(&L)...",         ID_ENHA_LAPSHARP
+    END
+    POPUP "边缘与轮廓(&D)"
+    BEGIN
+        MENUITEM "轮廓提取(&C)",                ID_EDGE_CONTOUR
+        MENUITEM SEPARATOR
+        MENUITEM "种子填充(&S)...",             ID_EDGE_FILL
+        MENUITEM SEPARATOR
+        MENUITEM "轮廓跟踪(&T)",                ID_EDGE_TRACE
+    END
+    POPUP "图像检测(&A)"
+    BEGIN
+        MENUITEM "投影...",                     ID_DETECT_PROJECT
+        MENUITEM SEPARATOR
+        MENUITEM "差影匹配",                    ID_DETECT_MINUS
+        MENUITEM SEPARATOR
+        MENUITEM "模板匹配",                    ID_DETECT_TEMPLATE
+    END
+    POPUP "几何变换(&G)"
+    BEGIN
+        MENUITEM "图像平移(&T)...",             ID_GEOM_TRAN
+        MENUITEM SEPARATOR
+        MENUITEM "垂直镜像(&V)",                ID_GEOM_MIRV
+        MENUITEM "水平镜像(&H)",                ID_GEOM_MIRH
+        MENUITEM "图像转置(&P)",                ID_GEOM_TRPO
+        MENUITEM SEPARATOR
+        MENUITEM "图像缩放(&Z)...",             ID_GEOM_ZOOM
+        MENUITEM SEPARATOR
+        MENUITEM "图像旋转(&R)...",             ID_GEOM_ROTA
+    END
+    POPUP "正交变换(&Z)"
+    BEGIN
+        MENUITEM "快速傅立叶变换",              ID_FREQ_FFT
+        MENUITEM "快速傅立叶逆变换",            ID_FREQ_NFFT
+        MENUITEM "快速傅立叶滤波...",           ID_FREQ_FFT_FILTE
+        MENUITEM SEPARATOR
+        MENUITEM "离散余弦变换",                ID_FREQ_DCT
+        MENUITEM "离散余弦逆变换",              ID_FREQ_NDCT
+        MENUITEM SEPARATOR
+        MENUITEM "沃尔什变换",                  ID_FREQ_WALH
+        MENUITEM "沃尔什逆变换",                ID_FREQ_NWALH
+    END
+    POPUP "窗口(&W)"
+    BEGIN
+        MENUITEM "新建窗口(&N)",                ID_WINDOW_NEW
+        MENUITEM "层叠(&C)",                    ID_WINDOW_CASCADE
+        MENUITEM "平铺(&T)",                    ID_WINDOW_TILE_HORZ
+        MENUITEM "排列图标(&A)",                ID_WINDOW_ARRANGE
+    END
+    POPUP "帮助(&H)"
+    BEGIN
+        MENUITEM "关于 Dip(&A)...",             ID_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS PRELOAD MOVEABLE PURE 
+BEGIN
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL
+    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY 
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 235, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "关于 Dip"
+FONT 9, "宋体"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,12,20,20
+    LTEXT           "Dip 1.0 版",IDC_STATIC,40,10,119,8,SS_NOPREFIX
+    LTEXT           "版权所有 (C) 2002",IDC_STATIC,40,25,149,8
+    DEFPUSHBUTTON   "确定",IDOK,178,7,50,14,WS_GROUP
+END
+
+IDD_DLG_Intensity DIALOGEX 0, 0, 242, 175
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "灰度直方图"
+FONT 9, "System", 0, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_COORD,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,4,14,
+                    167,152,WS_EX_CLIENTEDGE
+    GROUPBOX        "直方图类型",IDC_STATIC,174,6,64,54
+    CONTROL         "混合亮度",IDC_HISTOGRAMTYPE,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,187,15,46,10
+    CONTROL         "红色分量",IDC_RED_RADIO,"Button",BS_AUTORADIOBUTTON,187,
+                    26,46,10
+    CONTROL         "绿色分量",IDC_GREEN_RADIO,"Button",BS_AUTORADIOBUTTON,
+                    187,37,46,10
+    CONTROL         "蓝色分量",IDC_BLUE_RADIO,"Button",BS_AUTORADIOBUTTON,
+                    187,48,46,10
+    GROUPBOX        "显示区域",IDC_STATIC,174,61,64,46
+    LTEXT           "上限:",IDC_STATIC,180,74,21,10
+    EDITTEXT        IDC_EDIT_UpGray,203,73,23,12,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "Spin2",IDC_IDC_EDIT_UPSPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,225,72,10,14
+    LTEXT           "下限:",IDC_STATIC,180,91,21,10
+    EDITTEXT        IDC_EDIT_LowGray,203,90,23,12,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "Spin1",IDC_IDC_EDIT_LOWSPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,225,89,10,14
+    GROUPBOX        "当前灰度值",IDC_STATIC,174,108,64,46
+    LTEXT           "灰度:",IDC_STATIC,180,121,21,10
+    EDITTEXT        IDC_EDIT_CUR_GRAY,203,120,23,12,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    CONTROL         "Spin2",IDC_IDC_EDIT_CURSPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,225,119,10,14
+    EDITTEXT        IDC_EDIT_CUR_NUMBER,180,137,47,12,ES_AUTOHSCROLL | 
+                    ES_READONLY | ES_NUMBER
+    LTEXT           "个",IDC_STATIC,228,139,8,10
+    DEFPUSHBUTTON   "确定(&Y)",IDOK,184,158,47,13
+END
+
+IDD_DLG_LinerPara DIALOG DISCARDABLE  0, 0, 174, 215
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "线性变换参数设置"
+FONT 10, "System"
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,127,166,32,13
+    PUSHBUTTON      "取消",IDCANCEL,127,192,32,13
+    GROUPBOX        "线性变换参数：",IDC_STATIC,15,159,91,51
+    LTEXT           "斜率：",IDC_STATIC,23,175,25,10
+    LTEXT           "截距：",IDC_STATIC,23,190,27,10
+    EDITTEXT        IDC_EDIT_A,51,173,50,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_B,51,189,50,12,ES_AUTOHSCROLL
+    LTEXT           "",IDC_COORD,4,4,161,148
+END
+
+IDD_DLG_PointStre DIALOG DISCARDABLE  0, 0, 207, 226
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "灰度拉伸参数设置"
+FONT 10, "System"
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,35,209,32,13
+    PUSHBUTTON      "取消",IDCANCEL,143,209,32,13
+    GROUPBOX        "灰度拉伸参数：",IDC_STATIC,4,162,199,44
+    LTEXT           "第一点X坐标:",IDC_STATIC,10,173,50,10
+    LTEXT           "第一点Y坐标:",IDC_STATIC,10,188,50,10
+    EDITTEXT        IDC_EDIT_X1,66,173,24,12,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_EDIT_Y1,66,188,24,12,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "",IDC_COORD,20,4,167,152
+    LTEXT           "第二点X坐标:",IDC_STATIC,97,173,50,10
+    LTEXT           "第二点Y坐标:",IDC_STATIC,97,188,50,10
+    EDITTEXT        IDC_EDIT_X2,153,173,24,12,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_EDIT_Y2,153,188,24,12,ES_AUTOHSCROLL | ES_NUMBER
+END
+
+IDD_DLG_THRESHOLD DIALOGEX 0, 0, 242, 175
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "阈值变换参数设置"
+FONT 9, "System", 0, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_COORD,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,4,14,
+                    167,152,WS_EX_CLIENTEDGE
+    GROUPBOX        "显示区域",IDC_STATIC,174,5,64,46
+    LTEXT           "上限:",IDC_STATIC,180,18,21,10
+    EDITTEXT        IDC_EDIT_UpGray,203,16,23,12,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "Spin2",IDC_EDIT_UPSPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,225,15,10,14
+    LTEXT           "下限:",IDC_STATIC,180,35,21,10
+    EDITTEXT        IDC_EDIT_LowGray,203,33,23,12,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "Spin1",IDC_EDIT_LOWSPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,225,32,10,14
+    GROUPBOX        "阈值化类型",IDC_STATIC,174,53,64,32
+    CONTROL         "对象置白",IDC_TRESHOLD_WHITE,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,180,62,46,10
+    CONTROL         "对象置黑",IDC_TRESHOLD_BLACK,"Button",
+                    BS_AUTORADIOBUTTON,180,73,46,10
+    GROUPBOX        "阈值选择",IDC_STATIC,174,87,64,68
+    CONTROL         "判别分析法",IDC_THRESH_METHOD1,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,180,99,55,10
+    CONTROL         "自调整阈值法",IDC_THRESH_METHOD2,"Button",
+                    BS_AUTORADIOBUTTON,180,112,55,10
+    CONTROL         "自定义...",IDC_THRESH_METHOD3,"Button",
+                    BS_AUTORADIOBUTTON,180,125,55,10
+    LTEXT           "阈值:",IDC_STATIC_CURTHRESH,180,139,21,10
+    EDITTEXT        IDC_EDIT_CUR_TRESHOLD,203,137,23,12,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    CONTROL         "Spin2",IDC_EDIT_CUR_TRESHSPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,225,136,10,14
+    DEFPUSHBUTTON   "确定(&Y)",IDOK,184,158,47,13
+END
+
+IDD_DLG_Smooth DIALOG DISCARDABLE  0, 0, 179, 140
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "图像平滑模板设置"
+FONT 10, "System"
+BEGIN
+    CONTROL         "平均模板（3×3）",IDC_RAD1,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,9,17,76,10
+    CONTROL         "高斯模板（3×3）",IDC_RAD2,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,9,28,76,11
+    CONTROL         "自定义模板",IDC_RAD3,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,9,40,81,11
+    EDITTEXT        IDC_EDIT_TEMPC,62,52,32,12,WS_DISABLED
+    EDITTEXT        IDC_EDIT_TEMPH,81,65,13,12,ES_CENTER | ES_NUMBER | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_TEMPW,81,78,13,12,ES_CENTER | ES_NUMBER | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_MX,81,91,13,12,ES_CENTER | ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_MY,81,104,13,12,ES_CENTER | ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V0,102,52,13,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V1,116,52,13,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V2,130,52,13,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V3,144,52,13,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V4,158,52,13,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V5,102,65,13,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V6,116,65,13,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V7,130,65,13,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V8,144,65,13,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V9,158,65,13,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V10,102,78,13,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V11,116,78,13,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V12,130,78,13,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V13,144,78,13,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V14,158,78,13,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V15,102,91,13,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V16,116,91,13,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V17,130,91,13,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V18,144,91,13,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V19,158,91,13,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V20,102,104,13,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V21,116,104,13,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V22,130,104,13,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V23,144,104,13,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V24,158,104,13,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    DEFPUSHBUTTON   "确定",IDOK,49,123,32,13
+    PUSHBUTTON      "取消",IDCANCEL,96,123,32,13
+    GROUPBOX        "图像平滑模板：",IDC_STATIC,4,4,171,115
+    LTEXT           "模板高度:",IDC_STATIC,19,67,35,8
+    LTEXT           "模板宽度:",IDC_STATIC,19,80,35,8
+    GROUPBOX        "模板元素：",IDC_STATIC,98,41,77,78
+    LTEXT           "模板系数：",IDC_STATIC,19,54,40,8
+    LTEXT           "中心元素X坐标：",IDC_STATIC,18,92,61,10
+    LTEXT           "中心元素Y坐标：",IDC_STATIC,18,105,63,10
+END
+
+IDD_DLG_Color DIALOG DISCARDABLE  0, 0, 158, 183
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "选择伪彩色编码"
+FONT 10, "System"
+BEGIN
+    LISTBOX         IDC_COLOR_LIST,4,4,150,159,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "确定",IDOK,33,167,32,13
+    PUSHBUTTON      "取消",IDCANCEL,94,167,32,13
+END
+
+IDD_DLG_EdgeDet DIALOG DISCARDABLE  0, 0, 220, 224
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "图像边缘检测模板设置"
+FONT 10, "System"
+BEGIN
+    CONTROL         "Roberts   模板（3×3）",IDC_RAD1,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,13,17,88,11
+    CONTROL         "Sobel       模板（3×3）",IDC_RAD2,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,13,30,88,11
+    CONTROL         "Iso Sobel 模板（3×3）",IDC_RAD3,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,13,44,88,11
+    CONTROL         "Prewitt  模板（3×3）",IDC_RAD4,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,116,17,82,11
+    CONTROL         "Krisch   模板（3×3）",IDC_RAD5,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,116,30,82,11
+    CONTROL         "自定义模板",IDC_RAD6,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,13,58,81,11
+    EDITTEXT        IDC_EDIT_TEMPC,62,83,32,12,WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_TEMPC_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,94,83,8,11
+    EDITTEXT        IDC_EDIT_TEMPH,81,96,13,12,ES_CENTER | ES_NUMBER | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_TEMPH_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,94,96,8,11
+    EDITTEXT        IDC_EDIT_TEMPW,81,109,13,12,ES_CENTER | ES_NUMBER | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_TEMPW_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,94,109,8,11
+    EDITTEXT        IDC_EDIT_MX,81,122,13,12,ES_CENTER | ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_MX_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,94,122,8,11
+    EDITTEXT        IDC_EDIT_MY,81,135,13,12,ES_CENTER | ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_MY_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,94,135,8,11
+    EDITTEXT        IDC_EDIT_V0,113,83,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V1,132,83,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V2,151,83,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V3,170,83,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V4,189,83,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V5,113,96,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V6,132,96,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V7,151,96,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V8,170,96,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V9,189,96,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V10,113,109,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V11,132,109,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V12,151,109,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V13,170,109,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V14,189,109,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V15,113,122,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V16,132,122,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V17,151,122,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V18,170,122,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V19,189,122,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V20,113,135,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V21,132,135,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V22,151,135,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V23,170,135,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V24,189,135,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    DEFPUSHBUTTON   "确定",IDOK,39,207,32,13
+    PUSHBUTTON      "取消",IDCANCEL,130,207,32,13
+    LTEXT           "模板系数：",IDC_STATIC,19,85,40,8
+    LTEXT           "模板高度:",IDC_STATIC,19,98,35,8
+    LTEXT           "模板宽度:",IDC_STATIC,19,111,35,8
+    LTEXT           "中心元素X坐标：",IDC_STATIC,18,123,61,10
+    LTEXT           "中心元素Y坐标：",IDC_STATIC,18,136,63,10
+    GROUPBOX        "模板基本参数",IDC_STATIC,13,72,93,78
+    GROUPBOX        "模板元素",IDC_STATIC,110,72,100,78
+    GROUPBOX        "模板定义",IDC_STATIC,4,4,212,150
+    CONTROL         "正南方向",IDC_DIRECTION0,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,13,171,44,12
+    CONTROL         "正西方向",IDC_DIRECTION2,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,63,171,44,12
+    CONTROL         "正北方向",IDC_DIRECTION4,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,113,171,44,12
+    CONTROL         "正东方向",IDC_DIRECTION6,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,163,171,44,12
+    CONTROL         "西南方向",IDC_DIRECTION1,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,13,187,44,12
+    CONTROL         "西北方向",IDC_DIRECTION3,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,63,187,44,12
+    CONTROL         "东北方向",IDC_DIRECTION5,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,113,187,44,12
+    CONTROL         "东南方向",IDC_DIRECTION7,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,163,187,44,12
+    GROUPBOX        "检测方向选择",IDC_STATIC,4,160,212,44
+END
+
+IDD_DLG_LaplacianDet DIALOG DISCARDABLE  0, 0, 220, 192
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "拉普拉斯边缘检测模板设置"
+FONT 10, "System"
+BEGIN
+    CONTROL         "HP1  模板（3×3）",IDC_RAD1,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,13,17,88,11
+    CONTROL         "HP2  模板（3×3）",IDC_RAD2,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,13,30,88,11
+    CONTROL         "HP3  模板（3×3）",IDC_RAD3,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,13,43,88,11
+    CONTROL         "Lap1  模板（3×3）",IDC_RAD4,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,120,17,82,11
+    CONTROL         "Lap2  模板（3×3）",IDC_RAD5,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,120,30,82,11
+    CONTROL         "Lap3  模板（3×3）",IDC_RAD6,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,120,43,82,11
+    CONTROL         "Gaussian-Laplacian模板（5×5）",IDC_RAD7,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,13,56,118,11
+    CONTROL         "自定义模板",IDC_RAD8,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,13,69,81,11
+    EDITTEXT        IDC_EDIT_TEMPC,62,95,32,12,WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_TEMPC_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,94,95,8,11
+    EDITTEXT        IDC_EDIT_TEMPH,81,108,13,12,ES_CENTER | ES_NUMBER | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_TEMPH_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,94,108,8,11
+    EDITTEXT        IDC_EDIT_TEMPW,81,121,13,12,ES_CENTER | ES_NUMBER | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_TEMPW_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,94,121,8,11
+    EDITTEXT        IDC_EDIT_MX,81,134,13,12,ES_CENTER | ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_MX_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,94,134,8,11
+    EDITTEXT        IDC_EDIT_MY,81,147,13,12,ES_CENTER | ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_MY_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,94,147,8,11
+    EDITTEXT        IDC_EDIT_V0,113,95,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V1,132,95,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V2,151,95,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V3,170,95,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V4,189,95,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V5,113,108,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V6,132,108,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V7,151,108,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V8,170,108,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V9,189,108,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V10,113,121,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V11,132,121,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V12,151,121,18,12,ES_CENTER | WS_DISABLED
+    EDITTEXT        IDC_EDIT_V13,170,121,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V14,189,121,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V15,113,134,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V16,132,134,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V17,151,134,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V18,170,134,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V19,189,134,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V20,113,147,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V21,132,147,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V22,151,147,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V23,170,147,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_V24,189,147,18,12,ES_CENTER | NOT WS_VISIBLE | 
+                    WS_DISABLED
+    DEFPUSHBUTTON   "确定",IDOK,39,175,32,13
+    PUSHBUTTON      "取消",IDCANCEL,130,175,32,13
+    LTEXT           "模板系数：",IDC_STATIC,19,97,40,8
+    LTEXT           "模板高度:",IDC_STATIC,19,110,35,8
+    LTEXT           "模板宽度:",IDC_STATIC,19,123,35,8
+    LTEXT           "中心元素X坐标：",IDC_STATIC,18,135,61,10
+    LTEXT           "中心元素Y坐标：",IDC_STATIC,18,148,63,10
+    GROUPBOX        "模板基本参数",IDC_STATIC,13,84,93,78
+    GROUPBOX        "模板定义",IDC_STATIC,4,4,212,162
+    GROUPBOX        "模板元素",IDC_STATIC,110,84,100,78
+END
+
+IDD_CHANNEL_COMBINE DIALOG FIXED IMPURE  0, 0, 170, 108
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "通道合成"
+FONT 10, "System"
+BEGIN
+    LTEXT           "红色通道(&R)",IDC_STATIC,7,7,71,8
+    COMBOBOX        IDC_RED_CHANNEL,7,17,98,51,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "绿色通道(&G)",IDC_STATIC,7,34,73,8
+    COMBOBOX        IDC_GREEN_CHANNEL,7,44,98,51,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "蓝色通道(&B)",IDC_STATIC,7,61,75,8
+    COMBOBOX        IDC_BLUE_CHANNEL,7,71,98,51,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "确定(&Y)",IDOK,113,17,50,14
+    PUSHBUTTON      "忽略(&N)",IDCANCEL,113,34,50,14
+END
+
+IDD_DLG_MedianFilter DIALOG DISCARDABLE  0, 0, 173, 125
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "中值滤波窗口设置"
+FONT 10, "System"
+BEGIN
+    CONTROL         "3×3窗口",IDC_RAD1,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,13,17,44,11
+    CONTROL         "5×5窗口",IDC_RAD2,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,66,17,44,11
+    CONTROL         "7×7窗口",IDC_RAD3,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,119,17,44,11
+    CONTROL         "自定义窗口",IDC_RAD4,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,13,32,81,11
+    EDITTEXT        IDC_EDIT_TEMPH,49,58,13,12,ES_CENTER | ES_NUMBER | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_TEMPH_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,62,58,8,11
+    EDITTEXT        IDC_EDIT_TEMPW,49,45,13,12,ES_CENTER | ES_NUMBER | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_TEMPW_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,62,45,8,11
+    EDITTEXT        IDC_EDIT_MX,142,45,13,12,ES_CENTER | ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_MX_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,155,45,8,11
+    EDITTEXT        IDC_EDIT_MY,142,58,13,12,ES_CENTER | ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_MY_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,155,58,8,11
+    CONTROL         "冒泡排序",IDC_SORT1,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,13,90,48,10
+    CONTROL         "快速排序",IDC_SORT2,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,114,89,48,10
+    DEFPUSHBUTTON   "确定",IDOK,39,108,32,13
+    PUSHBUTTON      "取消",IDCANCEL,107,108,32,13
+    LTEXT           "高度:",IDC_STATIC,23,59,19,8
+    LTEXT           "宽度:",IDC_STATIC,23,46,19,8
+    LTEXT           "中心元素X坐标：",IDC_STATIC,79,46,61,10
+    LTEXT           "中心元素Y坐标：",IDC_STATIC,79,59,63,10
+    GROUPBOX        "窗口定义",IDC_STATIC,4,4,165,69
+    GROUPBOX        "排序算法",IDC_STATIC,4,77,165,27
+END
+
+IDD_DLG_GEORota DIALOG DISCARDABLE  0, 0, 122, 75
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "图像旋转参数设定"
+FONT 9, "System"
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,27,58,32,13
+    PUSHBUTTON      "取消",IDCANCEL,66,58,32,13
+    LTEXT           "旋转角度：",IDC_STATIC,8,10,40,10,NOT WS_GROUP
+    EDITTEXT        IDC_EDIT_Rotate,51,9,50,12,ES_AUTOHSCROLL
+    GROUPBOX        "插值方式",IDC_STATIC,4,25,114,27
+    CONTROL         "最邻近插值",IDC_INTORTYPE,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,6,36,49,10
+    CONTROL         "双线性插值",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,62,36,50,10
+END
+
+IDD_DLG_GEOTrans DIALOG DISCARDABLE  0, 0, 182, 75
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "图像平移参数设定"
+FONT 10, "System"
+BEGIN
+    DEFPUSHBUTTON   "确定(&Y)",IDOK,27,58,32,13
+    PUSHBUTTON      "取消(&N)",IDCANCEL,120,58,32,13
+    EDITTEXT        IDC_EDIT_XOffset,60,19,47,12,ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_XSPIN,"msctls_updown32",UDS_SETBUDDYINT | 
+                    UDS_ARROWKEYS,107,18,10,14
+    EDITTEXT        IDC_EDIT_YOffset,60,35,47,12,ES_AUTOHSCROLL
+    CONTROL         "Spin2",IDC_YSPIN,"msctls_updown32",UDS_SETBUDDYINT | 
+                    UDS_ARROWKEYS,107,34,10,14
+    GROUPBOX        "图像平移参数：",IDC_STATIC,4,7,115,46
+    LTEXT           "水平平移量：",IDC_STATIC,12,21,48,10
+    LTEXT           "垂直平移量：",IDC_STATIC,12,36,48,10
+    GROUPBOX        "平移方式",IDC_STATIC,126,7,52,46
+    CONTROL         "逐点平移",IDC_TRANS_TYPE,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,131,21,40,10
+    CONTROL         "逐行平移",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,132,36,40,10
+END
+
+IDD_DLG_GEOZoom DIALOG DISCARDABLE  0, 0, 124, 106
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "图像缩放参数设定"
+FONT 9, "System"
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,27,89,32,13
+    PUSHBUTTON      "取消",IDCANCEL,66,89,32,13
+    GROUPBOX        "图像缩放参数：",IDC_STATIC,4,7,116,46
+    LTEXT           "水平缩放量：",IDC_STATIC,12,21,48,10
+    LTEXT           "垂直缩放量：",IDC_STATIC,12,36,48,10
+    EDITTEXT        IDC_EDIT_XZoom,60,19,50,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_YZoom,60,35,50,12,ES_AUTOHSCROLL
+    GROUPBOX        "插值方式",IDC_STATIC,4,58,116,27
+    CONTROL         "最邻近插值",IDC_INTORTYPE,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,6,69,49,10
+    CONTROL         "双线性插值",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,64,69,50,10
+END
+
+IDD_DLG_Fourior_Filter DIALOG DISCARDABLE  0, 0, 182, 75
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "傅立叶滤波参数选择"
+FONT 9, "System"
+BEGIN
+    DEFPUSHBUTTON   "确定(&Y)",IDOK,27,58,32,13
+    PUSHBUTTON      "取消(&N)",IDCANCEL,120,58,32,13
+    EDITTEXT        IDC_Freq_Fitler_a,57,26,47,12,ES_AUTOHSCROLL
+    GROUPBOX        "滤波参数：",IDC_STATIC,4,7,115,46
+    LTEXT           "滤波半径：",IDC_STATIC,9,28,44,10
+    GROUPBOX        "滤波方式",IDC_STATIC,126,7,52,46
+    CONTROL         "低通滤波",IDC_Filter_TYPE,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,130,21,42,10
+    CONTROL         "高通滤波",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,131,36,41,10
+END
+
+IDD_DLG_MORPH DIALOG DISCARDABLE  0, 0, 190, 156
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "结构元素设定"
+FONT 10, "System"
+BEGIN
+    CONTROL         "菱形结构",IDC_DIAMOND,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,17,20,43,10
+    CONTROL         "方形结构",IDC_SQUARE,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,17,33,43,10
+    CONTROL         "圆形结构",IDC_CIRCLE,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,74,20,43,10
+    CONTROL         "矩形结构",IDC_RECT,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,74,33,43,10
+    CONTROL         "水平结构",IDC_HORI,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,131,20,43,10
+    CONTROL         "垂直结构",IDC_VERT,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,131,33,43,10
+    CONTROL         "自定义结构",IDC_CUSTOM,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,17,46,51,10
+    EDITTEXT        IDC_EDIT_STRU_H,71,73,26,12,ES_CENTER | ES_NUMBER | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_STRU_H_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,97,73,8,11
+    EDITTEXT        IDC_EDIT_STRU_W,71,86,26,12,ES_CENTER | ES_NUMBER | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_STRU_W_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,97,86,8,11
+    EDITTEXT        IDC_EDIT_STRU_XC,71,99,26,12,ES_CENTER | ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_STRU_XC_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,97,99,8,11
+    EDITTEXT        IDC_EDIT_STRU_YC,71,112,26,12,ES_CENTER | ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_STRU_YC_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,97,112,8,11
+    DEFPUSHBUTTON   "确定",IDOK,43,138,32,13
+    PUSHBUTTON      "取消",IDCANCEL,118,138,32,13
+    LTEXT           "结构元素高度:",IDC_STATIC,16,75,53,8
+    LTEXT           "结构元素宽度:",IDC_STATIC,16,88,53,8
+    LTEXT           "原点X位置：",IDC_STATIC,15,100,53,10
+    LTEXT           "原点Y位置：",IDC_STATIC,15,113,53,10
+    GROUPBOX        "结构元素基本参数",IDC_STATIC,11,60,101,70
+    GROUPBOX        "结构元素定义",IDC_STATIC,116,60,62,70
+    GROUPBOX        "结构元素",IDC_STATIC,4,7,180,127
+    CONTROL         "",IDC_STRU05,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,122,83,10,10
+    CONTROL         "",IDC_STRU06,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,133,83,10,10
+    CONTROL         "",IDC_STRU07,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,144,83,10,10
+    CONTROL         "",IDC_STRU08,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,155,83,10,10
+    CONTROL         "",IDC_STRU09,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,166,83,10,10
+    CONTROL         "",IDC_STRU10,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,122,94,10,10
+    CONTROL         "",IDC_STRU11,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,133,94,10,10
+    CONTROL         "",IDC_STRU12,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,144,94,10,10
+    CONTROL         "",IDC_STRU13,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,155,94,10,10
+    CONTROL         "",IDC_STRU14,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,166,94,10,10
+    CONTROL         "",IDC_STRU15,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,122,105,10,10
+    CONTROL         "",IDC_STRU16,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,133,105,10,10
+    CONTROL         "",IDC_STRU17,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,144,105,10,10
+    CONTROL         "",IDC_STRU18,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,155,105,10,10
+    CONTROL         "",IDC_STRU19,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,166,105,10,10
+    CONTROL         "",IDC_STRU20,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,122,116,10,10
+    CONTROL         "",IDC_STRU21,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,133,116,10,10
+    CONTROL         "",IDC_STRU22,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,144,116,10,10
+    CONTROL         "",IDC_STRU23,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,155,116,10,10
+    CONTROL         "",IDC_STRU24,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,166,116,10,10
+    CONTROL         "",IDC_STRU00,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,122,72,10,10
+    CONTROL         "",IDC_STRU01,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,133,72,10,10
+    CONTROL         "",IDC_STRU02,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,144,72,10,10
+    CONTROL         "",IDC_STRU03,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,155,72,10,10
+    CONTROL         "",IDC_STRU04,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,166,72,10,10
+END
+
+IDD_DLG_HitMiss DIALOG DISCARDABLE  0, 0, 190, 104
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "击中击不中结构元素设定"
+FONT 10, "System"
+BEGIN
+    EDITTEXT        IDC_EDIT_STRU_H,71,24,26,12,ES_CENTER | ES_NUMBER | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_STRU_H_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,97,24,8,11
+    EDITTEXT        IDC_EDIT_STRU_W,71,37,26,12,ES_CENTER | ES_NUMBER | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_STRU_W_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,97,37,8,11
+    EDITTEXT        IDC_EDIT_STRU_XC,71,50,26,12,ES_CENTER | ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_STRU_XC_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,97,50,8,11
+    EDITTEXT        IDC_EDIT_STRU_YC,71,63,26,12,ES_CENTER | ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    CONTROL         "Spin1",IDC_EDIT_STRU_YC_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ARROWKEYS,97,63,8,11
+    CONTROL         "",IDC_STRU00,"Button",BS_AUTO3STATE | WS_DISABLED | 
+                    WS_TABSTOP,122,23,10,10
+    CONTROL         "",IDC_STRU01,"Button",BS_AUTO3STATE | WS_DISABLED | 
+                    WS_TABSTOP,133,23,10,10
+    CONTROL         "",IDC_STRU02,"Button",BS_AUTO3STATE | WS_DISABLED | 
+                    WS_TABSTOP,144,23,10,10
+    CONTROL         "",IDC_STRU03,"Button",BS_AUTO3STATE | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,155,23,10,10
+    CONTROL         "",IDC_STRU04,"Button",BS_AUTO3STATE | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,166,23,10,10
+    CONTROL         "",IDC_STRU05,"Button",BS_AUTO3STATE | WS_DISABLED | 
+                    WS_TABSTOP,122,34,10,10
+    CONTROL         "",IDC_STRU06,"Button",BS_AUTO3STATE | WS_DISABLED | 
+                    WS_TABSTOP,133,34,10,10
+    CONTROL         "",IDC_STRU07,"Button",BS_AUTO3STATE | WS_DISABLED | 
+                    WS_TABSTOP,144,34,10,10
+    CONTROL         "",IDC_STRU08,"Button",BS_AUTO3STATE | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,155,34,10,10
+    CONTROL         "",IDC_STRU09,"Button",BS_AUTO3STATE | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,166,34,10,10
+    CONTROL         "",IDC_STRU10,"Button",BS_AUTO3STATE | WS_DISABLED | 
+                    WS_TABSTOP,122,45,10,10
+    CONTROL         "",IDC_STRU11,"Button",BS_AUTO3STATE | WS_DISABLED | 
+                    WS_TABSTOP,133,45,10,10
+    CONTROL         "",IDC_STRU12,"Button",BS_AUTO3STATE | WS_DISABLED | 
+                    WS_TABSTOP,144,45,10,10
+    CONTROL         "",IDC_STRU13,"Button",BS_AUTO3STATE | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,155,45,10,10
+    CONTROL         "",IDC_STRU14,"Button",BS_AUTO3STATE | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,166,45,10,10
+    CONTROL         "",IDC_STRU15,"Button",BS_AUTO3STATE | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,122,56,10,10
+    CONTROL         "",IDC_STRU16,"Button",BS_AUTO3STATE | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,133,56,10,10
+    CONTROL         "",IDC_STRU17,"Button",BS_AUTO3STATE | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,144,56,10,10
+    CONTROL         "",IDC_STRU18,"Button",BS_AUTO3STATE | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,155,56,10,10
+    CONTROL         "",IDC_STRU19,"Button",BS_AUTO3STATE | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,166,56,10,10
+    CONTROL         "",IDC_STRU20,"Button",BS_AUTO3STATE | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,122,67,10,10
+    CONTROL         "",IDC_STRU21,"Button",BS_AUTO3STATE | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,133,67,10,10
+    CONTROL         "",IDC_STRU22,"Button",BS_AUTO3STATE | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,144,67,10,10
+    CONTROL         "",IDC_STRU23,"Button",BS_AUTO3STATE | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,155,67,10,10
+    CONTROL         "",IDC_STRU24,"Button",BS_AUTO3STATE | NOT WS_VISIBLE | 
+                    WS_DISABLED | WS_TABSTOP,166,67,10,10
+    DEFPUSHBUTTON   "确定",IDOK,43,86,32,13
+    PUSHBUTTON      "取消",IDCANCEL,118,86,32,13
+    LTEXT           "结构元素高度:",IDC_STATIC,16,26,53,8
+    LTEXT           "结构元素宽度:",IDC_STATIC,16,39,53,8
+    LTEXT           "原点X位置：",IDC_STATIC,15,51,53,10
+    LTEXT           "原点Y位置：",IDC_STATIC,15,64,53,10
+    GROUPBOX        "结构元素基本参数",IDC_STATIC,11,11,101,70
+    GROUPBOX        "结构元素定义",IDC_STATIC,116,11,62,70
+END
+
+IDD_DLG_SEEDFILL DIALOG DISCARDABLE  0, 0, 138, 45
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "种子填充"
+FONT 10, "System"
+BEGIN
+    CONTROL         "种子填充方式1",IDC_RADIO_SEEDFILL1,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,9,8,68,10
+    CONTROL         "种子填充方式2",IDC_RADIO_SEEDFILL2,"Button",
+                    BS_AUTORADIOBUTTON,9,30,68,10
+    DEFPUSHBUTTON   "确定",IDOK,84,6,50,14
+    PUSHBUTTON      "取消",IDCANCEL,84,28,50,14
+END
+
+IDD_DLG_PROJECT DIALOG DISCARDABLE  0, 0, 138, 45
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "投影"
+FONT 10, "System"
+BEGIN
+    CONTROL         "水平投影",IDC_RADIO_PROJECTH,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,9,8,48,10
+    CONTROL         "垂直投影",IDC_RADIO_PROJECTV,"Button",
+                    BS_AUTORADIOBUTTON,9,30,48,10
+    DEFPUSHBUTTON   "确定",IDOK,84,6,50,14
+    PUSHBUTTON      "取消",IDCANCEL,84,28,50,14
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "Dip Microsoft 基础类应用程序\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "Dip\0"
+            VALUE "LegalCopyright", "版权所有 (C) 2002\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "Dip.EXE\0"
+            VALUE "ProductName", "Dip 应用程序\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_DLG_Intensity, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 238
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 171
+    END
+
+    IDD_DLG_LinerPara, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 170
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 210
+    END
+
+    IDD_DLG_PointStre, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 203
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 222
+    END
+
+    IDD_DLG_THRESHOLD, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 238
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 171
+    END
+
+    IDD_DLG_Smooth, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 175
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 136
+    END
+
+    IDD_DLG_Color, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 154
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 180
+    END
+
+    IDD_DLG_EdgeDet, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 216
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 220
+    END
+
+    IDD_DLG_LaplacianDet, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 216
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 188
+    END
+
+    IDD_DLG_MedianFilter, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 169
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 121
+    END
+
+    IDD_DLG_GEORota, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 118
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 71
+    END
+
+    IDD_DLG_GEOTrans, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 178
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 71
+    END
+
+    IDD_DLG_GEOZoom, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 120
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 102
+    END
+
+    IDD_DLG_Fourior_Filter, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 178
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 71
+    END
+
+    IDD_DLG_MORPH, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 184
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 151
+    END
+
+    IDD_DLG_HitMiss, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 184
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 99
+    END
+
+    IDD_DLG_SEEDFILL, DIALOG
+    BEGIN
+        LEFTMARGIN, 1
+        RIGHTMARGIN, 136
+        TOPMARGIN, 1
+        BOTTOMMARGIN, 42
+    END
+
+    IDD_DLG_PROJECT, DIALOG
+    BEGIN
+        LEFTMARGIN, 1
+        RIGHTMARGIN, 136
+        TOPMARGIN, 1
+        BOTTOMMARGIN, 42
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    IDR_MAINFRAME           "数字图像处理"
+    IDR_DIPTYPE             "\nDip\nDip\n\n\nDip.Document\nDip Document"
+    IDS_SPLIT_RED_CAPTION   "%1 [红色通道]"
+    IDS_SPLIT_GREEN_CAPTION "%1 [绿色通道]"
+    IDS_SPLIT_BLUE_CAPTION  "%1 [蓝色通道]"
+END
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    AFX_IDS_APP_TITLE       "Dip"
+    AFX_IDS_IDLEMESSAGE     "就绪"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_INDICATOR_EXT        "扩展名"
+    ID_INDICATOR_CAPS       "大写"
+    ID_INDICATOR_NUM        "数字"
+    ID_INDICATOR_SCRL       "滚动"
+    ID_INDICATOR_OVR        "改写"
+    ID_INDICATOR_REC        "记录"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_NEW             "建立新文档\n新建"
+    ID_FILE_OPEN            "打开一个现有文档\n打开"
+    ID_FILE_CLOSE           "关闭活动文档\n关闭"
+    ID_FILE_SAVE            "保存活动文档\n保存"
+    ID_FILE_SAVE_AS         "将活动文档以一个新文件名保存\n另存为"
+    ID_FILE_PAGE_SETUP      "改变打印选项\n页面设置"
+    ID_FILE_PRINT_SETUP     "改变打印机及打印选项\n打印设置"
+    ID_FILE_PRINT           "打印活动文档\n打印"
+    ID_FILE_PRINT_PREVIEW   "显示整页\n打印预览"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_APP_ABOUT            "显示程序信息，版本号和版权\n关于"
+    ID_APP_EXIT             "退出应用程序；提示保存文档\n退出"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_MRU_FILE1       "打开该文档"
+    ID_FILE_MRU_FILE2       "打开该文档"
+    ID_FILE_MRU_FILE3       "打开该文档"
+    ID_FILE_MRU_FILE4       "打开该文档"
+    ID_FILE_MRU_FILE5       "打开该文档"
+    ID_FILE_MRU_FILE6       "打开该文档"
+    ID_FILE_MRU_FILE7       "打开该文档"
+    ID_FILE_MRU_FILE8       "打开该文档"
+    ID_FILE_MRU_FILE9       "打开该文档"
+    ID_FILE_MRU_FILE10      "打开该文档"
+    ID_FILE_MRU_FILE11      "打开该文档"
+    ID_FILE_MRU_FILE12      "打开该文档"
+    ID_FILE_MRU_FILE13      "打开该文档"
+    ID_FILE_MRU_FILE14      "打开该文档"
+    ID_FILE_MRU_FILE15      "打开该文档"
+    ID_FILE_MRU_FILE16      "打开该文档"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_NEXT_PANE            "切换到下一个窗格\n下一窗格"
+    ID_PREV_PANE            "切换回前一个窗格\n前一窗格"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_WINDOW_NEW           "为活动文档打开另一个窗口\n新建窗口"
+    ID_WINDOW_ARRANGE       "将图标排列在窗口底部\n排列图标"
+    ID_WINDOW_CASCADE       "排列窗口成相互重叠\n层叠窗口"
+    ID_WINDOW_TILE_HORZ     "排列窗口成互不重叠\n平铺窗口"
+    ID_WINDOW_TILE_VERT     "排列窗口成互不重叠\n平铺窗口"
+    ID_WINDOW_SPLIT         "将活动的窗口分隔成窗格\n分隔"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_EDIT_CLEAR           "删除被选对象\n删除"
+    ID_EDIT_CLEAR_ALL       "全部删除\n全部删除"
+    ID_EDIT_COPY            "复制被选对象并将其置于剪贴板上\n复制"
+    ID_EDIT_CUT             "剪切被选对象并将其置于剪贴板上\n剪切"
+    ID_EDIT_FIND            "查找指定的正文\n查找"
+    ID_EDIT_PASTE           "插入剪贴板内容\n粘贴"
+    ID_EDIT_REPEAT          "重复上一步操作\n重复"
+    ID_EDIT_REPLACE         "用不同的正文替换指定的正文\n替换"
+    ID_EDIT_SELECT_ALL      "选择整个文档\n选择全部"
+    ID_EDIT_UNDO            "撤消最后一步操作\n撤消"
+    ID_EDIT_REDO            "重新执行先前已撤消的操作\n重新执行"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_VIEW_TOOLBAR         "显示或隐藏工具栏\n显隐工具栏"
+    ID_VIEW_STATUS_BAR      "显示或隐藏状态栏\n显隐状态栏"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCSIZE          "改变窗口大小"
+    AFX_IDS_SCMOVE          "改变窗口位置"
+    AFX_IDS_SCMINIMIZE      "将窗口缩小成图标"
+    AFX_IDS_SCMAXIMIZE      "把窗口放大到最大尺寸"
+    AFX_IDS_SCNEXTWINDOW    "切换到下一个文档窗口"
+    AFX_IDS_SCPREVWINDOW    "切换到先前的文档窗口"
+    AFX_IDS_SCCLOSE         "关闭活动的窗口并提示保存所有文档"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "把窗口恢复到正常大小"
+    AFX_IDS_SCTASKLIST      "激活任务表"
+    AFX_IDS_MDICHILD        "激活该窗口"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_PREVIEW_CLOSE   "关闭打印预览模式\n取消预阅"
+    IDS_FAIL_COMBINE        "通道合并出错！"
+    IDS_COMBINE_CAPTION     "%1通道合并后的图像]"
+    IDS_SPLIT_MIXED_CAPTION "%1 [混合通道]"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_GEOM_ROTA            "旋转当前图像\n图像旋转"
+    ID_POINT_GRAY_RED       "对当前图像进行水平镜像\n水平镜像"
+    ID_POINT_GRAY_GREEN     "对当前图像进行垂直镜像\n垂直镜像"
+    ID_POINT_GRAY_BLUE      "对当前图像进行转置\n图像转置"
+    ID_POINT_GRAY_MIXED     "缩放当前图像\n图像缩放"
+    ID_GEOM_MIRV2           "对当前图像进行垂直镜像\n垂直镜像"
+    ID_GEOM_MIRH2           "对当前图像进行水平镜像\n水平镜像"
+    ID_GEOM_TRPO2           "对当前图像进行转置\n图像转置"
+    ID_GEOM_ZOOM2           "缩放当前图像\n图像缩放"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_FAIL_SPLIT          "分离通道失败！"
+END
+
+#endif    // Chinese (P.R.C.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE 4, 2
+#pragma code_page(936)
+#endif //_WIN32
+#include "res\Dip.rc2"  // non-Microsoft Visual C++ edited resources
+#include "l.chs\afxres.rc"          // Standard components
+#include "l.chs\afxprint.rc"        // printing/print preview resources
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

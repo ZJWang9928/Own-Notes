@@ -1,0 +1,145 @@
+<html>
+
+<head>
+<title>a brief descripton of the kodak? pcd-format.</title>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body link="#0000ff" background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">a brief description of the kodak
+pcd-format</font></p>
+<div align="center"><center>
+
+<table border="0" width="80%">
+  <tr>
+    <td width="100%">a pcd picture is encode in five different sizes:<font face="courier new"
+    size="2"><p>level pixels 8 bit image 24 bit image</p>
+    <p>base/16 1 128x192 25 kb 74 kb</p>
+    <p>base/4 2 256x384 99 kb 295 kb</p>
+    <p>base 3 768x512 394 kb 1200 kb</p>
+    <p>4*base 4 1536x1024 1600 kb 4800 kb</p>
+    <p>16*base 5 2048x3072 6300 kb 18900 kb</p>
+    </font><p>the first three sub-formats consist of uncoded ycbyr (4:1:1). the last two
+    sub-formats are encoded in an incremental, but to me unknown way.</p>
+    <p>therefor i will describe only the first three subtypes:</p>
+    <p>the image-data of these subtypes start at the respective offsets of 02000h, 0b800h and
+    30000h. to decode the ycbyr to the more usual rgb-code, three lines of data have to be
+    read, each consisting of &#145;w&#146; bytes, where &#145;w&#146; is the width of the
+    image-subtype. the first &#145;w&#146; bytes and the first half of the third &#145;w&#146;
+    bytes contain data for the first rgb-line, the second &#145;w&#146; bytes and the second
+    half of the third &#145;w&#146; bytes contain data for a second rgb-line. the exact
+    decoding is given in the example pascal code below.</p>
+    <p>the orientation of pcd files is found in the 73<sup>rd</sup> byte from the start: if
+    (byte[73] and 63) &lt;&gt; 8 then the orientation is vertical, and you may want to mirror
+    the image.</p>
+    <p>if you have any questions or additions, please email me at: <a
+    href="mailto:alex@assist-consult.nl"><font size="2">alex@assist-consult.nl</font></a> !</p>
+    <p>&nbsp;</p>
+    <b><p>pascal code to decode the first three subtypes of a pcd file.</p>
+    </b><blockquote>
+      <blockquote>
+        <font face="courier new" size="1"><p>procedure ycbcr2rgb(y,cb,cr:integer; var
+        r,g,b:integer);</p>
+        <p>const c=256;</p>
+        <p>c11:real= 0.0054980*c;</p>
+        <p>c12:real= 0.0000000*c;</p>
+        <p>c13:real= 0.0051681*c;</p>
+        <p>c21:real= 0.0054980*c;</p>
+        <p>c22:real=-0.0015446*c;</p>
+        <p>c23:real=-0.0026325*c;</p>
+        <p>c31:real= 0.0054980*c;</p>
+        <p>c32:real= 0.0079533*c;</p>
+        <p>c33:real= 0.0000000*c;</p>
+        <p>begin</p>
+        <p>r:=round(c11*y +c12*(cb-156) +c13*(cr-137));</p>
+        <p>g:=round(c21*y +c22*(cb-156) +c23*(cr-137));</p>
+        <p>b:=round(c31*y +c32*(cb-156) +c33*(cr-137));</p>
+        <p>if r&lt;0 then r:=0;</p>
+        <p>if g&lt;0 then g:=0;</p>
+        <p>if b&lt;0 then b:=0;</p>
+        <p>if r&gt;255 then r:=255;</p>
+        <p>if g&gt;255 then g:=255;</p>
+        <p>if b&gt;255 then b:=255;</p>
+        <p>end;</p>
+        <p>procedure loadpcd(filename:string);</p>
+        <p>type buf=array[0..maxlinelen-1] of byte;</p>
+        <p>buf3=array[0..3*maxlinelen-1] of byte;</p>
+        <p>var ofs:longint;</p>
+        <p>infile:file;</p>
+        <p>y,x,xx:word;</p>
+        <p>y1,y2,cbcr:buf;</p>
+        <p>line:buf3;</p>
+        <p>r,g,b:integer;</p>
+        <p>function verticalorientation:boolean;</p>
+        <p>var buf:array[0..127] of byte;</p>
+        <p>begin</p>
+        <p>reset(invoer,1);</p>
+        <p>blockread(invoer,buf,128);</p>
+        <p>verticalorientation:=(buf[72] and 63)&lt;&gt;8;</p>
+        <p>end;</p>
+        <p>begin</p>
+        <p>assign(infile,filename);</p>
+        <p>reset(infile,1); </p>
+        <p>bpp:=24;</p>
+        <p>case pcdsize of</p>
+        <p>1: begin</p>
+        <p>w:=192;</p>
+        <p>h:=128;</p>
+        <p>seek(invoer,$2000);</p>
+        <p>end;</p>
+        <p>2: begin</p>
+        <p>w:=384;</p>
+        <p>h:=256;</p>
+        <p>seek(invoer,$b800);</p>
+        <p>end;</p>
+        <p>3: begin</p>
+        <p>w:=768;</p>
+        <p>h:=512;</p>
+        <p>seek(invoer,$30000);</p>
+        <p>end;</p>
+        <p>end;</p>
+        <p>ofs:=0;</p>
+        <p>for y:=0 to (h div 2)-1 do</p>
+        <p>begin</p>
+        <p>blockread(infile,y1,w);</p>
+        <p>blockread(infile,y2,w);</p>
+        <p>blockread(infile,cbcr,w);</p>
+        <p>xx:=0; </p>
+        <p>for x:=0 to w-1 do</p>
+        <p>begin</p>
+        <p>ycbcr2rgb(y1[x],cbcr[x div 2],cbcr[(w div 2)+(x div 2)],r,g,b);</p>
+        <p>line[xx]:=b;</p>
+        <p>line[xx+1]:=g;</p>
+        <p>line[xx+2]:=r;</p>
+        <p>inc(xx,3);</p>
+        <p>end;</p>
+        <p>{ save your line here ! }</p>
+        <p>inc(ofs,w*3);</p>
+        <p>xx:=0;</p>
+        <p>for x:=0 to w-1 do</p>
+        <p>begin</p>
+        <p>ycbcr2rgb(y2[x],cbcr[x div 2],cbcr[(w div 2)+(x div 2)],r,g,b);</p>
+        <p>line[xx]:=b;</p>
+        <p>line[xx+1]:=g;</p>
+        <p>line[xx+2]:=r;</p>
+        <p>inc(xx,3);</p>
+        <p>end;</p>
+        <p>{ save your line here ! }</p>
+        <p>inc(ofs,w*3);</p>
+        <p>end;</p>
+        <p>close(infile);</p>
+        </font><font size="1"><p>end;</p>
+        <p>end;</p>
+        </font>
+      </blockquote>
+    </blockquote>
+    </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">??</a></p>
+</body>
+</html>

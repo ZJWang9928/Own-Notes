@@ -1,0 +1,106 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>idx outlook express </title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="5" color="#0000ff">idx outlook express (ie4) index file
+format<br>
+</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+<tr>
+<td width="100%">by jeff evans<br>
+<br>
+idx file format<br>
+----------------------<br>
+<br>
+index size description<br>
+-------- ------- ----------------<br>
+1-4 4 bytes file id (the ascii string &quot;jmf9&quot;)<br>
+5-8 4 bytes sub-id (the hex value 0x04000100)<br>
+9-12 4 bytes number of items in the index file (number of e-mail<br>
+messages)<br>
+13-16 4 bytes file size in bytes<br>
+17-20 4 bytes ? (seems to contain the hex value 0x01000000)<br>
+21-24 4 bytes ? (seems to contain the hex value 0x10000100)<br>
+25-64 40 bytes string composed of 0x00's<br>
+<br>
+<br>
+index items immediately follow this header. each item has the following<br>
+format:<br>
+<br>
+index size description<br>
+-------- ------- ----------------<br>
+1-4 4 bytes flags (see below)<br>
+5-8 4 bytes ?<br>
+9-12 4 bytes entry number (unique for each index item)<br>
+13-16 4 bytes ?<br>
+17-20 4 bytes remaining size in this index item, including the size<br>
+of this value and the size of the end buffer<br>
+21-24 4 bytes ?<br>
+25-28 4 bytes size of the message, in bytes<br>
+29-194 166 bytes seems to be mostly empty, usage was unclear<br>
+195-202 8 bytes date message received (a win32 filetime structure)<br>
+203-210 8 bytes date message sent (a win32 filetime structure)<br>
+211-212 2 bytes ?<br>
+213-216 4 bytes size of the subject field in bytes<br>
+217-x x bytes subject field (an ascii string - length is<br>
+specified by the preceding value)<br>
+x-x 4 bytes size of senders e-mail address in bytes<br>
+x-x x bytes senders e-mail address (an ascii string - length<br>
+specified by preceding value)<br>
+x-x 4 bytes size of senders name in bytes<br>
+x-x x bytes senders name (an ascii string - length specified<br>
+by preceding value)<br>
+x-x 4 bytes size of pop server in bytes<br>
+x-x x bytes pop server message was retrieved from<br>
+x-x 5 bytes ?<br>
+x-x 4 bytes size of username used to log into pop server<br>
+x-x x bytes username used to log into pop server (an ascii<br>
+string)<br>
+x-x 4 bytes size of the name of the mail account<br>
+x-x x bytes name of the outlook express account that<br>
+corresponds to the pop server<br>
+x-x 8 bytes ?<br>
+x-x 0-3 bytes variable length buffer which is used to make the<br>
+length of the entry an even multiple of 4<br>
+<br>
+<br>
+notes:<br>
+<br>
+the size of the index entries is measured from the &quot;remaining size&quot; value.<br>
+this value is calculated such that it is equal to the number of bytes<br>
+between the start of this variable and the end of the variable length<br>
+buffer.<br>
+<br>
+each index entry has a set of flags which describe it's properties. a normal<br>
+message appears to have a value of 10h. messages that are marked as read by<br>
+the mail client have a value of 12h (you can perform a bitwise and on the<br>
+flags using 2h to determine if the message has been read. ex:)<br>
+<br>
+if (dwflags &amp; 2)<br>
+(message is not read)<br>
+else<br>
+(message is read)<br>
+<br>
+there are probably other values to indicate attachments and priorities, but<br>
+i did not attempt to work these out.<br>
+<br>
+<br>
+i can be reached via e-mail at: evansj@triceris.com or evansj@shaw.wave.ca<br>
+<br>
+<br>
+jeff evans.<br>
+</td>
+</tr>
+</table>
+</center></div>
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

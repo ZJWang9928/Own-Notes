@@ -1,0 +1,57 @@
+<html>
+
+<head>
+<title>file:///d:/程序资料/format2/lzh.txt</title>
+</head>
+
+<body background="../jpg/di1.JPG">
+<div align="center"><center>
+
+<pre><font size="6" color="#0000ff">lzh format</font></pre>
+</center></div><div align="center"><center>
+
+<table border="0" width="80%">
+  <tr>
+    <td width="100%"><pre>
+the lharc/lha archiver is a multi platform archiver made by haruyasu yoshizaki,
+which has a relatively good compression. it uses more or less the same
+technology like the zip programs by phil katz. there was a hack named &quot;ice&quot;,
+which had only the graphic characters displayed on decompression changed.</pre>
+    <pre>offset              count type   description
+0000h                   1 byte   size of archived file header
+0001h                   1 byte   checksum of remaining bytes
+0002h                   3 char   id='-lh'
+                                 id='-lz'
+0005h                   1 char   compression methods used (see table 0005)
+0006h                   1 char   id='-'
+0007h                   1 dword  compressed size
+000bh                   1 dword  uncompressed size
+000fh                   1 dword  original file date/time (see table 0009)
+0013h                   1 word   file attribute
+0015h                   1 byte   filename / path length in bytes
+                                 =&quot;len&quot;
+0016h               &quot;len&quot; char   filename / path
+0018h                   1 word   crc-16 of original file
++&quot;len&quot;</pre>
+    <pre>(table 0005)
+lharc compression types
+  &quot;0&quot; - no compression
+  &quot;1&quot; - lzw, 4k buffer, huffman for upper 6 bits of position
+  &quot;2&quot; - unknown
+  &quot;3&quot; - unknown
+  &quot;4&quot; - lzw, arithmetic encoding
+  &quot;5&quot; - lzw, arithmetic encoding
+  &quot;s&quot; - lha 2.x archive?
+  &quot;\&quot; - lha 2.x archive?
+  &quot;d&quot; - lha 2.x archive?</pre>
+    <pre>extension:lzh,ice
+occurences:pc
+programs:lharc.exe, lha.exe</pre>
+    </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

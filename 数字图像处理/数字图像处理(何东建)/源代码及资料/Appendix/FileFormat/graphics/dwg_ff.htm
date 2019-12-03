@@ -1,0 +1,334 @@
+<html>
+
+<head>
+<title>file:///d:/程序资料/format2/dwg_ff.txt</title>
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">dwg file format</font></p>
+<div align="center"><center>
+
+<table border="0" width="80%">
+  <tr>
+    <td width="100%"><pre>an attempt to specify the dwg (r12) file format using the bff grammar for
+binary files.</pre>
+    <pre>acknowledgements</pre>
+    <pre>i would like to thank reini urban &lt;rurban@sbox.tu-graz.ac.at&gt; for his
+contributions.</pre>
+    <pre>definition of the elementary elements</pre>
+    <pre>typedef word word :=
+     byte : b1, byte : b2
+     return (word)f | ((word)s &lt;&lt; 8).
+typedef longword longp :=
+     byte : b1, byte : b2, byte : b3, byte : b4
+     return (longword)b1 | ((longword)b2 &lt;&lt; 8)
+          | ((longword)b3 &lt;&lt; 16) | ((longword)b4 &lt;&lt; 24).
+typedef longword longword :=
+     byte : b1, byte : b2, byte : b3, byte : b4
+     return (longword)b1 | ((longword)b2 &lt;&lt; 8)
+          | ((longword)b3 &lt;&lt; 16) | ((longword)b4 &lt;&lt; 24).</pre>
+    <pre>definition of the whole file</pre>
+    <pre>root dwg_file :=
+ [begin : end](
+  char[12] : version,
+  byte, word, word, word, byte,
+  longp : p_entities,  longp : p_entend,
+  longp : p_blocksec,  byte[4],  longp : p_bsend,  byte[4],
+  tablepos : block_table,
+  tablepos : layer_table,
+  tablepos : style_table,
+  tablepos : ltype_table,
+  tablepos : view_table,
+  header,  [cur : 0x3ef]byte*,
+  tablepos : ucs_table,  [cur : 0x500]byte*,
+  tablepos : vport_table,  byte[8],
+  tablepos : appid_table,  byte[6],
+  tablepos : dimstyle_table,  [cur : 0x69f]byte*,
+  tablepos : p13_table,  bytes[38],
+  [p_entities : p_entend]entities : ents,   byte[19],
+  [block_table.start : ]blocks : block_table,
+  [layer_table.start : ]layers : layer_table,
+  [style_table.start : ]styles : style_table,
+  [ltype_table.start : ]ltypes : ltype_table,
+  [view_table.start : ]table : view_table,
+  [ucs_table.start : ]table : ucs_table,
+  [vport_table.start : vport_table.end]table : vport_table,
+  [appid_table.start : ]appids : appid_table,
+  [dimstyle_table.start : ]table : dimstyle_table,
+  [p13_table.start : ]table : p13_table,
+  [p_blocksec : p_bsend]entities : blocks,  bytes[36],
+  longp = p_entities,  longp = p_entend,
+  longp = blocksec,  longp = bsend,
+  bytes[12],
+  bytes[6],
+  longp = block_table.start,   bytes[6],
+  longp = layer_table.start,   bytes[6],
+  longp = style_table.start,   bytes[6],
+  longp = ltype_table.start,   bytes[6]
+  longp = view_table.start,   bytes[6],
+  longp = ucs_table.start,   bytes[6],
+  longp = vport_table.start,   bytes[6],
+  longp = appid_table.start,   bytes[6],
+  longp = dimstyle_table.start,   bytes[6],
+  longp = p13_table.start,   bytes[6],
+  longp  bytes*,
+ ).</pre>
+    <pre>a table position</pre>
+    <pre>tablepos :=
+   word : size,
+   long : nr,
+   long : start,</pre>
+    <pre>the header</pre>
+    <pre>header :=
+   word,
+   point(true) : inbase,
+   point(true) : extmin,
+   point(true) : extmax,
+   point(false) : limmin,
+   point(false) : limmax,
+   double[4],
+   byte[2],
+   double[2],
+   byte[56],
+   double[3],
+   byte[18],
+   double .</pre>
+    <pre>the block table</pre>
+    <pre>blocks :=
+  ( [size](
+      byte : flag,
+      char[32] : name,
+      word : used,
+      byte, word, byte, word,
+      check_2
+    )
+  )[nr] : blocks_info,
+  check_32.</pre>
+    <pre>check_2 := byte[2].
+check_32 := byte[32].</pre>
+    <pre>the layer table</pre>
+    <pre>layers :=
+  ( [size](
+      byte : flag,
+      char[32] : name,
+      word : used,
+      word : color,
+      word : style,
+      check_2
+    )
+  )[nr] : layer_info,
+  check_32.</pre>
+    <pre>the style table</pre>
+    <pre>styles :=
+  ( [size](
+      byte : flag,
+      char[32] : name,
+      word, double[3], byte, double, char[128],
+      check_2
+    )
+  )[nr] : style_info,
+  check_32.</pre>
+    <pre>the line-type table</pre>
+    <pre>ltypes :=
+  ( [size](
+      byte : flag,
+      char[32] : name,
+      word,  char[48],  byte,
+      byte,  double[13],
+      check_2
+    )
+  )[nr] : ltype_info,
+  check_32 .</pre>
+    <pre>the application identifier table</pre>
+    <pre>appids :=
+  ( [size](
+      byte : flag,
+      char[32] : name,
+      word,
+      check_2
+    )
+  )[nr] : appid_info,
+  check_32 .</pre>
+    <pre>the other tables</pre>
+    <pre>table :=
+  ( [size](
+      byte : flag,
+      [size - 3]byte*,
+      check_2
+    )
+  )[nr],
+  check_32 .</pre>
+    <pre>the entities</pre>
+    <pre>(experimental)</pre>
+    <pre>entities :=
+  ( byte : kind,
+    byte : flag,
+    word : length,
+    [length - 4](
+      word : layer,
+      word : opts,
+      if (flag &amp; 1) then byte : color else color = 0 fi,
+      if (flag &amp; 0x40) then byte : extra else extra = 0 fi,
+      if (extra &amp; 2) then xdata fi,
+      if (flag &amp; 2) then word : type fi,
+      if (flag &amp; 4 &amp;&amp; kind &gt; 2 &amp;&amp; kind != 22) then double : z fi,
+      if (flag &amp; 8) then double : th fi,
+      if (flag &amp; 0x20) then handle fi,
+      if (extra &amp; 4) then word : paper fi,
+      switch (kind)
+      case 1:  /* line */
+        point(!(flag &amp; 4)) : l10,
+        point(!(flag &amp; 4)) : l11,
+        if (opts &amp; 1) then point(true) : l210 fi,
+        if (opts &amp; 2) then double : l38 fi,
+      case 2:  /* point */
+        point(!(flag &amp; 4)) : l10,
+        if (opts &amp; 1) then point(true) : l210 fi,
+        if (opts &amp; 2) then double : l38 fi,
+      case 3:  /* circle */
+        point(false) : l10,
+        double : l40,
+        if (opts &amp; 1) then point(true) : l210 fi,
+        if (opts &amp; 2) then double : l38 fi,
+      case 4:  /* shape */
+        point(false) : l10,
+        word : l2,
+        if (opts &amp; 1) then point(true) : l210 fi,
+        if (opts &amp; 2) then double : l38 fi,
+      case 7: /* text */
+        point(false) : l10,
+        double : l40,
+        string : l1,
+        if (opts &amp; 1) then double : l50 fi,
+        if (opts &amp; 2) then double : l41 fi,
+        if (opts &amp; 4) then double : l51 fi,             /*?*/
+        if (opts &amp; 8) then byte : l7 fi,
+        if (opts &amp; 0x10) then byte : l71 fi,
+        if (opts &amp; 0x20) then byte : l72 fi,
+        if (opts &amp; 0x40) then point(false) : l11 fi,
+        if (opts &amp; 0x100) then byte : l73 fi,
+      case 8:  /* arc */
+        point(false) : l10,
+        double : l40,
+        double : l50,
+        double : l51,
+        if (opts &amp; 1) then point(true) : l210 fi,
+        if (opts &amp; 2) then double : l38 fi,
+      case 9:   /* trace */
+        point(false) : l10,
+        point(false) : l11,
+        point(false) : l12,
+        point(false) : l13,
+        if (opts &amp; 1) then point(true) : l210 fi,
+        if (opts &amp; 2) then double : l38 fi,
+      case 11:   /* solid */
+        point(false) : l11,
+        point(false) : l12,
+        point(false) : l13,
+        point(false) : l14,
+        if (opts &amp; 1) then point(true) : l210 fi,
+        if (opts &amp; 2) then double : l38 fi
+      case 12:   /* block */
+        point(false) : l10,                /*?*/
+        string : l1,                       /* if (opts &amp; 1) then ? */
+        if (opts &amp; 2) then string : l3 fi
+      case 13:  /* endblk */
+      case 14:   /* insert */
+        word : l1,
+        point(false) : l10,
+        if (opts &amp; 1) then double : l41 fi,
+        if (opts &amp; 2) then double : l42 fi,
+        if (opts &amp; 4) then double : l43 fi,
+        if (opts &amp; 8) then double : l50 fi,
+        if (opts &amp; 0x10) then byte : l70 fi,                /*?*/
+        if (opts &amp; 0x20) then byte : l71 fi,                /*?*/
+        if (opts &amp; 0x40) then double : l44 fi,              /*?*/
+        if (opts &amp; 0x80) then double : l45 fi              /*?*/
+      case 15:    /* attdef */
+        point(false) : l10,
+        double : l40,
+        string : l1,
+        string : l3,
+        string : l2,
+        byte : l70,
+        if (opts &amp; 1) then byte : l73 fi,           /*?*/
+        if (opts &amp; 2) then double : l50 fi,         /*?*/
+        if (opts &amp; 4) then double : l41 fi,
+        if (opts &amp; 8) then double : l42 fi,
+        if (opts &amp; 0x10) then byte : l7 fi,
+        if (opts &amp; 0x20) then byte : l71 fi,
+        if (opts &amp; 0x40) then byte : l72 fi,
+        if (opts &amp; 0x80) then point(false) : l11 fi,   /*?*/
+        if (opts &amp; 0x100) then point(true) : l210 fi,
+        if (opts &amp; 0x200) then double : l38 fi        /*?*/
+      case 16:   /* attrib */
+        point(false) : l10,
+        double : l40,
+        string : l1,
+        string : l2,
+        byte : l70,
+        if (opts &amp; 1) then byte : l73 fi,           /*?*/
+        if (opts &amp; 2) then double : l50 fi,         /*?*/
+        if (opts &amp; 4) then double : l41 fi,
+        if (opts &amp; 8) then double : l42 fi,
+        if (opts &amp; 0x10) then byte : l7 fi,
+        if (opts &amp; 0x20) then byte : l71 fi,
+        if (opts &amp; 0x40) then byte : l72 fi,
+        if (opts &amp; 0x80) then point(false) : l11 fi,   /*?*/
+        if (opts &amp; 0x100) then point(true) : l210 fi,
+        if (opts &amp; 0x200) then double : l38 fi        /*?*/
+      case 17:   /* s/bend */
+        long
+      case 19:   /* pline */
+        if (opts &amp; 1) then byte : l70 fi,
+        if (opts &amp; 2) then double : l40 fi,                   /*?*/
+        if (opts &amp; 4) then byte : l71 fi,         /*?*/
+        if (opts &amp; 8) then byte : l72 fi,         /*?*/
+        if (opts &amp; 0x10) then byte : l73 fi,         /*?*/
+        if (opts &amp; 0x20) then byte : l74 fi,         /*?*/
+        if (opts &amp; 0x40) then byte : l75 fi         /*?*/
+      case 20:   /* vertex */
+        point(false) : l10,
+        if (opts &amp; 1) then double : l40 fi,           /*?*/
+        if (opts &amp; 2) then double : l41 fi,           /*?*/
+        if (opts &amp; 4) then byte : l70 fi,             /*?*/
+        if (opts &amp; 8) then double : l50 fi           /*?*/
+      case 22:   /* 3dface */
+        point(!(flag &amp; 4)) : l10,
+        point(!(flag &amp; 4)) : l11,
+        point(!(flag &amp; 4)) : l12,
+        point(!(flag &amp; 4)) : l13
+      case 23:   /* dim */
+        word : l1,
+        point(true) : l10,
+        point(false) : l11,   /*?*/
+        if (opts &amp; 2) then byte : l70 fi,
+        if (opts &amp; 1) then point(true) : l12 fi,    /*?*/
+        if (opts &amp; 4) then string : l1 fi,
+        if (opts &amp; 8) then point(true) : l13 fi,
+        if (opts &amp; 0x10) then point(true) : l14 fi,
+        if (opts &amp; 0x20) then point(true) : l15 fi,
+        if (opts &amp; 0x40) then point(true) : l16 fi,
+        if (opts &amp; 0x80) then double : l40 fi,
+        if (opts &amp; 0x100) then double : l50 fi,
+        if (opts &amp; 0x200) then double : l51 fi,
+        if (opts &amp; 0x400) then double : l52 fi,
+        if (opts &amp; 0x800) then double : l53 fi
+      case 24:   /* vport */
+        point(true) : l10,
+        double : l40,
+        double : l41,
+        word : l68
+      endswitch
+      check_2
+    )
+  )* : entities.</pre>
+    </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

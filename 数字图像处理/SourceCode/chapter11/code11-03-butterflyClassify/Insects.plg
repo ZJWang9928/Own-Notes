@@ -1,0 +1,152 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: Insects - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x804 /fo"Debug/Insects.res" /d "_DEBUG" /d "_AFXDLL" "E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\Insects.rc"" 
+Creating temporary file "C:\DOCUME~1\nana\LOCALS~1\Temp\RSP25.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /FR"Debug/" /Fp"Debug/Insects.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\BtnST.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\ButtonStruct.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\Character.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\ChildFrm.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\DibObject.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\DlgCharacter.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\DlgGenRota.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\DlgGenTran.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\DlgGenZoom.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\DlgInfo.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\DlgLine.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\DlgMedFilter.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\DlgMorth.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\DlgResult.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\DlgTempSmooth.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\DlgThreshold.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\GeoTrans.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\Identify.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\Insects.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\InsectsDoc.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\InsectsView.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\LapDlg.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\MainFrm.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\MorphProc.cpp"
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\Pretreatment.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\nana\LOCALS~1\Temp\RSP25.tmp" 
+Creating temporary file "C:\DOCUME~1\nana\LOCALS~1\Temp\RSP26.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /FR"Debug/" /Fp"Debug/Insects.pch" /Yc"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"E:\NanaWord_DOC\教材编写\十一五规化教材\光盘文件\SourceCode\chap_13\蝴蝶与蛾的分类\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\nana\LOCALS~1\Temp\RSP26.tmp" 
+Creating temporary file "C:\DOCUME~1\nana\LOCALS~1\Temp\RSP27.tmp" with contents
+[
+/nologo /subsystem:windows /incremental:yes /pdb:"Debug/Insects.pdb" /debug /machine:I386 /out:"Debug/Insects.exe" /pdbtype:sept 
+".\Debug\BtnST.obj"
+".\Debug\ButtonStruct.obj"
+".\Debug\Character.obj"
+".\Debug\ChildFrm.obj"
+".\Debug\DibObject.obj"
+".\Debug\DlgCharacter.obj"
+".\Debug\DlgGenRota.obj"
+".\Debug\DlgGenTran.obj"
+".\Debug\DlgGenZoom.obj"
+".\Debug\DlgInfo.obj"
+".\Debug\DlgLine.obj"
+".\Debug\DlgMedFilter.obj"
+".\Debug\DlgMorth.obj"
+".\Debug\DlgResult.obj"
+".\Debug\DlgTempSmooth.obj"
+".\Debug\DlgThreshold.obj"
+".\Debug\GeoTrans.obj"
+".\Debug\Identify.obj"
+".\Debug\Insects.obj"
+".\Debug\InsectsDoc.obj"
+".\Debug\InsectsView.obj"
+".\Debug\LapDlg.obj"
+".\Debug\MainFrm.obj"
+".\Debug\MorphProc.obj"
+".\Debug\Pretreatment.obj"
+".\Debug\StdAfx.obj"
+".\Debug\Insects.res"
+".\ImageLoad.lib"
+]
+Creating command line "link.exe @C:\DOCUME~1\nana\LOCALS~1\Temp\RSP27.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+BtnST.cpp
+ButtonStruct.cpp
+Character.cpp
+ChildFrm.cpp
+DibObject.cpp
+DlgCharacter.cpp
+DlgGenRota.cpp
+DlgGenTran.cpp
+DlgGenZoom.cpp
+DlgInfo.cpp
+DlgLine.cpp
+DlgMedFilter.cpp
+DlgMorth.cpp
+DlgResult.cpp
+DlgTempSmooth.cpp
+DlgThreshold.cpp
+GeoTrans.cpp
+Identify.cpp
+Insects.cpp
+InsectsDoc.cpp
+Generating Code...
+Compiling...
+InsectsView.cpp
+LapDlg.cpp
+MainFrm.cpp
+MorphProc.cpp
+Pretreatment.cpp
+Generating Code...
+Linking...
+Creating temporary file "C:\DOCUME~1\nana\LOCALS~1\Temp\RSP29.tmp" with contents
+[
+/nologo /o"Debug/Insects.bsc" 
+".\Debug\StdAfx.sbr"
+".\Debug\BtnST.sbr"
+".\Debug\ButtonStruct.sbr"
+".\Debug\Character.sbr"
+".\Debug\ChildFrm.sbr"
+".\Debug\DibObject.sbr"
+".\Debug\DlgCharacter.sbr"
+".\Debug\DlgGenRota.sbr"
+".\Debug\DlgGenTran.sbr"
+".\Debug\DlgGenZoom.sbr"
+".\Debug\DlgInfo.sbr"
+".\Debug\DlgLine.sbr"
+".\Debug\DlgMedFilter.sbr"
+".\Debug\DlgMorth.sbr"
+".\Debug\DlgResult.sbr"
+".\Debug\DlgTempSmooth.sbr"
+".\Debug\DlgThreshold.sbr"
+".\Debug\GeoTrans.sbr"
+".\Debug\Identify.sbr"
+".\Debug\Insects.sbr"
+".\Debug\InsectsDoc.sbr"
+".\Debug\InsectsView.sbr"
+".\Debug\LapDlg.sbr"
+".\Debug\MainFrm.sbr"
+".\Debug\MorphProc.sbr"
+".\Debug\Pretreatment.sbr"]
+Creating command line "bscmake.exe @C:\DOCUME~1\nana\LOCALS~1\Temp\RSP29.tmp"
+Creating browse info file...
+<h3>Output Window</h3>
+
+
+
+<h3>Results</h3>
+Insects.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

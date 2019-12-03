@@ -1,0 +1,938 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>the blue wave offline mail systemmail packet file structuresrevision level
+2copyright 1990</title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="5" color="#0000ff">blue wave mail packet file structures</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+<tr>
+<td width="100%"><br>
+the blue wave offline mail system<br>
+mail packet file structures<br>
+revision level 2<br>
+<br>
+copyright 1990-1994 by cutting edge computing<br>
+all rights reserved<br>
+<br>
+created by george hatchew<br>
+<br>
+documentation by martin pollard and george hatchew<br>
+revision 2.01 - january 18, 1994<br>
+<br>
+<br>
+<br>
+===================<br>
+table of contents<br>
+===================<br>
+<br>
+<a href="#introduction">introduction</a><br>
+<a href="#filename conventions">filename conventions</a><br>
+<a href="#files in blue wave packets">files in blue wave packets</a><br>
+<a href="#byte ordering in file structures">byte ordering in file structures</a><br>
+<a href="#using the file structures">using the file structures</a><br>
+<a href="#unused and reserved structure fields">unused and reserved structure fields</a><br>
+<a href="#the *.inf file (inf_header &amp; inf_area_info)">the *.inf file (inf_header
+&amp; inf_area_info)</a><br>
+<a href="#the *.mix file (mix_rec)">the *.mix file (mix_rec)</a><br>
+<a href="#the *.fti file (fti_rec)">the *.fti file (fti_rec)</a><br>
+<a href="#the *.dat file">the *.dat file</a><br>
+<a href="#the *.xti file (xti_rec)">the *.xti file (xti_rec)</a><br>
+<a href="#the *.upl file (upl_header &amp; upl_rec)">the *.upl file (upl_header &amp;
+upl_rec)</a><br>
+<a href="#the *.upi (upi_rec) and *.net (net_rec) files">the *.upi (upi_rec) and *.net
+(net_rec) files</a><br>
+<a href="#the *.req file (req_rec)">the *.req file (req_rec)</a><br>
+<a href="#the *.pdq file (pdq_header &amp; pdq_rec)">the *.pdq file (pdq_header &amp;
+pdq_rec)</a><br>
+<a href="#appendix a - how to create a blue wave mail packet">appendix a - how to create a
+blue wave mail packet</a><br>
+<a href="#appendix b - how to create a blue wave reply packet">appendix b - how to create
+a blue wave reply packet</a><br>
+<a href="#appendix c - the blue wave structures and turbo pascal">appendix c - the blue
+wave structures and turbo pascal</a><br>
+<a href="#appendix d - serial numbers in mail and reply packets">appendix d - serial
+numbers in mail and reply packets </a><br>
+&#12;<br>
+<br>
+============================<br>
+copyright and restrictions<br>
+============================<br>
+<br>
+the blue wave packet structures were created by george hatchew, and<br>
+are the copyrighted property of cutting edge computing. permission is<br>
+granted for third parties to use these structures in their own pro-<br>
+grams, without any royalties or licenses required. cutting edge<br>
+computing reserves the right to make any changes to these structures,<br>
+at any time. as such, third parties are requested not to make any<br>
+unauthorized changes to these structures, as cutting edge computing is<br>
+not bound to follow these changes. any proposed changes should be<br>
+brought to the attention of cutting edge computing, where they may be<br>
+included in future revisions of the structures.<br>
+<br>
+authors that use these structures are allowed to claim that their<br>
+programs are &quot;blue wave compatible&quot;. however, to avoid confusion and<br>
+complications, authors are not allowed to use &quot;blue wave&quot; as any part<br>
+of the name of their programs (as &quot;blue wave&quot; is a product line from,<br>
+as well as a trademark of, cutting edge computing).<br>
+<br>
+<br>
+<br>
+===================<br>
+trademark notices<br>
+===================<br>
+<br>
+the following are products, trademarks, or registered trademarks of<br>
+the following individuals and/or companies:<br>
+<br>
+arc - system enhancement associates<br>
+blue wave - george hatchew and cutting edge computing<br>
+fidonet - tom jennings and fido software<br>
+megareader - kip compton<br>
+ms-dos - microsoft corp.<br>
+pkzip - pkware inc.<br>
+qwk - mark &quot;sparky&quot; herring<br>
+silver xpress - hector santos and santronics software<br>
+turbo pascal, borland pascal - borland international<br>
+xrs - michael y. ratledge<br>
+<br>
+any omissions from this list are purely unintentional.<br>
+&#12; blue wave mail packet file structures - revision level 2<br>
+<br>
+<br>
+<a name="introduction">introduction</a><br>
+============<br>
+<br>
+the world of offline mail has virtually exploded since the late 1980s,<br>
+due mostly to the ever-increasing interest in electronic mail networks<br>
+(such as fidonet and the internet). as the flow of mail increased,<br>
+more and more users became aware of the benefits of downloading mail,<br>
+reading it offline, and uploading replies at a later date, thus maxi-<br>
+mizing efficiency and minimizing the time spent online.<br>
+<br>
+several competing formats for storage of offline mail have come into<br>
+existence during this period, with the minimalist qwk format emerging<br>
+as the dominant one due to its open specifications. (the megareader,<br>
+silver xpress, and xrs, formats also exist, but never really achieved<br>
+&quot;critical mass&quot; due to the proprietary nature of their file formats.)<br>
+qwk enjoys widespread popularity, but its technical limitations make<br>
+it less than suitable for handling the wide variety of electronic mail<br>
+that currently exists (and which will appear in the coming years).<br>
+<br>
+the blue wave format was designed as a superior method of providing<br>
+offline mail capabilities, particularly for networks based on the<br>
+fidonet standard (which means full support for fidonet-style private<br>
+mail, or netmail). its design is simple enough that virtually any<br>
+programmer can create a blue wave-compatible product in a short amount<br>
+of time, yet flexible enough to provide plenty of room for future<br>
+needs (such as fax capabilities). it also has basic support for non-<br>
+fidonet style mail, such as that required by internet mail, usenet<br>
+newsgroups, and qwk-based network mail.<br>
+<br>
+note that this is a reference document, not a programming tutorial. a<br>
+tutorial on programming is beyond the scope of this document. thus,<br>
+we do not recommend the use of these structures by the novice.<br>
+<br>
+<br>
+<a name="filename conventions">filename conventions</a><br>
+====================<br>
+<br>
+the blue wave format was originally designed for the blue wave series<br>
+of offline mail readers and doors running on an intel-compatible pc<br>
+using ms-dos (or a dos-compatible operating system). this means that<br>
+filenames are limited to the dos standard &quot;8.3&quot; format (up to eight<br>
+characters, optionally followed by a period and a one to three charac-<br>
+ter extension, with no distinction made between upper and lower case<br>
+letters). for maximum compatibility across different platforms,<br>
+programs utilizing the blue wave format should limit filenames to the<br>
+dos format as well.<br>
+<br>
+additionally, dos allows for some non-alphanumeric characters to be<br>
+used in filenames. these characters, while suitable for dos, may<br>
+cause problems on non-dos platforms. therefore, it would be wise to<br>
+restrict the allowable characters in filenames to uppercase letters<br>
+(&quot;a&quot; to &quot;z&quot;) and digits (&quot;0&quot; to &quot;9&quot;).<br>
+<br>
+<a name="files in blue wave packets">files in blue wave packets</a><br>
+==========================<br>
+<br>
+there are two main components to the blue wave system: mail packets,<br>
+which consist of messages obtained from the host system (such as a<br>
+bbs), and reply packets, which consist of messages written by the user<br>
+via an offline mail reader (such as the reader that bears its name,<br>
+the blue wave offline mail reader). each type of packet contains its<br>
+own set of unique files.<br>
+<br>
+blue wave mail and reply packet filenames are based around what is<br>
+called a &quot;packet id&quot;. the packet id is a one to eight character<br>
+string that uniquely identifies a particular host system, and is used<br>
+as the basis for all packet files. &quot;packets&quot;, as defined here, are<br>
+groups of files contained in an archive file, which uses the packet id<br>
+as the base filename and is created using a file archive utility (such<br>
+as arc or pkzip, or the equivalent for non-dos platforms). the three-<br>
+character extension for a mail packet is comprised of the first two<br>
+letters of the day of the week, followed by a digit from 0 to 9.<br>
+fidonet sysops will recognize this as the same scheme used for the<br>
+extensions on echomail packets. (an alternate scheme is to use a pure<br>
+numerical extension, i.e. &quot;001&quot; through &quot;999&quot;.) the extension for a<br>
+reply packet is &quot;new&quot;. (note that door implementations should include<br>
+code to keep track of the last mail packet extension used, so that<br>
+multiple mail packets created on the same day won't have the same<br>
+filename.) examples of packet archive names and internal filenames,<br>
+based around the packet id, are given below (after the list of files).<br>
+<br>
+a mail packet consists of, at minimum, the following files:<br>
+<br>
+*.inf information about the host system and its message<br>
+areas, as well as information about the user who<br>
+obtained the mail packet.<br>
+<br>
+*.fti the headers for each message in the mail packet.<br>
+the headers consist of such things as the from:,<br>
+to:, and subject: fields, and the date/time the<br>
+message was written.<br>
+<br>
+*.mix an index file that points to the messages for each<br>
+message area, designed for quick access to messag-<br>
+es.<br>
+<br>
+*.dat the text for all messages in the mail packet.<br>
+<br>
+optional text/ansi files may also be included in the archive. in<br>
+addition to the &quot;reader&quot; files specified in the *.inf header, there<br>
+are two other types of files, not defined in the *.inf header, that<br>
+may be included. the first, a list of new files available for down-<br>
+load, can be included as &quot;newfiles.*&quot; (any extension is valid). the<br>
+second, system bulletins, can be included as &quot;blt*.*&quot; (any filename is<br>
+valid, as long as it begins with &quot;blt&quot;). the methods used to display<br>
+these bulletins is implementation dependent.<br>
+<br>
+<br>
+a reply packet consists of, at minimum, the following files:<br>
+<br>
+*.upl contains the information (name, network address,<br>
+message attributes, filename of message text,<br>
+etc.) for each reply message. replaces the *.upi<br>
+and *.net files (see below) used in older blue<br>
+wave implementations.<br>
+<br>
+*.upi contains the information (name, network address,<br>
+message attributes, filename of message text,<br>
+etc.) for each non-netmail reply message. this<br>
+file has been obsoleted by the *.upl file, but is<br>
+documented here for compatibility purposes (as<br>
+some older systems are not yet compatible with the<br>
+*.upl file).<br>
+<br>
+*.net contains the information (name, network address,<br>
+message attributes, filename of message text,<br>
+etc.) for each netmail reply message. this file<br>
+has been obsoleted by the *.upl file, but is<br>
+documented here for compatibility purposes (as<br>
+some older systems are not yet compatible with the<br>
+*.upl file).<br>
+<br>
+*.req an optional file that specifies the information on<br>
+file requests made through the offline mail read-<br>
+er.<br>
+<br>
+*.pdq an optional file that specifies the information on<br>
+remote configuration (such as adding and dropping<br>
+message areas) made through the offline mail<br>
+reader.<br>
+<br>
+to clarify, let's say a bbs is using the packet id of &quot;wildblue&quot;. a<br>
+mail packet from that bbs would contain (at minimum) the files wild-<br>
+blue.inf, wildblue.fti, wildblue.mix, and wildblue.dat, and when<br>
+archived, would be called &quot;wildblue.su1&quot; (the extension may differ,<br>
+depending on the criteria described above). consequently, a reply<br>
+packet destined for that bbs would contain (at minimum) the files<br>
+wildblue.upl, wildblue.net and wildblue.upi (for compatibility), plus<br>
+the individual files that comprise reply messages, and when archived,<br>
+would be called &quot;wildblue.new&quot;.<br>
+<br>
+the text of each reply message is stored in individual files in the<br>
+reply packet. each *.upl record contains the name of the text file<br>
+corresponding to the particular reply message. the naming convention<br>
+used to assign names to each text file is up to the programmer. (the<br>
+blue wave reader uses &quot;xxx.yyy&quot;, which stands for &quot;message 'xxx' in<br>
+area 'yyy', but you are not limited to this format as long as the<br>
+filename is properly stored in the *.upl, *.upi, or *.net record.)<br>
+<br>
+<br>
+<a name="byte ordering in file structures">byte ordering in file structures</a><br>
+================================<br>
+<br>
+since the blue wave packet structures were initially written for ibm<br>
+pcs and compatible systems, the format for multi-byte fields in the<br>
+data structures is expected to be in intel format (i.e. the least<br>
+significant byte first, followed by the most significant byte[s]).<br>
+some cpus, particularly the motorola 68000 series, store multi-byte<br>
+fields as most significant byte first. if you are writing a blue wave<br>
+compatible program for a system that does not store data in the intel<br>
+format, you will have to write a routine that will convert data bet-<br>
+ween the two formats.<br>
+<br>
+<br>
+<a name="using the file structures">using the file structures</a><br>
+=========================<br>
+<br>
+the file structures, as presented here, are provided as a header file<br>
+for use with the c programming language. simply use the #include<br>
+statement in your program source code to incorporate the header file:<br>
+<br>
+#include &quot;bluewave.h&quot;<br>
+<br>
+each file structure is defined as a data structure (&quot;struct&quot;) using<br>
+the &quot;typedef&quot; feature, making it easy to define variables. for exam-<br>
+ple, to define a variable used to store the *.inf file header, simply<br>
+use:<br>
+<br>
+inf_header infhdr;<br>
+<br>
+in your program.<br>
+<br>
+to make the structures as compatible across platforms as possible, all<br>
+data types used in the structures are user-defined via &quot;typedef&quot;. for<br>
+example, to use a 16-bit unsigned integer, the data type &quot;tword&quot; is<br>
+used instead of &quot;unsigned int&quot;. this way, data fields are guaranteed<br>
+to be the same size across platforms. (for more information, refer to<br>
+the information contained in the bluewave.h file.)<br>
+<br>
+also, if your program is being written for a cpu that does not store<br>
+data in intel format (as described earlier), you should insert:<br>
+<br>
+#define big_endian<br>
+<br>
+before you include the bluewave.h file. this will define the data<br>
+types as arrays of bytes, making it easier to create routines that<br>
+will convert data fields between intel format and the format native to<br>
+your cpu. (refer to &quot;byte ordering in file structures&quot; for more<br>
+information.)<br>
+<br>
+several of the file structures -- the *.inf and *.upl headers --<br>
+include fields that define the lengths of the other file structures<br>
+used in mail and reply packet files. these fields are used to ensure<br>
+that programs can use future releases of the file structures without<br>
+breaking... as long as programs are coded to use them, that is.<br>
+<br>
+door authors should take the few extra lines of code to fill in the<br>
+structure length fields. reader authors need to take the time to code<br>
+for possible extensions to this file format. if the data fields are<br>
+longer than expected, simply do a seek to move to the next record, and<br>
+ignore the extra information. (if the data fields are shorter than<br>
+expected, a simple &quot;please upgrade your reader&quot; should suffice.<br>
+however, you should never encounter a record size smaller than the<br>
+ones defined here.) any extra information that is sent in the packets<br>
+probably would not be crucial, and you may be able to continue with<br>
+reading the packet anyway.<br>
+<br>
+(it should be noted that all blue wave doors earlier than the version<br>
+3.0 series set these fields to 0, as this extensibility was not added<br>
+until recently. if the structure sizes are 0, readers should assume<br>
+that all records are of the sizes defined in the header file as the<br>
+&quot;original_xxxx_len&quot; macros, and should use these macros when field<br>
+lengths of 0 are encountered. there is no definition for the original<br>
+length of the *.upl structures, as the older doors did not recognize<br>
+the *.upl file.)<br>
+<br>
+to see an example of how to use these structure length fields, refer<br>
+to the comments in the bluewave.h file. there, you will see a c code<br>
+snippet that not only demonstrates the length fields, but the<br>
+original_xxxx_len macros as well.<br>
+<br>
+important note: all blue wave file structures must be stored in<br>
+&quot;packed&quot; format (i.e. the compiler must not insert padding between<br>
+fields in order to force fields onto word boundaries). most compilers<br>
+default to &quot;packed&quot; mode, but if yours does not, you must use the<br>
+appropriate settings or preprocessor directives to set &quot;packed&quot; mode.<br>
+failure to do so will all but guarantee that your program will gener-<br>
+ate incompatible blue wave packets!<br>
+<br>
+<br>
+<a name="unused and reserved structure fields">unused and reserved structure fields</a><br>
+====================================<br>
+<br>
+some fields and flags in the blue wave structures are either not<br>
+defined, or are marked as being reserved for future use. these areas<br>
+are not to be used by programmers, unless otherwise indicated. they<br>
+are reserved for future expansion and enhancement of the blue wave<br>
+packet structures, and if you use them for your own purposes, you run<br>
+the risk of making your program incompatible with future updates of<br>
+the file structures.<br>
+<br>
+furthermore, future structure updates will assume that these unused<br>
+areas are &quot;garbage-free&quot; (i.e. they are filled with 0 values). in<br>
+order to cover all bases, then, all unused areas should be set to 0.<br>
+this can be easily done with the standard c function memset(). for<br>
+example, using:<br>
+<br>
+memset(&amp;infhdr, 0, sizeof(inf_header));<br>
+<br>
+before you begin adding information to the *.inf header structure will<br>
+ensure that all unused fields are set to 0. this should be done<br>
+before adding information to *any* blue wave file structure.<br>
+<br>
+<br>
+<a name="the *.inf file (inf_header &amp; inf_area_info)">the *.inf file (inf_header &amp;
+inf_area_info)</a><br>
+===========================================<br>
+<br>
+the *.inf file consists of two &quot;parts&quot;: a header, which contains<br>
+information about the host system and the user to whom the packet is<br>
+intended, and a series of records that contain the information on all<br>
+message bases available on the host system. (the latter is used in a<br>
+reader both for posting replies and offline configuration.) the<br>
+header structure is known as inf_header, and the record structure is<br>
+known as inf_area_info.<br>
+<br>
+most of the fields in inf_header are self-explanatory. the following<br>
+fields, however, deserve extra attention:<br>
+<br>
+ver packet version level. this is a crucial<br>
+field, as it allows doors and readers to<br>
+determine the revision level of the file<br>
+structures used to create the packet. pro-<br>
+grams should check this field to insure that<br>
+they can properly handle the packet; doors<br>
+should store in this field the current packet<br>
+revision level, shown at the top of this<br>
+document.<br>
+<br>
+readerfiles files that can be displayed by the reader.<br>
+these are usually bulletins, sign-on banners,<br>
+etc. up to five files can be specified.<br>
+<br>
+keywords specifies the keywords used while bundling<br>
+messages. door authors that wish to provide<br>
+keyword support should refer to the blue wave<br>
+user documentation for more information.<br>
+<br>
+filters same as above, but specifies the filters used<br>
+while bundling messages.<br>
+<br>
+macros same as above, but specifies the macros used<br>
+in the door to specify message bundling<br>
+operations.<br>
+<br>
+can_forward indicates that the user can forward messages<br>
+to other message areas from within a reader.<br>
+<br>
+inf_header_len length of inf_header used in mail packet.<br>
+door authors are required to fill this field;<br>
+reader authors should use this field to<br>
+properly parse the *.inf file. the current<br>
+crop of blue wave doors properly fill this<br>
+field, but older versions may not. refer to<br>
+the header file for more information on using<br>
+this field.<br>
+<br>
+inf_areainfo_len same as above, but specifies the length of<br>
+the inf_area_info structure.<br>
+<br>
+mix_structlen same as above, but specifies the length of<br>
+the *.mix file structure (mix_rec).<br>
+<br>
+fti_structlen same as above, but specifies the length of<br>
+the *.fti file structure (fti_rec).<br>
+<br>
+uses_upl_file a non-zero value in this field indicates that<br>
+the door which create the mail packet can<br>
+process reply packets stored in the *.upl<br>
+format. if zero, the door can only handle<br>
+reply packets stored in the older *.upi and<br>
+*.net formats. (these formats are discussed<br>
+later.)<br>
+<br>
+packet_id the packet id used by the host system, which<br>
+can be used by readers to properly access<br>
+mail packet control files even if the mail<br>
+packet itself has been renamed. (if this<br>
+field is not filled, readers should assume<br>
+that the root name of the mail packet is the<br>
+packet id.)<br>
+<br>
+the inf_area_info structure fields are defined as follows:<br>
+<br>
+areanum the area number on the host system for which<br>
+the record defines, specified as an ascii<br>
+string. this field will correspond to the<br>
+similar field in the *.mix structure (dis-<br>
+cussed later). this does not necessarily<br>
+have to be a number, so a case-insensitive<br>
+match should be performed when doing any<br>
+comparisons using this field.<br>
+<br>
+echotag the area tag name for which the record de-<br>
+fines. this field is used in the reply<br>
+packet to link reply messages to the destina-<br>
+tion areas on the host system, and must be<br>
+unique (i.e. there cannot be two or more<br>
+identical area tags).<br>
+<br>
+title the message area description.<br>
+<br>
+area_flags specifies the unique characteristics of the<br>
+message area for which the record defines.<br>
+most of the flags are self-explanatory, as<br>
+specified in the header file; the network<br>
+area flags, however, need to be clarified.<br>
+if the message area is part of a network<br>
+(i.e. fidonet), the inf_echo flag should be<br>
+set; this will allow a reader to properly<br>
+handle network mail. if the area is for<br>
+private network mail, the inf_netmail flag<br>
+should also be set.<br>
+<br>
+network_type specifies the network type for which the<br>
+defined message area belongs. note that the<br>
+network type is specified as a full byte<br>
+value, not as a bit flag. (if the inf_echo<br>
+flag is not set, the network type can be<br>
+ignored, obviously.)<br>
+<br>
+<br>
+<a name="the *.mix file (mix_rec)">the *.mix file (mix_rec)</a><br>
+========================<br>
+<br>
+each record in the *.mix file points to the beginning of the area in<br>
+the *.fti file that contains the header information for messages that<br>
+were obtained from each message area. note that *only* the areas for<br>
+which messages were extracted will have a corresponding *.mix record.<br>
+<br>
+each structure field is defined as follows:<br>
+<br>
+areanum corresponds to the identical field in the<br>
+*.inf record for the particular message area.<br>
+it is used by the reader to coordinate the<br>
+information between the *.inf and *.mix<br>
+records. again, case-insensitive comparisons<br>
+should be performed when using this field, as<br>
+this field does not have to contain a numeri-<br>
+cal value.<br>
+<br>
+totmsgs total number of messages in this area. up to<br>
+65,535 messages per area are allowed (the<br>
+limit of an unsigned 16-bit integer).<br>
+<br>
+numpers total number of messages in this area that<br>
+are directed specifically to the user who<br>
+bundled the mail packet. this value is<br>
+usually obtained during message bundling by<br>
+comparing the name in the &quot;to:&quot; field to the<br>
+user name for every message, and incrementing<br>
+a counter if they match. (reader authors can<br>
+feel free to disregard this value and perform<br>
+their own search for personal messages, once<br>
+the packet is loaded into the program.)<br>
+<br>
+msghptr pointer to the first record in the *.fti file<br>
+that corresponds to this message area. note<br>
+that this specifies the byte offset into the<br>
+*.fti file, *not* the record number; thus,<br>
+programmers can use the seek() or lseek()<br>
+functions to quickly point to the proper<br>
+section of the *.fti file.<br>
+<br>
+<br>
+<a name="the *.fti file (fti_rec)">the *.fti file (fti_rec)</a><br>
+========================<br>
+<br>
+the *.fti record specifies the header information for messages in the<br>
+mail packet, along with additional information such as the length of<br>
+the message and the pointer to the message stored in the *.dat file.<br>
+these records are stored sequentially in the *.fti file, with all the<br>
+headers for the first message area stored first, followed by the<br>
+headers for the second message area, and so forth.<br>
+<br>
+most of the fields are self-explanatory, with the following fields<br>
+described in more detail:<br>
+<br>
+msgnum the message number as stored on the host<br>
+system. this provides an &quot;absolute&quot; message<br>
+number for use with message threading.<br>
+<br>
+replyto indicates the absolute message number for<br>
+which this message is a reply (the &quot;previous&quot;<br>
+message). if zero, there is no previous<br>
+message.<br>
+<br>
+replyat indicates the absolute message number of a<br>
+reply to this message (the &quot;next&quot; message).<br>
+if zero, there is no next message.<br>
+<br>
+msgptr pointer to the start of the message text in<br>
+the *.dat file. this is a byte offset, thus<br>
+a programmer can use the seek() or lseek()<br>
+functions to quickly point to the proper<br>
+position in the *.dat file.<br>
+<br>
+msglength length of the message text (in bytes) plus 1.<br>
+the addition of 1 is done to compensate for<br>
+the required space character in front of the<br>
+message text (described below).<br>
+<br>
+flags bit-mapped message status flags. note that<br>
+for fidonet network messages, these flags are<br>
+*not* stored in the exact same order as<br>
+specified in the fidonet technical standards,<br>
+even though they are identical in function.<br>
+<p><a name="the *.dat file">the *.dat file</a><br>
+==============<br>
+<br>
+the *.dat file contains the text of all messages obtained from the<br>
+host system. valid messages begin with an ascii space character (&quot; &quot;,<br>
+decimal 32, hexadecimal 20), followed by the message text itself.<br>
+note that the space character is *not* to be considered a part of the<br>
+message text; it is simply a marker used to indicate the start of a<br>
+valid block of text, and *must* be present for each message specified<br>
+in the *.fti file (even if there is no message text at all). the<br>
+messages in the *.dat file should be in the same order as specified in<br>
+the *.fti file, though this is not a requirement (due to the fact that<br>
+the *.dat file is unstructured).<br>
+<br>
+<br>
+<a name="the *.xti file (xti_rec)">the *.xti file (xti_rec)</a><br>
+========================<br>
+<br>
+each record in the *.xti file corresponds to a record in the *.fti<br>
+file, and specifies extended status information for each message (the<br>
+&quot;save&quot;, &quot;reply&quot;, &quot;print&quot;, and &quot;delete&quot; flags used
+by the blue wave<br>
+reader). note that this file is *not* created by any blue wave door;<br>
+it is created on-the-fly by the blue wave reader. (the fields and<br>
+flags used in xti_rec are self-explanatory, thus they will not be<br>
+explained here.)<br>
+<br>
+note: the *.xti file is not an official part of the blue wave<br>
+specification. it is documented here solely for the benefit<br>
+of third-party authors who might wish to create a similar<br>
+file for their own applications. if so, authors should not<br>
+use the &quot;xti&quot; extension on their own files if they differ<br>
+from the xti_rec format, as this extension is used on the<br>
+file created by the blue wave offline mail reader (which<br>
+expects the file to use the xti_rec format). on the other<br>
+hand, authors can use the &quot;xti&quot; extension as long as the<br>
+xti_rec format is used.<br>
+<br>
+<br>
+<a name="the *.upl file (upl_header &amp; upl_rec)">the *.upl file (upl_header &amp;
+upl_rec)</a><br>
+=====================================<br>
+<br>
+the *.upl file consists of two &quot;parts&quot;: a header, which contains<br>
+information about the reader used to create the reply packet, and a<br>
+series of records that contain the information on all messages con-<br>
+tained in the reply packet.<br>
+<br>
+most of the fields in the *.upl file are self-explanatory. the fol-<br>
+lowing, however, deserve extra attention, starting with upl_header:<br>
+<br>
+upl_header_len length of upl_header used in the reply<br>
+packet. reader authors are required to fill<br>
+this field; door authors should use this<br>
+field to properly parse the *.upl file.<br>
+refer to the header file (under the<br>
+inf_header section) for more information on<br>
+using this field.<br>
+<br>
+upl_rec_len same as above, but specifies the length of<br>
+the upl_rec structure.<br>
+<br>
+reader_tear contains the abbreviated name of the reader<br>
+that created the reply packet (i.e. &quot;blue<br>
+wave&quot;, &quot;q-blue&quot;, &quot;wave rider&quot;, etc.). this<br>
+text can be used by the door to append tear<br>
+lines and other reader-identifying lines to<br>
+the message text, if desired. (door authors<br>
+should take steps to use alternate text in<br>
+case this field is not filled; using the name<br>
+of the door is usually a good alternative.)<br>
+<br>
+likewise, here is additional detail on several fields in the upl_rec<br>
+structure:<br>
+<br>
+unix_date the date/time that the reply message was<br>
+written, specified as the number of seconds<br>
+since 01/01/1970 (i.e. &quot;unix-style&quot;). this<br>
+value can easily be obtained by c programmers<br>
+via the time() function; in addition, the<br>
+ansi c standard library contains additional<br>
+functions to manipulate a unix-style time<br>
+field, enough to satisfy most any require-<br>
+ment (provided your compiler has support<br>
+for them, though any compiler that claims to<br>
+be ansi c compliant will contain all those<br>
+functions and more).<br>
+<br>
+filename the name of the file that contains the text<br>
+of the message. there is no requirement on<br>
+how this file is to be named; such schemes<br>
+are left to the individual. (the blue wave<br>
+reader uses &quot;xxx.yyy&quot;, where &quot;xxx&quot; is the<br>
+area number -- derived from the &quot;areanum&quot;<br>
+field in inf_area_info -- and &quot;yyy&quot; is a<br>
+unique number for each message that corre-<br>
+sponds to that area. note that this is only<br>
+provided as an example; you are not required<br>
+to use this scheme, so long as the filenames<br>
+are properly specified.)<br>
+<br>
+area_flags this field is used internally by the blue<br>
+wave reader; as such, it *must not* be used<br>
+by any other application.<br>
+<br>
+net_dest used to specify the destination address, as a<br>
+text string, on messages destined for non-<br>
+fidonet networks. (fidonet addresses are<br>
+specified by the &quot;destzone&quot;, &quot;destnet&quot;,<br>
+&quot;destnode&quot;, and &quot;destpoint&quot; fields in<br>
+upl_rec.) the format of the address is,<br>
+naturally, dependent on the network in ques-<br>
+tion. if the message is for a non-networked<br>
+message area, this field is ignored.<br>
+<br>
+<br>
+<a name="the *.upi (upi_rec) and *.net (net_rec) files">the *.upi (upi_rec) and *.net
+(net_rec) files</a><br>
+=============================================<br>
+<br>
+the *.upi and *.net files are similar to the *.upl file, in that they<br>
+specify the information for all messages in the reply packet (*.upi<br>
+for non-netmail messages, *.net for netmail messages only). the<br>
+fields in these files are similar in form and function to those in the<br>
+*.upl file, thus they will not be elaborated upon here.<br>
+<br>
+*.upi and *.net were used in older versions of the blue wave reader,<br>
+and have effectively been replaced by the more informative (and<br>
+flexible) *.upl file. however, some older blue wave doors cannot<br>
+handle the new *.upl file; for this reason, authors should provide<br>
+support for *.upi and *.net, as well as *.upl. readers should create<br>
+all three files, and doors should include code to process all three<br>
+(giving preferential treatment to *.upl, of course). eventually,<br>
+*.upi and *.net will be phased out altogether.<br>
+<br>
+<br>
+<a name="the *.req file (req_rec)">the *.req file (req_rec)</a><br>
+========================<br>
+<br>
+the *.req file is simply a list of files that the user wishes to<br>
+obtain (download) from the host system. the implementation of such a<br>
+feature is left to the individual programmer.<br>
+<br>
+note: current blue wave doors do not allow wildcard characters<br>
+(&quot;*&quot; and &quot;?&quot;) in filenames, nor do they provide support for<br>
+requesting more than 10 files. these are limitations of the<br>
+blue wave doors themselves, *not* of the blue wave file<br>
+specifications. this information is provided merely for<br>
+informational purposes; authors should not feel bound by<br>
+these restrictions in their own programs.<br>
+<br>
+<br>
+<a name="the *.pdq file (pdq_header &amp; pdq_rec)">the *.pdq file (pdq_header &amp;
+pdq_rec)</a><br>
+=====================================<br>
+<br>
+the *.pdq file is used to perform offline configuration of the door<br>
+via the reader. this file consists of two parts: a header, which<br>
+contains non-message area configuration information, and a series of<br>
+records that indicate the message areas to enable for scanning.<br>
+<br>
+the fields in both pdq_header and pdq_rec are mostly self-explanatory,<br>
+though the process of selecting message areas needs elaboration. if<br>
+the pdq_area_changes flag is set (in the &quot;flags&quot; field of pdq_header),<br>
+the door should enable all the message areas (specified in pdq_rec<br>
+records) that follow the header. this is most easily accomplished by<br>
+first turning off all message areas that were active, then turning on<br>
+each area indicated by the pdq_rec records (provided the user has<br>
+access to them on the host system, of course). this is the method<br>
+used by the blue wave doors, as it seems to be the easiest way to<br>
+accomplish the task.<br>
+<br>
+note: this method of performing offline configuration will change<br>
+in a subsequent revision of the blue wave specifications, so<br>
+be ready for it!<br>
+<br>
+<br>
+<a name="appendix a - how to create a blue wave mail packet">appendix a - how to create a
+blue wave mail packet</a><br>
+==================================================<br>
+<br>
+the following steps outline the basic method for creating a blue wave<br>
+mail packet. note that this outline is highly generalized; the<br>
+details of such a process are left to the programmer to implement as<br>
+desired.<br>
+<br>
+1. open the *.inf, *.mix, *.fti, and *.dat files for writing; if<br>
+they currently exist, they should be truncated and overwritten.<br>
+<br>
+2. fill the inf_header structure and write it to the *.inf file.<br>
+<br>
+3. obtain the information for the first message area, fill the<br>
+inf_area_info structure, and writing it to the *.inf file.<br>
+<br>
+4. repeat step 3 for all remaining message areas.<br>
+<br>
+5. scan through the messages for the first message area and<br>
+determine how many messages need to be packed. if messages need<br>
+to be packed, fill the mix_rec structure and write it to the<br>
+*.mix file, then perform the following steps:<br>
+<br>
+a. read the next new message from the message area.<br>
+<br>
+b. fill the fti_rec structure and write it to the *.fti file.<br>
+<br>
+c. write the message text to the *.dat file.<br>
+<br>
+d. repeat steps a through c until all messages are packed.<br>
+<br>
+6. repeat step 5 for all remaining message areas.<br>
+<br>
+note: an alternate method for the actions described in steps<br>
+5 and 6 is to scan through the message base and write<br>
+the fti_rec records and the *.dat text first, then<br>
+write the mix_rec. as mentioned above, however, the<br>
+method you use is entirely up to you.<br>
+<br>
+7. use an archiving utility (arc, pkzip, etc.) to pack the *.inf,<br>
+*.mix, *.fti, and *.dat files into an archive file. the file<br>
+should be named according to the naming convention specified<br>
+earlier in this document.<br>
+<br>
+note that these steps do not take into account such things as bulletin<br>
+files, keywords, filters, macros, and so forth, but again, these are<br>
+the details which are left to the programmer to implement.<br>
+<br>
+<br>
+<a name="appendix b - how to create a blue wave reply packet">appendix b - how to create a
+blue wave reply packet</a><br>
+===================================================<br>
+<br>
+unlike creating a mail packet, the creation of a reply packet is not a<br>
+linear process; there is no outline that can be followed. basically,<br>
+when the reader creates a reply message, a upl_rec record is filled<br>
+and written to the *.upl file for each reply created by the reader; if<br>
+the *.upl file doesn't exist, then it will have to be created (natu-<br>
+rally) by filling and writing a upl_header to the *.upl file before<br>
+adding upl_rec records. this process is performed on-the-fly, at the<br>
+time the user creates reply messages.<br>
+<br>
+the reply archive itself is created by an archive utility (arc, pkzip,<br>
+etc.), using the filename conventions specified earlier in this docu-<br>
+ment. in order to prevent &quot;orphaned&quot; files -- messages deleted by the<br>
+reader -- from showing up in the reply archive, reader authors should<br>
+delete the archive before running the archive utility; this will force<br>
+a &quot;fresh&quot; file, free from excess clutter, to be created from scratch.<br>
+<br>
+<br>
+<a name="appendix c - the blue wave structures and turbo pascal">appendix c - the blue
+wave structures and turbo pascal</a><br>
+======================================================<br>
+<br>
+the blue wave packet structures are provided as a header file for c<br>
+compilers, since the blue wave offline mail reader and the blue wave<br>
+offline mail doors from cutting edge computing are written in c.<br>
+however, for the convenience of programmers who write programs using<br>
+borland's pascal compilers (turbo pascal and borland pascal), a header<br>
+file for use in pascal programs (bluewave.inc) is provided. please<br>
+note the following changes and restrictions from the c header imple-<br>
+mentation:<br>
+<br>
+1. as implemented, the pascal header is to be included within a<br>
+source file, i.e.:<br>
+<br>
+{$i bluewave.inc}<br>
+<br>
+industrious pascal programmers can easily convert this header<br>
+file to a unit if so desired.<br>
+<br>
+2. the structure names and constants remain identical, i.e. mix_rec,<br>
+fti_rec, and so on, and are defined as &quot;record&quot; data types.<br>
+thus, defining a structure is similar to any other pascal data<br>
+<br>
+type, i.e.:<br>
+<br>
+var infheader : inf_header;<br>
+infrec : inf_area_info;<br>
+mixrec : mix_rec;<br>
+ftirec : fti_rec;<br>
+<br>
+also note that unlike c, pascal is not case-sensitive with re-<br>
+gards to variable and type names. thus, inf_header can also be<br>
+accessed as &quot;inf_header&quot;, &quot;inf_header&quot;, or even
+&quot;inf_header&quot;.<br>
+<br>
+3. due to a conflict with reserved keywords in pascal, the &quot;from&quot;<br>
+and &quot;to&quot; fields in fti_rec, msg_rec, upi_rec, and upl_rec have<br>
+been renamed to &quot;mfrom&quot; and &quot;mto&quot;. all other field names are<br>
+identical between the c and pascal headers.<br>
+<br>
+4. bit flags are defined as sets in the pascal header, and are set<br>
+and reset using the pascal set operators (+ and -). for example,<br>
+to set the inf_echo and inf_netmail flags, the following state-<br>
+ment:<br>
+<br>
+infrec.area_flags := infrec.area_flags + [inf_echo,<br>
+inf_netmail];<br>
+<br>
+can be used.<br>
+<br>
+5. with one exception, data types in pascal are stored identically<br>
+to their c counterparts (i.e. pascal &quot;longint&quot; and c &quot;long int&quot;<br>
+are stored, identically, in 4 bytes.). the lone exception is<br>
+strings. in c, strings are stored as a series of characters<br>
+terminated with a 0 byte. in pascal, strings are stored as a<br>
+length byte followed by the characters that make up the string.<br>
+since the blue wave format is centered around the c language,<br>
+pascal programmers will have to convert strings between c and<br>
+pascal formats. to aid in this endeavor, strings in the pascal<br>
+header are defined as arrays of bytes (i.e. &quot;array[1..43] of<br>
+byte&quot;), but you will have to devise your own routines to convert<br>
+strings between the two formats.<br>
+<br>
+there are undoubtedly other areas where c and pascal differ, but this<br>
+should get you started in the right direction.<br>
+<br>
+please note that cutting edge computing does not provide support for<br>
+pascal programmers using these structures. the pascal header is<br>
+provided solely for your convenience; other than that, you are on your<br>
+own. thus, it is recommended that only pascal programmers with some<br>
+experience in using data created by (and expected by) c programs use<br>
+these structures, as handling the differences between the languages is<br>
+not something that is easily handled by the novice.<br>
+<br>
+<br>
+<a name="appendix d - serial numbers in mail and reply packets">appendix d - serial
+numbers in mail and reply packets</a><br>
+=====================================================<br>
+<br>
+the serial number fields in the *.inf, *.upi, and *.upl structures are<br>
+used mainly by the blue wave reader and doors from cutting edge com-<br>
+puting (using what is, naturally, a proprietary algorithm to determine<br>
+the actual serial numbers). authors are free to use these fields as<br>
+they see fit, though the values in the fields will undoubtedly be<br>
+meaningless to other blue wave-compatible programs. in fact, unless<br>
+you're creating your own series of blue wave-compatible doors and<br>
+readers, the serial number fields are practically useless to third-<br>
+party authors.<br>
+<br>
+(as an example, the blue wave doors will examine the reader name field<br>
+in the *.upl header to determine if a reply packet was created by the<br>
+blue wave reader. if it was, then the serial number is used to deter-<br>
+mine if &quot;[nr]&quot; should be added to the tear line. on the other hand,<br>
+if the packet was created by a different reader, the blue wave doors<br>
+will ignore the serial number and never put &quot;[nr]&quot; in the tear line.)<br>
+</td>
+</tr>
+</table>
+</center></div>
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

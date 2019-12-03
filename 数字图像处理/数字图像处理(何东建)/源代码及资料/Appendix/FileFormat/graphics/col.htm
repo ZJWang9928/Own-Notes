@@ -1,0 +1,57 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>col format</title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">col format</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%"><br>
+    information from file format list 2.0 by max maischein.<br>
+    <br>
+    <br>
+    a col file stores the rgb values for entries in the color palette. both<br>
+    animator pro and the original animator produce col files, but the formats<br>
+    are different. to process a col file for input, check the file size. if it is<br>
+    exactly 768 bytes, the file is an original animator col file. if the file is<br>
+    any other size, it is an animator pro col file - which makes identification<br>
+    almost impossible.<br>
+    <br>
+    animator pro col files do have a 8-byte header :<br>
+    <br>
+    offset count type description<br>
+    0000h 1 dword file size, including this header<br>
+    0004h 1 word id=0b123h<br>
+    0006h 1 word version, currently 0<br>
+    <br>
+    following the file header are palette entries in rgbrgb... order. each of<br>
+    the r, g, and b components is a single byte in the range of 0-255. generally,<br>
+    there will be data for 256 palette entries, but this cannot be assumed.<br>
+    the actual number of palette entries is ((size-8)/3); if this value is not<br>
+    an even multiple of three, the file is corrupted.<br>
+    <br>
+    original animator col files<br>
+    <br>
+    a col file created by the original animator is exactly 768 bytes<br>
+    long. there is no file header or other control information in<br>
+    the file.<br>
+    <br>
+    extension:col<br>
+    occurences:pc<br>
+    programs:autodesk animator, autodesk animator pro<br>
+    see also:flic,flt<br>
+    </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

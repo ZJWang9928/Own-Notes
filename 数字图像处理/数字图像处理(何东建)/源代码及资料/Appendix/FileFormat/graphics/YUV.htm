@@ -1,0 +1,96 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>yuv4</title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">yuv4:1:1 </font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%">this reffers to common terms for y'cbcr format<br>
+    which separates the 'luminance' information in an<br>
+    image from the chroma information, allowing the resolution of<br>
+    chroma information to be reduced, exploiting the lack of color<br>
+    acuity inherent in the human visual system.<br>
+    <br>
+    there are a couple of issues with the terms in this description<br>
+    as explained to me by charles poynton. firstly the common use of<br>
+    the term luminance for y' is a misrepresentation and a distinction<br>
+    should be drawn between this term and true cie luminance, for<br>
+    example by using the term &quot;luma&quot;, secondly the u v terms for<br>
+    historical reasons are associated with adjusted levels as<br>
+    broadcast from television transmitters and digital systems<br>
+    actually use y'cbcr.<br>
+    <br>
+    so yuv should more accurately mean y'cbcr.<br>
+    <br>
+    the 4:1:1 denotes the degree of compression of chroma information<br>
+    and makes less sense with newer formats, suffice to say that 4:1:1<br>
+    stores full resolution y'(luma) but 1/4 resolution of cb and cr<br>
+    information sampled along the horizontal axis or line.<br>
+    <br>
+    y'cbcr 4:2:2 is actually a more commonly used professional<br>
+    format where chroma components are only halved along the<br>
+    horizontal axis or line.<br>
+    <br>
+    y'cbcr 4:2:0 is used for 1/4 resolution chroma but with half<br>
+    resolution horizontally and half resolution vertically.<br>
+    <br>
+    4:4:4 denotes equal resolution of luminance and chroma.<br>
+    <br>
+    to generate the standard cie luminance term, from an rgb triplet<br>
+    y = .2125r + .7154g + .0721b, this is *different* from the y'<br>
+    described above.<br>
+    <br>
+    luma as stored in these video formats is actually<br>
+    y' = .299r'+.587g'+.114b' where the r' g' and b' terms<br>
+    represent scalar values which are non linear and represent<br>
+    gamma corrected perceptually uniform values when represented<br>
+    by an integer (gamma == .45).<br>
+    <br>
+    chroma terms can then be produced from these valuse:<br>
+    cb = b'-y'<br>
+    cr = r'-y'<br>
+    <br>
+    to reconstruct an rgb image from a 'yuv4:1:1' you must<br>
+    first resample the single cbcr sample to 4 cbcr samples<br>
+    to match the luminance, once this is done you should<br>
+    regenerate rgb triplets by reversing the above arithmetic:<br>
+    <br>
+    b' = cb +y'<br>
+    r' = cr +y'<br>
+    g' = (y'-.299r'-.114b')/.587<br>
+    <br>
+    r' b' g' represent an rgb triplet with a built in gamma<br>
+    correction of .45, this should look perfect when displayed<br>
+    on a machine with no gamma correction and a crt display<br>
+    (which typically have gamma transfer functions of around<br>
+    2.5-3.0)<br>
+    <br>
+    note that because chroma information may be negative, the<br>
+    cb cr values stored in any file format mey have to be adjusted<br>
+    accordingly. for example you would subtract 127 from an 8 bit<br>
+    chroma value stored in a file.<br>
+    <br>
+    don't use the luminance equation above, it is included to show<br>
+    the difference between luminance and luma or y' which is<br>
+    actually stored in the file.<br>
+    <br>
+    for more in depth information read charles a. poyntons<br>
+    excellent book &quot;a technical introduction to digital video&quot;<br>
+    pub, john wiley &amp; sons, inc. isbn 0-471-12253-x<br>
+    <br>
+    cheers,angus.</td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

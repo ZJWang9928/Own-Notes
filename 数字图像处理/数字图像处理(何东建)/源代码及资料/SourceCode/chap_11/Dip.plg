@@ -1,0 +1,153 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: Dip - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x804 /fo"Debug/Dip.res" /d "_DEBUG" /d "_AFXDLL" "D:\西电教材源码\chap_11\Dip.rc"" 
+Creating temporary file "C:\DOCUME~1\Mark\LOCALS~1\Temp\RSP10.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /Fp"Debug/Dip.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\西电教材源码\chap_11\AreaPro.cpp"
+"D:\西电教材源码\chap_11\BtnST.cpp"
+"D:\西电教材源码\chap_11\ChildFrm.cpp"
+"D:\西电教材源码\chap_11\CombineDlg.cpp"
+"D:\西电教材源码\chap_11\DibObject.cpp"
+"D:\西电教材源码\chap_11\Dip.cpp"
+"D:\西电教材源码\chap_11\DipDoc.cpp"
+"D:\西电教材源码\chap_11\DipView.cpp"
+"D:\西电教材源码\chap_11\DlgColor.cpp"
+"D:\西电教材源码\chap_11\DlgFeature.cpp"
+"D:\西电教材源码\chap_11\DlgFouriorFilte.cpp"
+"D:\西电教材源码\chap_11\DlgGeoRota.cpp"
+"D:\西电教材源码\chap_11\DlgGeoTran.cpp"
+"D:\西电教材源码\chap_11\DlgGeoZoom.cpp"
+"D:\西电教材源码\chap_11\DlgHitMiss.cpp"
+"D:\西电教材源码\chap_11\DlgHuffman.cpp"
+"D:\西电教材源码\chap_11\DlgIntensity.cpp"
+"D:\西电教材源码\chap_11\DlgLinerPara.cpp"
+"D:\西电教材源码\chap_11\DlgMedianFilter.cpp"
+"D:\西电教材源码\chap_11\DlgMorph.cpp"
+"D:\西电教材源码\chap_11\DlgPointStre.cpp"
+"D:\西电教材源码\chap_11\DlgProject.cpp"
+"D:\西电教材源码\chap_11\DlgSeedFill.cpp"
+"D:\西电教材源码\chap_11\DlgShannon.cpp"
+"D:\西电教材源码\chap_11\DlgSmooth.cpp"
+"D:\西电教材源码\chap_11\DlgStrInput.cpp"
+"D:\西电教材源码\chap_11\DlgThreshold.cpp"
+"D:\西电教材源码\chap_11\EdgeDetDlg.cpp"
+"D:\西电教材源码\chap_11\FreqPro.cpp"
+"D:\西电教材源码\chap_11\GeoTrans.cpp"
+"D:\西电教材源码\chap_11\ImgAnalyse.cpp"
+"D:\西电教材源码\chap_11\LapDlg.cpp"
+"D:\西电教材源码\chap_11\MainFrm.cpp"
+"D:\西电教材源码\chap_11\MorphProc.cpp"
+"D:\西电教材源码\chap_11\PointPro.cpp"
+"D:\西电教材源码\chap_11\Restore.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\Mark\LOCALS~1\Temp\RSP10.tmp" 
+Creating temporary file "C:\DOCUME~1\Mark\LOCALS~1\Temp\RSP11.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /Fp"Debug/Dip.pch" /Yc"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\西电教材源码\chap_11\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\Mark\LOCALS~1\Temp\RSP11.tmp" 
+Creating temporary file "C:\DOCUME~1\Mark\LOCALS~1\Temp\RSP12.tmp" with contents
+[
+ImageLoad.lib mdv4501v.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/Dip.pdb" /debug /machine:I386 /out:"Debug/Dip.exe" /pdbtype:sept 
+".\Debug\AreaPro.obj"
+".\Debug\BtnST.obj"
+".\Debug\ChildFrm.obj"
+".\Debug\CombineDlg.obj"
+".\Debug\DibObject.obj"
+".\Debug\Dip.obj"
+".\Debug\DipDoc.obj"
+".\Debug\DipView.obj"
+".\Debug\DlgColor.obj"
+".\Debug\DlgFeature.obj"
+".\Debug\DlgFouriorFilte.obj"
+".\Debug\DlgGeoRota.obj"
+".\Debug\DlgGeoTran.obj"
+".\Debug\DlgGeoZoom.obj"
+".\Debug\DlgHitMiss.obj"
+".\Debug\DlgHuffman.obj"
+".\Debug\DlgIntensity.obj"
+".\Debug\DlgLinerPara.obj"
+".\Debug\DlgMedianFilter.obj"
+".\Debug\DlgMorph.obj"
+".\Debug\DlgPointStre.obj"
+".\Debug\DlgProject.obj"
+".\Debug\DlgSeedFill.obj"
+".\Debug\DlgShannon.obj"
+".\Debug\DlgSmooth.obj"
+".\Debug\DlgStrInput.obj"
+".\Debug\DlgThreshold.obj"
+".\Debug\EdgeDetDlg.obj"
+".\Debug\FreqPro.obj"
+".\Debug\GeoTrans.obj"
+".\Debug\ImgAnalyse.obj"
+".\Debug\LapDlg.obj"
+".\Debug\MainFrm.obj"
+".\Debug\MorphProc.obj"
+".\Debug\PointPro.obj"
+".\Debug\Restore.obj"
+".\Debug\StdAfx.obj"
+".\Debug\Dip.res"
+".\mdv4501v.lib"
+]
+Creating command line "link.exe @C:\DOCUME~1\Mark\LOCALS~1\Temp\RSP12.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+AreaPro.cpp
+BtnST.cpp
+ChildFrm.cpp
+CombineDlg.cpp
+DibObject.cpp
+Dip.cpp
+DipDoc.cpp
+DipView.cpp
+DlgColor.cpp
+DlgFeature.cpp
+DlgFouriorFilte.cpp
+DlgGeoRota.cpp
+DlgGeoTran.cpp
+DlgGeoZoom.cpp
+DlgHitMiss.cpp
+DlgHuffman.cpp
+DlgIntensity.cpp
+DlgLinerPara.cpp
+DlgMedianFilter.cpp
+DlgMorph.cpp
+Generating Code...
+Compiling...
+DlgPointStre.cpp
+DlgProject.cpp
+DlgSeedFill.cpp
+DlgShannon.cpp
+DlgSmooth.cpp
+DlgStrInput.cpp
+DlgThreshold.cpp
+EdgeDetDlg.cpp
+FreqPro.cpp
+GeoTrans.cpp
+ImgAnalyse.cpp
+LapDlg.cpp
+MainFrm.cpp
+MorphProc.cpp
+PointPro.cpp
+Restore.cpp
+Generating Code...
+Linking...
+
+
+
+<h3>Results</h3>
+Dip.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

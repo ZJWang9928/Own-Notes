@@ -1,0 +1,451 @@
+{\rtf1\ansi\deff0\deftab720{\fonttbl{\f0\fnil MS Sans Serif;}{\f1\fnil\fcharset2 Symbol;}{\f2\fswiss\fprq2 System;}{\f3\fnil\fcharset134 \'cb\'ce\'cc\'e5;}{\f4\froman\fprq2 Times;}{\f5\fswiss\fprq2 Arial Narrow;}{\f6\froman\fprq2\fcharset2 Symbol;}{\f7\fnil\fprq2\fcharset134 \'cb\'ce\'cc\'e5;}{\f8\fmodern Lucida Sans Typewriter;}}
+{\colortbl\red0\green0\blue0;\red255\green255\blue255;}
+\deflang2052{\info{\horzdoc }{\*\fchars !),.:\'3b?\}]\'a1\'a2\'a1\'a3\'a1\'a4\'a1\'a5\'a1\'a6\'a1\'a7\'a1\'a8\'a1\'a9\'a1\'aa\'a1\'ab\'a1\'ac\'a1\'ad\'a1\'af\'a1\'b1\'a1\'b3\'a1\'b5\'a1\'b7\'a1\'b9\'a1\'bb\'a1\'bd\'a1\'bf\'a1\'c3\'a3\'a1\'a3\'a2\'a3\'a7\'a3\'a9\'a3\'ac\'a3\'ae\'a3\'ba\'a3\'bb\'a3\'bf\'a3\'dd\'a3\'e0}{\*\lchars ([\{\'a1\'ae\'a1\'b0\'a1\'b2\'a1\'b4\'a1\'b6\'a1\'b8\'a1\'ba\'a1\'bc\'a1\'be\'a3\'a8\'a3\'db\'a3\'fb\'a3\'ae\'a1\'a4}}
+\pard\nowwrap\nooverflow\plain\f7\fs24 
+\par \plain\f5\fs48\b AVI Files
+\par \plain\f4\fs21 The Microsoft Audio/Video Interleaved (AVI) file format is a RIFF file specification used with applications that capture, edit, and playback audio/video sequences. In general, AVI files contain multiple streams of different types of data. Most AVI sequences will use both audio and video streams. A simple variation for an AVI sequence uses video data and does not require an audio stream. Specialized AVI sequences might include a control track or MIDI track as an additional data stream. The control track could control external devices such as an MCI videodisc player. The MIDI track could play background music for the sequence. While a specialized sequence requires a specialized control program to take advantage of all its capabilities, applications that can read and play AVI sequences can still read and play an AVI sequence in a specialized file. (These applications ignore the non-AVI data in the specialized file.) This chapter primarily describes AVI files containing only audio and video data.
+\par This chapter covers the following topics:
+\par \pard\li280\fi-280\tx280\nowwrap\nooverflow\plain\f6\fs20 \'b7\plain\f7\fs21 \tab \plain\f4\fs21 The required chunks of an AVI file
+\par \plain\f6\fs20 \'b7\plain\f7\fs21 \tab \plain\f4\fs21 The optional chunks of an AVI file
+\par \plain\f6\fs20 \'b7\plain\f7\fs21 \tab \plain\f4\fs21 Developing routines to write AVI files
+\par \pard\nowwrap\nooverflow\plain\f4\fs21 For additional information about RIFF files, see the \plain\f4\fs21\i Microsoft Windows Multimedia Programmer's Guide\plain\f4\fs21  and \plain\f4\fs21\i Microsoft Windows Multimedia Programmer's Reference\plain\f4\fs21 .
+\par For additional information about installable compressors and decompressors, see chapter 10, "Video Compression and Decompression Drivers."
+\par \plain\f5\fs40\b AVI RIFF Form
+\par \plain\f4\fs21 AVI files use the AVI RIFF form. The AVI RIFF form is identified by the four-character code "AVI ". All AVI files include two mandatory LIST chunks. These chunks define the format of the streams and stream data. AVI files might also include an index chunk. This 
+\par \plain\f7\fs12 
+\par \plain\f4\fs21 optional chunk specifies the location of data chunks within the file. An AVI file with these components has the following form:
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16 RIFF ('AVI ' 
+\par      LIST ('hdrl'
+\par             .
+\par             .
+\par             .
+\par           )
+\par      LIST ('movi' 
+\par             .
+\par             .
+\par             .
+\par           )
+\par      ['idx1'<AVI Index>]
+\par      )
+\par 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21 The LIST chunks and the index chunk are subchunks of the RIFF "AVI " chunk. The "AVI " chunk identifies the file as an AVI RIFF file. The LIST "hdrl" chunk defines the format of the data and is the first required list chunk. The LIST "movi" chunk contains the data for the AVI sequence and is the second required list chunk. The "idx1" chunk is the optional index chunk. AVI files must keep these three components in the proper sequence. 
+\par The LIST "hdrl" and LIST "movi" chunks use subchunks for their data. The following example shows the AVI RIFF form expanded with the chunks needed to complete the LIST "hdrl" and LIST "movi" chunks:
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16 RIFF ('AVI '
+\par        LIST ('hdrl'
+\par              'avih'(<Main AVI Header>)
+\par              LIST ('strl'
+\par                    'strh'(<Stream header>)
+\par                    'strf'(<Stream format>)
+\par                    'strd'(additional header data)
+\par                        .
+\par                        .
+\par                        .
+\par              )
+\par \pard\nowwrap\nooverflow\plain\f7\fs21 
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16              .
+\par              .
+\par              .
+\par    )
+\par \pard\nowwrap\nooverflow\plain\f7\fs21 
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16 LIST ('movi'
+\par              \{SubChunk | LIST('rec '
+\par                               SubChunk1
+\par                               SubChunk2
+\par                                  .
+\par                                  .
+\par                                  .
+\par                          )
+\par \pard\nowwrap\nooverflow\plain\f7\fs21 
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16                  .
+\par                  .
+\par                  .
+\par              \}
+\par \pard\nowwrap\nooverflow\plain\f7\fs21 
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16         .
+\par         .
+\par         .
+\par    )
+\par 
+\par    ['idx1'<AVIIndex>]
+\par )
+\par 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21 The following sections describe the chunks contained in the LIST "hdrl" and LIST "movi" chunks as well as the "idx1" chunk. 
+\par \plain\f5\fs34\b Data Structures for AVI Files
+\par \plain\f4\fs21 Data structures used in the RIFF chunks are defined in the AVIFMT.H header file. The reference section at the end of this chapter describes the data structures that can be used for the main AVI header, stream header, AVIIndex, and palette change chunks.
+\par \plain\f5\fs34\b The Main AVI Header LIST
+\par \plain\f4\fs21 The file begins with the main header. In the AVI file, this header is identified with "avih" four-character code. The header contains general information about the file, such as the number of streams within the file and the width and height of the AVI sequence. The main header has the following data structure defined for it:
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16 typedef struct \{
+\par     DWORD  dwMicroSecPerFrame;
+\par     DWORD  dwMaxBytesPerSec;
+\par     DWORD  dwReserved1;
+\par     DWORD  dwFlags;
+\par     DWORD  dwTotalFrames;
+\par     DWORD  dwInitialFrames;
+\par     DWORD  dwStreams;
+\par     DWORD  dwSuggestedBufferSize;
+\par     DWORD  dwWidth;
+\par     DWORD  dwHeight;
+\par     DWORD  dwScale;
+\par     DWORD  dwRate;
+\par     DWORD  dwStart;
+\par     DWORD  dwLength;
+\par \} MainAVIHeader;
+\par 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21 The \plain\f4\fs21\b dwMicroSecPerFrame\plain\f4\fs21  field specifies the period between video frames. This value indicates the overall timing for the file.
+\par The \plain\f4\fs21\b dwMaxBytesPerSec\plain\f4\fs21  field specifies the approximate maximum data rate of the file. This value indicates the number of bytes per second the system must handle to present an AVI sequence as specified by the other parameters contained in the main header and stream header chunks.
+\par The \plain\f4\fs21\b dwFlags\plain\f4\fs21  field contains any flags for the file. The following flags are defined:
+\par \pard\li30\ri30\nowwrap\nooverflow\plain\f7\fs12\cf1 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b AVIF_HASINDEX
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Indicates the AVI file has an "idx1" chunk.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b AVIF_MUSTUSEINDEX
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Indicates the index should be used to determine the order of presentation of the data. 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b AVIF_ISINTERLEAVED
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Indicates the AVI file is interleaved.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b AVIF_WASCAPTUREFILE
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Indicates the AVI file is a specially allocated file used for capturing real-time video. 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b AVIF_COPYRIGHTED
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Indicates the AVI file contains copyrighted data.
+\par \pard\li30\ri30\nowwrap\nooverflow\plain\f7\fs12\cf1 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21 The AVIF_HASINDEX and AVIF_MUSTUSEINDEX flags applies to files with an index chunk. The AVI_HASINDEX flag indicates an index is present. The AVIF_MUSTUSEINDEX flag indicates the index should be used to determine the order of the presentation of the data. When this flag is set, it implies the physical ordering of the chunks in the file does not correspond to the presentation order.
+\par The AVIF_ISINTERLEAVED flag indicates the AVI file has been interleaved. The system can stream interleaved data from a CD-ROM more efficiently than non-interleaved data. For more information on interleaved files, see "Special Information for Interleaved Files."
+\par The AVIF_WASCAPTUREFILE flag indicates the AVI file is a specially allocated file used for capturing real-time video. Typically, capture files have been defragmented by user so video capture data can be efficiently streamed into the file. If this flag is set, an application should warn the user before writing over the file with this flag.
+\par The AVIF_COPYRIGHTED flag indicates the AVI file contains copyrighted data. When this flag is set, applications should not let users duplicate the file or the data in the file.
+\par The \plain\f4\fs21\b dwTotalFrames\plain\f4\fs21  field of the main header specifies the total number of frames of data in file.
+\par The \plain\f4\fs21\b dwInitialFrames\plain\f4\fs21  is used for interleaved files. If you are creating interleaved files, specify the number of frames in the file prior to the initial frame of the AVI sequence in this field.
+\par The \plain\f4\fs21\b dwStreams\plain\f4\fs21  field specifies the number of streams in the file. For example, a file with audio and video has 2 streams.
+\par The \plain\f4\fs21\b dwSuggestedBufferSize\plain\f4\fs21  field specifies the suggested buffer size for reading the file. Generally, this size should be large enough to contain the largest chunk in the file. If set to zero, or if it is too small, the playback software will have to reallocate memory during playback which will reduce performance. For an interleaved file, the buffer size should be large enough to read an entire record and not just a chunk.
+\par The \plain\f4\fs21\b dwWidth\plain\f4\fs21  and \plain\f4\fs21\b dwHeight\plain\f4\fs21  fields specify the width and height of the AVI file in pixels.
+\par The \plain\f4\fs21\b dwScale\plain\f4\fs21  and \plain\f4\fs21\b dwRate\plain\f4\fs21  fields are used to specify the general time scale that the file will use. In addition to this time scale, each stream can have its own time scale. The time scale in samples per second is determined by dividing \plain\f4\fs21\b dwRate\plain\f4\fs21  by \plain\f4\fs21\b dwScale\plain\f4\fs21 .
+\par The \plain\f4\fs21\b dwStart\plain\f4\fs21  and \plain\f4\fs21\b dwLength\plain\f4\fs21  fields specify the starting time of the AVI file and the length of the file. The units are defined by \plain\f4\fs21\b dwRate\plain\f4\fs21  and \plain\f4\fs21\b dwScale\plain\f4\fs21 . The \plain\f4\fs21\b dwStart\plain\f4\fs21  field is usually set to zero.
+\par \plain\f5\fs34\b The Stream Header ("strl") Chunks
+\par \plain\f4\fs21 The main header is followed by one or more "strl" chunks. (A "strl" chunk is required for each data stream.) These chunks contain information about the streams in the file. Each "strl" chunk must contain a stream header and stream format chunk. Stream header chunks are identified by the four-character code "strh" and stream format chunks are identified with the four-character code "strf". In addition to the stream header and stream format chunks, the "strl" chunk might also contain a stream data chunk. Stream data chunks are identified with the four-character code "strd". 
+\par \plain\f7\fs12 
+\par \plain\f4\fs21 The stream header has the following data structure defined for it:
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16 typedef struct \{
+\par     FOURCC  fccType;
+\par     FOURCC  fccHandler;
+\par     DWORD   dwFlags;
+\par     DWORD   dwReserved1;
+\par     DWORD   dwInitialFrames;
+\par     DWORD   dwScale;
+\par     DWORD   dwRate;
+\par     DWORD   dwStart;
+\par     DWORD   dwLength;
+\par     DWORD   dwSuggestedBufferSize;
+\par     DWORD   dwQuality;
+\par     DWORD   dwSampleSize;
+\par \} AVIStreamHeader;
+\par 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21 The stream header specifies the type of data the stream contains, such as audio or video, by means of a four-character code. The \plain\f4\fs21\b fccType\plain\f4\fs21  field is set to "vids" if the stream it specifies contains video data. It is set to "auds" if it contains audio data. 
+\par The \plain\f4\fs21\b fccHandler\plain\f4\fs21  field contains a four-character code describing the installable compressor or decompressor used with the data. 
+\par The \plain\f4\fs21\b dwFlags\plain\f4\fs21  field contains any flags for the data stream.  The AVISF_DISABLED flag indicates that the stream data should be rendered only when explicitly enabled by the user. The AVISF_VIDEO_PALCHANGES flag indicates palette changes are embedded in the file. 
+\par The \plain\f4\fs21\b dwInitialFrames\plain\f4\fs21  is used for interleaved files. If you are creating interleaved files, specify the number of frames in the file prior to the initial frame of the AVI sequence in this field.
+\par The remaining fields describe the playback characteristics of the stream. These factors include the playback rate (\plain\f4\fs21\b dwScale\plain\f4\fs21  and \plain\f4\fs21\b dwRate\plain\f4\fs21 ), the starting time of the sequence (\plain\f4\fs21\b dwStart\plain\f4\fs21 ), the length of the sequence (\plain\f4\fs21\b dwLength\plain\f4\fs21 ), the size of the playback buffer (\plain\f4\fs21\b dwSuggestedBuffer\plain\f4\fs21 ), an indicator of the data quality (\plain\f4\fs21\b dwQuality\plain\f4\fs21 ), and sample size (\plain\f4\fs21\b dwSampleSize\plain\f4\fs21 ). See the reference section for more information on these fields. 
+\par Some of the fields in the stream header structure are also present in the main header structure. The data in the main header structure applies to the whole file while the data  in the stream header structure applies only to a stream. 
+\par A stream format ("strf") chunk must follow a stream header ("strh") chunk. The stream format chunk describes the format of the data in the stream. For video streams, the information in this chunk is a BITMAPINFO structure (including palette information if appropriate). For audio streams, the information in this chunk is a WAVEFORMATEX or PCMWAVEFORMAT structure. (The WAVEFORMATEX structure is an extended version of the WAVEFORMAT structure.) For more information on this structure, see the \plain\f4\fs21\i New Multimedia Data Types and Data Techniques Standards Update\plain\f4\fs21 .
+\par The "strl" chunk might also contain a stream data ("strd") chunk. If used, this chunk follows the stream format chunk. The format and content of this chunk is defined by installable compression or decompression drivers. Typically, drivers use this information for configuration. Applications that read and write RIFF files do not need to decode this information. They transfer this data to and from a driver as a memory block. 
+\par An AVI player associates the stream headers in the LIST "hdrl" chunk with the stream data in the LIST "movi" chunk by using the order of the "strl" chunks. The first "strl" chunk applies to stream 0, the second applies to stream 1, and so forth. For example, if the first "strl" chunk describes the wave audio data, the wave audio data is contained in stream 0. Similarly, if the second "strl" chunk describes video data, then the video data is contained in stream 1.
+\par \plain\f5\fs34\b The LIST "movi" Chunk
+\par \plain\f4\fs21 Following the header information is a LIST "movi" chunk that contains chunks of the actual data in the streams; that is, the pictures and sounds themselves. The data chunks can reside directly in the LIST "movi" chunk or they might be grouped into "rec " chunks. The "rec " grouping implies that the grouped chunks should be read from disk all at once. This is used only for files specifically interleaved to play from CD-ROM.
+\par Like any RIFF chunk, the data chunks contain a four-character code to identify the chunk type. The four-character code that identifies each chunk consists of the stream number and a two-character code that defines the type of information encapsulated in the chunk. For example, a waveform chunk is identified by a two-character code of "wb". If a waveform chunk corresponded to the second LIST "hdrl" stream description, it would have a four-character code of "01wb". 
+\par Since all the format information is in the header, the audio data contained in these data chunks does not contain any information about its format. An audio data chunk has the following format (the ## in the format represents the stream identifier):
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16 WAVE  Bytes   '##wb'
+\par       BYTE    abBytes[];
+\par 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21 Video data can be compressed or uncompressed DIBs. An uncompressed DIB has BI_RGB specified for the \plain\f4\fs21\b biCompression\plain\f4\fs21  field in its associated BITMAPINFO structure. A compressed DIB has a value other than BI_RGB specified in the \plain\f4\fs21\b biCompression\plain\f4\fs21  field. For more information about compression formats, see the description of the BITMAPINFOHEADER data structure in the \plain\f4\fs21\i Microsoft Windows Programmers Reference\plain\f4\fs21  and Chapter 5, "DIB Format Extensions for Microsoft Windows."
+\par A data chunk for an uncompressed DIB contains RGB video data. These chunks are identified with a two-character code of "db" (db is an abbreviation for DIB bits). Data chunks for a compressed DIB are identified with a two-character code of "dc" (dc is an abbreviation for DIB compressed). Neither data chunk will contain any header information about the DIBs. The data chunk for an uncompressed DIB has the following form:
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16 DIB  Bits   '##db'
+\par      BYTE   abBits[];
+\par \pard\nowwrap\nooverflow\plain\f7\fs12 
+\par \plain\f4\fs21 The data chunk for a compressed DIB has the following form:
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16 Compressed DIB   '##dc'
+\par      BYTE         abBits[];
+\par 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21 Video data chunks can also define new palette entries used to update the palette during an AVI sequence. These chunks are identified with a two-character code of "pc" (pc is an abbreviation for palette change). The following data structure is defined palette information:
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16 typedef struct \{
+\par     BYTE          bFirstEntry;
+\par     BYTE          bNumEntries;
+\par     WORD          wFlags;
+\par     PALETTEENTRY  peNew;
+\par \} AVIPALCHANGE;
+\par 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21 The \plain\f4\fs21\b bFirstEntry\plain\f4\fs21  field defines the first entry to change and the \plain\f4\fs21\b bNumEntries\plain\f4\fs21  field specifies the number of entries to change. The \plain\f4\fs21\b peNew\plain\f4\fs21  field contains the new color entries. 
+\par If you include palette changes in a video stream, set the AVITF_VIDEO_PALCHANGES flag in the \plain\f4\fs21\b dwFlags\plain\f4\fs21  field of the stream header. This flag indicates that this video stream contains palette changes and warns the playback software that it will need to animate the palette.
+\par \plain\f5\fs34\b The "idx1" Chunk
+\par \plain\f4\fs21 AVI files can have an index chunk after the LIST "movi" chunk. The index chunk essentially contains a list of the data chunks and their location in the file. This provides efficient random access to the data within the file, because an application can locate a particular sound sequence or video image in a large AVI file without having to scan it. 
+\par Index chunks use the four-character code "idx1". The following data structure is defined for index entries:
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16 typedef struct \{
+\par     DWORD  ckid;
+\par     DWORD  dwFlags;
+\par     DWORD  dwChunkOffset;
+\par     DWORD  dwChunkLength;
+\par \} AVIINDEXENTRY;
+\par 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21 The \plain\f4\fs21\b ckid\plain\f4\fs21 , \plain\f4\fs21\b dwFlags\plain\f4\fs21 , \plain\f4\fs21\b dwChunkOffset\plain\f4\fs21 , and \plain\f4\fs21\b dwChunkLength\plain\f4\fs21  entries are repeated in the AVI file for each data chunk indexed. If the file is interleaved, the index will also have these entries for each "rec" chunk. The "rec" entries should have the AVIIF_LIST flag set and the list type in the \plain\f4\fs21\b ckid\plain\f4\fs21  field.
+\par The \plain\f4\fs21\b ckid\plain\f4\fs21  field identifies the data chunk. This field uses four-character codes for identifying the chunk.
+\par The \plain\f4\fs21\b dwFlags\plain\f4\fs21  field specifies any flags for the data. The AVIIF_KEYFRAME flag indicates key frames in the video sequence. Key frames do not need previous video information to be decompressed. The AVIIF_NOTIME flag indicates a chunk does not affect the timing of a video stream. For example, changing palette entries indicated by a palette chunk should occur between displaying video frames. Thus, if an application needs to determine the length of a video sequence, it should not use chunks with the AVIIF_NOTIME flag. In this case, it would ignore a palette chunk. The AVIIF_LIST flag indicates the current chunk is a LIST chunk. Use the \plain\f4\fs21\b ckid\plain\f4\fs21  field to identify the type of LIST chunk.
+\par The \plain\f4\fs21\b dwChunkOffset\plain\f4\fs21  and \plain\f4\fs21\b dwChunkLength\plain\f4\fs21  fields specify the position of the chunk and the length of the chunk. The \plain\f4\fs21\b dwChunkOffset\plain\f4\fs21  field specifies the position of the chunk in the file relative to the 'movi' list. The \plain\f4\fs21\b dwChunkLength\plain\f4\fs21  field specifies the length of the chunk excluding the eight bytes for the RIFF header.
+\par If you include an index in the RIFF file, set the AVIF_HASINDEX in the \plain\f4\fs21\b dwFlags\plain\f4\fs21  field of the AVI header. (This header is identified by "avih" chunk ID.) This flag indicates that the file has an index.
+\par \plain\f5\fs34\b Other Data Chunks
+\par \plain\f4\fs21 If you need to align data in your AVI file you can add a "JUNK" chunk. (This chunk is a standard RIFF type.) Applications reading these chunks ignore their contents. Files played from CD-ROM use these chunks to align data so they can be read more efficiently. You might want to use this chunk to align your data for the 2 kilobyte CD-ROM boundaries. The "JUNK" chunk has the following form:
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16 AVI Padding   'JUNK'
+\par     Byte      data[]
+\par 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21 As with any other RIFF files, all applications that read AVI files should ignore the non-AVI chunks that it does not recognize. Applications that read and write AVI files should preserve the non-AVI chunks when they save files they have loaded.
+\par \plain\f5\fs34\b Special Information for Interleaved Files
+\par \plain\f4\fs21 Files that are interleaved for playback from CD-ROM require some special handling. While they can be read similarly to any other AVI files, they require special care when produced.
+\par The audio has to be separated into single-frame pieces, and audio and video for each frame needs to be grouped together into "rec " chunks. The record chunks should be padded so that their size is a multiple of 2 kilobytes and so that the beginning of the actual data in the LIST chunk lies on a 2 kilobyte boundary in the file. (This implies that the LIST chunk itself begins 12 bytes before a 2 kilobyte boundary.)
+\par To give the audio driver enough audio to work with, the audio data has to be skewed from the video data. Typically, the audio data should be moved forward enough frames to allow approximately 0.75 seconds of audio data to be preloaded. The \plain\f4\fs21\b dwInitialRecords\plain\f4\fs21  field of the main header and the \plain\f4\fs21\b dwInitialFrames\plain\f4\fs21  field of the audio stream header should be set to the number of frames the audio is skewed.
+\par Additionally, you must ensure that CD-ROM drive is capable of reading the data fast enough to support your AVI sequence. Non-MPC CD-ROM drives can have a data rate of less than 150 kilobytes per second.
+\par \plain\f5\fs40\b Using VidEdit With AVI Files
+\par \plain\f4\fs21 VidEdit lets you create and edit audio-visual sequences consisting of a series of frames that contain digital audio and video data. You can use VidEdit to create and edit AVI files that contain one audio and one video stream. Each stream in the file must start at the beginning of the file (that is, the \plain\f4\fs21\b dwStart\plain\f4\fs21  field in each stream header must be zero).
+\par \plain\f5\fs40\b Example Code for Writing AVI Files
+\par \plain\f4\fs21 The WRITEAVI.C and AVIEASY.C files contain example code for writing AVI files. For simplicity, the examples assume that all video frames are uncompressed DIBs of the same size. While the DIBS can have any bit depth; 8, 16, and 24 bits are preferred.
+\par These examples also assume all wave data is in memory. A more generalized procedure should work with wave data that is in memory as well as in a disk file. These examples do not restrict wave data to PCM. It should work with any format.
+\par \plain\f5\fs40\b An Outline for Writing AVI Files
+\par \plain\f4\fs21 Like other RIFF files, AVI files are created with the \plain\f4\fs21\b mmioOpen\plain\f4\fs21 , \plain\f4\fs21\b mmioCreateChunk\plain\f4\fs21 , \plain\f4\fs21\b mmioWrite\plain\f4\fs21 , \plain\f4\fs21\b mmioAscend\plain\f4\fs21 , and \plain\f4\fs21\b mmioClose\plain\f4\fs21  functions. These functions have the following definitions:
+\par \pard\li30\ri30\nowwrap\nooverflow\plain\f7\fs12\cf1 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b mmioOpen
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Opens a file for reading or writing, and returns a handle to the open file.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b mmioCreateChunk
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Creates a new chunk in a RIFF file.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b mmioWrite
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Writes a specified number of bytes to an open file.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b mmioAscend
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Ascends out of a RIFF file chunk to the next chunk in the file.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b mmioClose
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Closes an open file.
+\par \pard\li30\ri30\nowwrap\nooverflow\plain\f7\fs12\cf1 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21 In addition to these functions, you can use \plain\f4\fs21\b mmioFOURCC\plain\f4\fs21  to convert four individual characters into a four-character code. For more information on these functions and macros, see the \plain\f4\fs21\i Microsoft Windows Multimedia Programmer's Guide\plain\f4\fs21  and \plain\f4\fs21\i Microsoft Windows Multimedia Programmer's Reference\plain\f4\fs21 .
+\par \pard\li30\ri30\nowwrap\nooverflow\plain\f7\fs12\cf1 
+\par \plain\f4\fs12\cf1 Note: 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21 The AVIFMT.H file contains macro definitions for creating the two- and four-character codes described in this chapter. It also defines the \plain\f4\fs21\b aviTWOCC\plain\f4\fs21  and \plain\f4\fs21\b TWOCCFromFOURCC\plain\f4\fs21  macros. These macros create two-character codes from individual characters or from four-character codes.
+\par \pard\li30\ri30\nowwrap\nooverflow\plain\f7\fs12\cf1 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21 Unlike many other RIFF files, AVI files use many nested chunks and subchunks. This makes them more complicated than most RIFF files. Use the following tables as a checklist to help you decide when to create a chunk, when to write data to a chunk, and when to ascend from a chunk. The tables do not include information about writing non-AVI data chunks to the file. The information in the chunk column of the table mirrors the example in the "AVI RIFF Form" section presented previously. 
+\par \plain\f5\fs34\b Creating the File and "AVI " Chunk
+\par \plain\f4\fs21 The "AVI " chunk is the first chunk in the file. You will not ascend from this chunk until all other chunks have been created.
+\par \plain\f7\fs8 \tab \tab \plain\f7\fs21 
+\par \plain\f4\fs19\b Chunk\tab How to Handle\tab \plain\f7\fs21 
+\par \plain\f7\fs8 \tab \tab \plain\f7\fs21 
+\par \plain\f4\fs19 RIFF ('AVI '\tab Use \plain\f4\fs19\b mmioOpen\plain\f4\fs19  to open the file.  Seek to the beginning of the file with \plain\f4\fs19\b mmioSeek\plain\f4\fs19 .   Create the AVI chunk with \plain\f4\fs19\b mmioCreateChunk\plain\f4\fs19 . (Use the "AVI " four-character code and the MMIO_CREATERIFF flag.)  Do not ascend from this chunk in preparation for writing the remaining chunks. \tab \plain\f7\fs21 
+\par \pard\li30\ri30\qr\nowwrap\nooverflow\plain\f7\fs16 
+\par \pard\nowwrap\nooverflow\plain\f5\fs34\b Creating the LIST "hdrl " and "avih" Chunks
+\par \plain\f4\fs21 The LIST "hdrl " chunk contains the stream format header chunks. Because it contains other chunks, you will not ascend from it until the other header chunks are created.
+\par The "avih" chunk contains the main header list. This is written as a complete chunk.
+\par \plain\f7\fs8 \tab \tab \plain\f7\fs21 
+\par \plain\f4\fs19\b Chunk\tab How to Handle\tab \plain\f7\fs21 
+\par \plain\f7\fs8 \tab \tab \plain\f7\fs21 
+\par \plain\f4\fs19 LIST ('hdrl'\tab Create the LIST "hdrl" chunk with \plain\f4\fs19\b mmioCreateChunk\plain\f4\fs19 . (Use the "hdrl" four-character code and the MMIO_CREATELIST flag.)\tab \plain\f7\fs21 
+\par \plain\f4\fs19 'avih'(<Main AVI Header>)\tab Create the Main AVI Header chunk with \plain\f4\fs19\b mmioCreateChunk\plain\f4\fs19 . (Use the "avih" four-character code.)  Write the header information with \plain\f4\fs19\b mmioWrite\plain\f4\fs19 .  Ascend from the "avih" chunk with \plain\f4\fs19\b mmioAscend\plain\f4\fs19 .  Do not ascend from the LIST "hdrl" chunk. \tab \plain\f7\fs21 
+\par \pard\li30\ri30\qr\nowwrap\nooverflow\plain\f7\fs16 
+\par \pard\nowwrap\nooverflow\plain\f7\fs12 
+\par \plain\f5\fs34\b Creating the "strl", "strh", "strf", and "strd" Chunks
+\par \plain\f4\fs21 The "strl", "strh", "strf", and "strd" chunks are written as complete chunks. You write a set of the "strh", "strf", and "strd" chunks for each stream in the file. After all the stream descriptions are written, you ascend from LIST "hdrl" chunk.
+\par \plain\f7\fs8 \tab \tab \plain\f7\fs21 
+\par \plain\f4\fs19\b Chunk\tab How to Handle\tab \plain\f7\fs21 
+\par \plain\f7\fs8 \tab \tab \plain\f7\fs21 
+\par \plain\f4\fs19 LIST ('strl'\tab Create the LIST "strl" chunk with \plain\f4\fs19\b mmioCreateChunk\plain\f4\fs19 . (Use the "strl" four-character code and the MMIO_CREATELIST flag.)\tab \plain\f7\fs21 
+\par \plain\f4\fs19 'strh'(<Stream header>)\tab Create the stream header chunk with \plain\f4\fs19\b mmioCreateChunk\plain\f4\fs19 . (Use the "strh" four-character code.)  Write the stream header information with \plain\f4\fs19\b mmioWrite\plain\f4\fs19 .  Ascend from the "strh" chunk with \plain\f4\fs19\b mmioAscend\plain\f4\fs19 .\tab \plain\f7\fs21 
+\par \plain\f4\fs19 'strf'(<Stream format>)\tab Create the stream format chunk with \plain\f4\fs19\b mmioCreateChunk\plain\f4\fs19 . (Use the "strf" four-character code.)  Write the stream format information with \plain\f4\fs19\b mmioWrite\plain\f4\fs19 .  Ascend from the "strf" chunk with \plain\f4\fs19\b mmioAscend\plain\f4\fs19 .\tab \plain\f7\fs21 
+\par \plain\f4\fs19 'strd'(additional header data)\tab If needed, create chunks for any additional header data with \plain\f4\fs19\b mmioCreateChunk\plain\f4\fs19 . (Use the "strd" four-character code.)  Write the additional header data with \plain\f4\fs19\b mmioWrite\plain\f4\fs19 .  Ascend from the "strd" chunk.\tab \plain\f7\fs21 
+\par \plain\f4\fs19           .           .           .\tab If needed, add stream header, stream format, and additional header data chunks for other streams in the file.\tab \plain\f7\fs21 
+\par \plain\f7\fs19 \tab \plain\f4\fs19       )\tab Ascend from the LIST "strl" chunk with \plain\f4\fs19\b mmioAscend\plain\f4\fs19 .\tab \plain\f7\fs21 
+\par \plain\f4\fs19     .     .     . )\tab Ascend from the LIST "hdrl" chunk with \plain\f4\fs19\b mmioAscend\plain\f4\fs19 .  If needed, create and write padding chunks or other data chunks.\tab \plain\f7\fs21 
+\par \pard\li30\ri30\qr\nowwrap\nooverflow\plain\f7\fs16 
+\par \pard\nowwrap\nooverflow\plain\f5\fs34\b Creating the LIST "movi" and "rec " Chunks
+\par \plain\f4\fs21 The LIST "movi" chunk contains other chunks. After you create this chunk, you will not ascend from it until the other chunks are written.
+\par \plain\f7\fs12 
+\par \plain\f4\fs21 You can write the data as an individual chunk or as part of a "rec " chunk. Like the LIST "movi" chunk, you will not ascend from a "rec " chunk until you write all of its subchunks.
+\par \plain\f7\fs8 \tab \tab \plain\f7\fs21 
+\par \plain\f4\fs19\b Chunk\tab How to Handle\tab \plain\f7\fs21 
+\par \plain\f7\fs8 \tab \tab \plain\f7\fs21 
+\par \plain\f4\fs19 LIST ('movi'\tab Create the LIST "movi" chunk with \plain\f4\fs19\b mmioCreateChunk\plain\f4\fs19 . (Use the LIST "movi" four-character code and the MMIO_CREATELIST flag.)\tab \plain\f7\fs21 
+\par \plain\f7\fs19 \{\plain\f4\fs19  SubChunk |  \tab LIST('rec '  \tab \tab SubChunk1  \tab \tab SubChunk2    \tab \tab  .    \tab \tab  .    \tab \tab  .   \tab \tab )   \tab .    \tab .   \tab .   \tab \}    .    .    . \tab You can add your movie data directly at this point in a subchunk or include it in a "rec " chunk. The following steps summarize creating these chunks:  Create a data chunk with \plain\f4\fs19\b mmioCreateChunk\plain\f4\fs19 . (Use the four-character code appropriate for the data chunk and stream.) If you are adding an index chunk to the end of the file, save the location of the subchunks for it.\tab \plain\f7\fs21 
+\par \plain\f4\fs19 )\tab Ascend from the LIST "movi " chunk.\tab \plain\f7\fs21 
+\par \pard\li30\ri30\qr\nowwrap\nooverflow\plain\f7\fs16 
+\par \pard\nowwrap\nooverflow\plain\f5\fs34\b Creating the "idx1" Chunk and Ascending From the "AVI " Chunk
+\par \plain\f4\fs21 The optional index chunk is written as a complete chunk. After you have completed this chunk, you can ascend from the "AVI " chunk and close the file.
+\par \plain\f7\fs8 \tab \tab \plain\f7\fs21 
+\par \plain\f4\fs19\b Chunk\tab How to Handle\tab \plain\f7\fs21 
+\par \plain\f7\fs8 \tab \tab \plain\f7\fs21 
+\par \plain\f4\fs19 ['idx1'<AVIIndex>]\tab If used, create the AVI index chunk with \plain\f4\fs19\b mmioCreateChunk\plain\f4\fs19 . (Use the "idx1" four-character code.)  Write the index information with \plain\f4\fs19\b mmioWrite\plain\f4\fs19 .  Ascend from the "idx1" chunk with \plain\f4\fs19\b mmioAscend\plain\f4\fs19 .  Although the "idx1" is the last chunk used in an AVI sequence, you can add non-AVI chunks after it. These subchunks will still be part of the "AVI " chunk. \tab \plain\f7\fs21 
+\par \plain\f4\fs19 )\tab Ascend from the "AVI " chunk with \plain\f4\fs19\b mmioAscend\plain\f4\fs19 .  Close the file with \plain\f4\fs19\b mmioClose\plain\f4\fs19 .\tab \plain\f7\fs21 
+\par \plain\f7\fs19 \tab \tab \plain\f7\fs21 
+\par \pard\li30\ri30\qr\nowwrap\nooverflow\plain\f7\fs16 
+\par \pard\nowwrap\nooverflow\plain\f7\fs21 
+\par \plain\f5\fs40\b AVI RIFF File Reference
+\par \plain\f4\fs21 This section lists data structures used to support AVI RIFF files. (These structures are defined in AVIFMT.H.) The data structures are presented in alphabetical order. The structure definition is given, followed by a description of each field.
+\par \pard\ri30\nowwrap\nooverflow\plain\f7\fs12 
+\par \pard\nowwrap\nooverflow\plain\f5\fs34\b AVIINDEXENTRY
+\par \plain\f4\fs21 The AVI file index consists of an array of \plain\f4\fs21\b AVIINDEXENTRY\plain\f4\fs21  structures contained within an 'idx1' chunk at the end of an AVI file. This chunk follows the main LIST 'movi' chunk which contains the actual data.
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16 typedef struct \{
+\par     DWORD  ckid;
+\par     DWORD  dwFlags;
+\par     DWORD  dwChunkOffset;
+\par     DWORD  dwChunkLength;
+\par \} AVIINDEXENTRY;
+\par 
+\par \pard\nowwrap\nooverflow\plain\f5\fs30\b Fields
+\par \plain\f4\fs21 The \plain\f4\fs21\b AVIINDEXENTRY\plain\f4\fs21  structure has the following fields:
+\par \plain\f4\fs21\b ckid
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies a four-character code corresponding to the chunk ID of a data chunk in the file.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwFlags
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies any applicable flags. The flags in the low-order word are reserved for AVI, while those in the high-order word can be used for stream- and compressor/decompressor-specific information.
+\par The following values are currently defined:
+\par AVIIF_LIST
+\par \pard\li560\nowwrap\nooverflow\plain\f4\fs21 Indicates the specified chunk is a 'LIST' chunk, and the \plain\f4\fs21\b ckid\plain\f4\fs21  field contains the list type of the chunk.
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 AVIIF_KEYFRAME
+\par \pard\li560\nowwrap\nooverflow\plain\f4\fs21 Indicates this chunk is a key frame. Key frames do not require additional preceding chunks to be properly decoded.
+\par \pard\nowwrap\nooverflow\plain\f7\fs12 
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 AVIIF_FIRSTPART
+\par \pard\li560\nowwrap\nooverflow\plain\f4\fs21 Indicates this chunk needs the frames following it to be used; it cannot stand alone.
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 AVIIF_LASTPART
+\par \pard\li560\nowwrap\nooverflow\plain\f4\fs21 Indicates this chunk needs the frames preceding it to be used; it cannot stand alone.
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 AVIIF_NOTIME
+\par \pard\li560\nowwrap\nooverflow\plain\f4\fs21 Indicates this chunk should have no effect on timing or calculating time values based on the number of chunks. For example, palette change chunks in a video stream should have this flag set, so that they are not counted as taking up a frame's worth of time.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwChunkOffset
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the position in the file of the specified chunk. The position value includes the eight byte RIFF header.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwChunkLength
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the length of the specified chunk. The length value does not include the eight byte RIFF header.
+\par \pard\ri30\nowwrap\nooverflow\plain\f7\fs12 
+\par \pard\nowwrap\nooverflow\plain\f5\fs34\b AVIPALCHANGE
+\par \plain\f4\fs21 The \plain\f4\fs21\b AVIPALCHANGE\plain\f4\fs21  structure is used in video streams containing palettized data to indicate the palette should change for subsequent video data.
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16 typedef struct \{
+\par     BYTE  bFirstEntry;
+\par     BYTE  bNumEntries;
+\par     WORD  wFlags;
+\par     PALETTEENTRY  peNew;
+\par \} AVIPALCHANGE;
+\par 
+\par \pard\nowwrap\nooverflow\plain\f5\fs30\b Fields
+\par \plain\f4\fs21 The \plain\f4\fs21\b AVIPALCHANGE\plain\f4\fs21  structure has the following fields:
+\par \plain\f4\fs21\b bFirstEntry
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the first palette entry to change.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b bNumEntries
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the number of entries to change.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b wFlags
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Reserved. (This should be set to 0.)
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b peNew
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies an array of new palette entries.
+\par \pard\nowwrap\nooverflow\plain\f5\fs34\b AVIStreamHeader
+\par \plain\f4\fs21 The \plain\f4\fs21\b AVIStreamHeader\plain\f4\fs21  structure contains header information for a single stream of an file. It is contained within an 'strh' chunk within a LIST 'strl' chunk that is itself contained within the LIST 'hdrl' chunk at the beginning of an AVI RIFF file.
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16 typedef struct \{
+\par     FOURCC  fccType;
+\par     FOURCC  fccHandler;
+\par     DWORD  dwFlags;
+\par     DWORD  dwReserved1;
+\par     DWORD  dwInitialFrames;
+\par     DWORD  dwScale;
+\par     DWORD  dwRate;
+\par     DWORD  dwStart;
+\par     DWORD  dwLength;
+\par     DWORD  dwSuggestedBufferSize;
+\par     DWORD  dwQuality;
+\par     DWORD  dwSampleSize;
+\par \} AVIStreamHeader;
+\par 
+\par \pard\nowwrap\nooverflow\plain\f5\fs30\b Fields
+\par \plain\f4\fs21 The \plain\f4\fs21\b AVIStreamHeader\plain\f4\fs21  structure has the following fields:
+\par \plain\f4\fs21\b fccType
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Contains a four-character code which specifies the type of data contained in the stream. The following values are currently defined for AVI data:
+\par 'vids'
+\par \pard\li560\nowwrap\nooverflow\plain\f4\fs21 Indicates the stream contains video data. The stream format chunk contains a \plain\f4\fs21\b BITMAPINFO\plain\f4\fs21  structure which can include palette information.
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 'auds'
+\par \pard\li560\nowwrap\nooverflow\plain\f4\fs21 Indicates the stream contains video data. The stream format chunk contains a \plain\f4\fs21\b WAVEFORMAT\plain\f4\fs21  or \plain\f4\fs21\b PCMWAVEFORMAT\plain\f4\fs21  structure.
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Other four-character codes can identify non-AVI data. 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b fccHandler
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Optionally, contains a four-character code that identifies a specific data handler. The data handler is the preferred handler for the stream.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwFlags
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies any applicable flags. The bits in the high-order word of these flags are specific to the type of data contained in the stream. The following flags are currently defined:
+\par AVISF_DISABLED
+\par \pard\li560\nowwrap\nooverflow\plain\f4\fs21 Indicates this stream should not be enabled by default.
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 AVISF_VIDEO_PALCHANGES
+\par \pard\li560\nowwrap\nooverflow\plain\f4\fs21 Indicates this video stream contains palette changes. This flag warns the playback software that it will need to animate the palette.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwReserved1
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Reserved. (Should be set to 0.)
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwInitialFrames
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies how far audio data is skewed ahead of the video frames in interleaved files. Typically, this is about 0.75 seconds.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwScale
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 This field is used together with \plain\f4\fs21\b dwRate\plain\f4\fs21  to specify the time scale that this stream will use.
+\par Dividing \plain\f4\fs21\b dwRate\plain\f4\fs21  by \plain\f4\fs21\b dwScale\plain\f4\fs21  gives the number of samples per second.
+\par For video streams, this rate should be the frame rate.
+\par For audio streams, this rate should correspond to the time needed for \plain\f4\fs21\b nBlockAlign\plain\f4\fs21  bytes of audio, which for PCM audio simply reduces to the sample rate.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwRate
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 See \plain\f4\fs21\b dwScale\plain\f4\fs21 .
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwStart
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the starting time of the AVI file. The units are defined by the \plain\f4\fs21\b dwRate\plain\f4\fs21  and \plain\f4\fs21\b dwScale\plain\f4\fs21  fields in the main file header. Normally, this is zero, but it can specify a delay time for a stream which does not start concurrently with the file.
+\par Note: The 1.0 release of the AVI tools does not support a non-zero starting time.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwLength
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the length of this stream. The units are defined by the \plain\f4\fs21\b dwRate\plain\f4\fs21  and \plain\f4\fs21\b dwScale\plain\f4\fs21  fields of the stream's header.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwSuggestedBufferSize
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Suggests how large a buffer should be used to read this stream. Typically, this contains a value corresponding to the largest chunk present in the stream. Using the correct buffer size makes playback more efficient. Use zero if you do not know the correct buffer size.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwQuality
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies an indicator of the quality of the data in the stream. Quality is represented as a number between 0 and 10000. For compressed data, this typically represent the value of the quality parameter passed to the compression software. If set to -1, drivers use the default quality value. 
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwSampleSize
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the size of a single sample of data. This is set to zero if the samples can vary in size. If this number is non-zero, then multiple samples of data can be grouped into a single chunk within the file. If it is zero, each sample of data (such as a video frame) must be in a separate chunk.
+\par For video streams, this number is typically zero, although it can be non-zero if all video frames are the same size.
+\par For audio streams, this number should be the same as the \plain\f4\fs21\b nBlockAlign\plain\f4\fs21  field of the \plain\f4\fs21\b WAVEFORMAT\plain\f4\fs21  structure describing the audio.
+\par \pard\nowwrap\nooverflow\plain\f5\fs34\b MainAVIHeader
+\par \plain\f4\fs21 The \plain\f4\fs21\b MainAVIHeader\plain\f4\fs21  structure contains global information for the entire AVI file. It is contained within an 'avih' chunk within the LIST 'hdrl' chunk at the beginning of an AVI RIFF file.
+\par \pard\tx380\tx760\tx1140\tx1520\tx1900\tx2280\tx2660\tx3040\tx3420\tx3800\nowwrap\nooverflow\plain\f8\fs16 typedef struct \{
+\par     DWORD  dwMicroSecPerFrame;
+\par     DWORD  dwMaxBytesPerSec;
+\par     DWORD  dwReserved1;
+\par     DWORD  dwFlags;
+\par     DWORD  dwTotalFrames;
+\par     DWORD  dwInitialFrames;
+\par     DWORD  dwStreams;
+\par     DWORD  dwSuggestedBufferSize;
+\par     DWORD  dwWidth;
+\par     DWORD  dwHeight;
+\par     DWORD  dwScale;
+\par     DWORD  dwRate;
+\par     DWORD  dwStart;
+\par     DWORD  dwLength;
+\par \} MainAVIHeader;
+\par 
+\par \pard\nowwrap\nooverflow\plain\f5\fs30\b Fields
+\par \plain\f4\fs21 The \plain\f4\fs21\b MainAVIHeader\plain\f4\fs21  structure has the following fields:
+\par \plain\f4\fs21\b dwMicroSecPerFrame
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the number of microseconds between frames.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwMaxBytesPerSec
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the approximate maximum data rate of file.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwReserved1
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Reserved. (This field should be set to 0.)
+\par \pard\nowwrap\nooverflow\plain\f4\fs21 dwFlags
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies any applicable flags. The following flags are defined:
+\par AVIF_HASINDEX
+\par \pard\li560\nowwrap\nooverflow\plain\f4\fs21 Indicates the AVI file has an 'idx1' chunk containing an index at the end of the file. For good performance, all AVI files should contain an index.
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 AVIF_MUSTUSEINDEX
+\par \pard\li560\nowwrap\nooverflow\plain\f4\fs21 Indicates that the index, rather than the physical ordering of the chunks in the file, should be used to determine the order of presentation of the data. For example, this could be used for creating a list frames for editing.
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 AVIF_ISINTERLEAVED
+\par \pard\li560\nowwrap\nooverflow\plain\f4\fs21 Indicates the AVI file is interleaved.
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 AVIF_WASCAPTUREFILE
+\par \pard\li560\nowwrap\nooverflow\plain\f4\fs21 Indicates the AVI file is a specially allocated file used for capturing real-time video. Applications should warn the user before writing over a file with this flag set because the user probably defragmented this file.
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 AVIF_COPYRIGHTED
+\par \pard\li560\nowwrap\nooverflow\plain\f4\fs21 Indicates the AVI file contains copyrighted data and software. When this flag is used, software should not permit the data to be duplicated.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwTotalFrames
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the number of frames of data in file.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwInitialFrames
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the initial frame for interleaved files. Non-interleaved files should specify zero.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwStreams
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the number of streams in the file. For example, a file with audio and video has 2 streams.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwSuggestedBufferSize
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the suggested buffer size for reading the file. Generally, this size should be large enough to contain the largest chunk in the file. If set to zero, or if it is too small, the playback software will have to reallocate memory during playback which will reduce performance.
+\par For an interleaved file, this buffer size should be large enough to read an entire record and not just a chunk.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwWidth
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the width of the AVI file in pixels.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwHeight
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the height of the AVI file in pixels.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwScale
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 This field is used with \plain\f4\fs21\b dwRate\plain\f4\fs21  to specify the time scale that the file as a whole will use. In addition, each stream can have its own time scale.
+\par Dividing \plain\f4\fs21\b dwRate\plain\f4\fs21  by \plain\f4\fs21\b dwScale\plain\f4\fs21  gives the number of samples per second.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwRate
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 See \plain\f4\fs21\b dwScale\plain\f4\fs21 .
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwStart
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the starting time of the AVI file. The units are defined by \plain\f4\fs21\b dwRate\plain\f4\fs21  and \plain\f4\fs21\b dwScale\plain\f4\fs21 . This field is usually set to zero.
+\par \pard\nowwrap\nooverflow\plain\f4\fs21\b dwLength
+\par \pard\li280\nowwrap\nooverflow\plain\f4\fs21 Specifies the length of the AVI file. The units are defined by \plain\f4\fs21\b dwRate\plain\f4\fs21  and \plain\f4\fs21\b dwScale\plain\f4\fs21 . This length is returned by MCIAVI when using the frames time format. 
+\par \pard\nowwrap\nooverflow\plain\f7\fs21 
+\par }
+ 

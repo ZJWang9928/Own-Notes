@@ -1,0 +1,253 @@
+<html>
+
+<head>
+<title>file:///d:/程序资料/format2/tar.txt</title>
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">tar format</font></p>
+<div align="center"><center>
+
+<table border="0" width="80%">
+  <tr>
+    <td width="100%"><pre>the unix tar program is an archiver program which stores files in a single
+archive without compression.
+offset              count type   description
+@section the standard format
+a @dfn{tar tape} or file contains a series of records.  each record
+contains @code{recordsize} bytes.  although this format may be
+thought of as being on magnetic tape, other media are often used.</pre>
+    <pre>each file archived is represented by a header record which describes
+the file, followed by zero or more records which give the contents
+of the file.  at the end of the archive file there may be a record
+filled with binary zeros as an end-of-file marker.  a reasonable
+system should write a record of zeros at the end, but must not
+assume that such a record exists when reading an archive.</pre>
+    <pre>the records may be @dfn{blocked} for physical i/o operations.  each
+block of @var{n} records (where @var{n} is set by the @samp{-b}
+option to @code{tar}) is written with a single @code{write()}
+operation.  on magnetic tapes, the result of such a write is a
+single tape record.  when writing an archive, the last block of
+records should be written at the full size, with records after the
+zero record containing all zeroes.  when reading an archive, a
+reasonable system should properly handle an archive whose last block
+is shorter than the rest, or which contains garbage records after a
+zero record.</pre>
+    <pre>the header record is defined in c as follows:</pre>
+    <pre>@example
+/*
+ * standard archive format - standard tar - ustar
+ */
+#define  recordsize  512
+#define  namsiz      100
+#define  tunmlen      32
+#define  tgnmlen      32</pre>
+    <pre>union record @{
+    char        charptr[recordsize];
+    struct header @{
+        char    name[namsiz];
+        char    mode[8];
+        char    uid[8];
+        char    gid[8];
+        char    size[12];
+        char    mtime[12];
+        char    chksum[8];
+        char    linkflag;
+        char    linkname[namsiz];
+        char    magic[8];
+        char    uname[tunmlen];
+        char    gname[tgnmlen];
+        char    devmajor[8];
+        char    devminor[8];
+    @} header;
+@};</pre>
+    <pre>/* the checksum field is filled with this while the checksum is computed. */
+#define    chkblanks    &quot;        &quot;        /* 8 blanks, no null */</pre>
+    <pre>/* the magic field is filled with this if uname and gname are valid. */
+#define    tmagic    &quot;ustar  &quot;        /* 7 chars and a null */</pre>
+    <pre>/* the magic field is filled with this if this is a gnu format dump entry */
+#define    gnumagic  &quot;gnutar &quot;        /* 7 chars and a null */</pre>
+    <pre>/* the linkflag defines the type of file */
+#define  lf_oldnormal '\0'       /* normal disk file, unix compatible */
+#define  lf_normal    '0'        /* normal disk file */
+#define  lf_link      '1'        /* link to previously dumped file */
+#define  lf_symlink   '2'        /* symbolic link */
+#define  lf_chr       '3'        /* character special file */
+#define  lf_blk       '4'        /* block special file */
+#define  lf_dir       '5'        /* directory */
+#define  lf_fifo      '6'        /* fifo special file */
+#define  lf_contig    '7'        /* contiguous file */</pre>
+    <pre>/* further link types may be defined later. */</pre>
+    <pre>/* bits used in the mode field - values in octal */
+#define  tsuid    04000        /* set uid on execution */
+#define  tsgid    02000        /* set gid on execution */
+#define  tsvtx    01000        /* save text (sticky bit) */</pre>
+    <pre>/* file permissions */
+#define  turead   00400        /* read by owner */
+#define  tuwrite  00200        /* write by owner */
+#define  tuexec   00100        /* execute/search by owner */
+#define  tgread   00040        /* read by group */
+#define  tgwrite  00020        /* write by group */
+#define  tgexec   00010        /* execute/search by group */
+#define  toread   00004        /* read by other */
+#define  towrite  00002        /* write by other */
+#define  toexec   00001        /* execute/search by other */
+@end example</pre>
+    <pre>all characters in header records are represented by using 8-bit
+characters in the local variant of ascii.  each field within the
+structure is contiguous; that is, there is no padding used within
+the structure.  each character on the archive medium is stored
+contiguously.</pre>
+    <pre>bytes representing the contents of files (after the header record of
+each file) are not translated in any way and are not constrained to
+represent characters in any character set.  the @code{tar} format
+does not distinguish text files from binary files, and no
+translation of file contents is performed.</pre>
+    <pre>the @code{name}, @code{linkname}, @code{magic}, @code{uname}, and
+@code{gname} are null-terminated character strings.  all other
+fileds are zero-filled octal numbers in ascii.  each numeric field
+of width @var{w} contains @var{w}@minus{} 2 digits, a space, and a null,
+except @code{size}, and @code{mtime}, which do not contain the
+trailing null.</pre>
+    <pre>the @code{name} field is the pathname of the file, with directory
+names (if any) preceding the file name, separated by slashes.</pre>
+    <pre>the @code{mode} field provides nine bits specifying file permissions
+and three bits to specify the set uid, set gid, and save text
+(``stick'') modes.  values for these bits are defined above.  when
+special permissions are required to create a file with a given mode,
+and the user restoring files from the archive does not hold such
+permissions, the mode bit(s) specifying those special permissions
+are ignored.  modes which are not supported by the operating system
+restoring files from the archive will be ignored.  unsupported modes
+should be faked up when creating or updating an archive; e.g. the
+group permission could be copied from the @code{other} permission.</pre>
+    <pre>the @code{uid} and @code{gid} fields are the numeric user and group
+id of the file owners, respectively.  if the operating system does
+not support numeric user or group ids, these fields should be
+ignored.</pre>
+    <pre>the @code{size} field is the size of the file in bytes; linked files
+are archived with this field specified as zero.
+@xref{extraction options}; in particular the @samp{-g} option.@refill</pre>
+    <pre>the @code{mtime} field is the modification time of the file at the
+time it was archived.  it is the ascii representation of the octal
+value of the last time the file was modified, represented as an
+integer number of seconds since january 1, 1970, 00:00 coordinated
+universal time.</pre>
+    <pre>the @code{chksum} field is the ascii representation of the octal
+value of the simple sum of all bytes in the header record.  each
+8-bit byte in the header is added to an unsigned integer,
+initialized to zero, the precision of which shall be no less than
+seventeen bits.  when calculating the checksum, the @code{chksum}
+field is treated as if it were all blanks.</pre>
+    <pre>the @code{typeflag} field specifies the type of file archived.  if a
+particular implementation does not recognize or permit the specified
+type, the file will be extracted as if it were a regular file.  as
+this action occurs, @code{tar} issues a warning to the standard
+error.</pre>
+    <pre>@table @code
+@item lf_normal
+@itemx lf_oldnormal
+these represent a regular file.  in order to be compatible with
+older versions of @code{tar}, a @code{typeflag} value of
+@code{lf_oldnormal} should be silently recognized as a regular
+file.  new archives should be created using @code{lf_normal}.  also,
+for backward compatibility, @code{tar} treats a regular file whose
+name ends with a slash as a directory.</pre>
+    <pre>@item lf_link
+this represents a file linked to another file, of any type,
+previously archived.  such files are identified in unix by each file
+having the same device and inode number.  the linked-to
+name is specified in the @code{linkname} field with a trailing null.</pre>
+    <pre>@item lf_symlink
+this represents a symbolic link to another file.  the linked-to
+name is specified in the @code{linkname} field with a trailing null.</pre>
+    <pre>@item lf_chr
+@itemx lf_blk
+these represent character special files and block special files
+respectively.  in this case the @code{devmajor} and @code{devminor}
+fields will contain the major and minor device numbers
+respectively.  operating systems may map the device specifications
+to their own local specification, or may ignore the entry.</pre>
+    <pre>@item lf_dir
+this specifies a directory or sub-directory.  the directory name in
+the @code{name} field should end with a slash.  on systems where
+disk allocation is performed on a directory basis the @code{size}
+field will contain the maximum number of bytes (which may be rounded
+to the nearest disk block allocation unit) which the directory may
+hold.  a @code{size} field of zero indicates no such limiting.
+systems which do not support limiting in this manner should ignore
+the @code{size} field.</pre>
+    <pre>@item lf_fifo
+this specifies a fifo special file.  note that the archiving of a
+fifo file archives the existence of this file and not its contents.</pre>
+    <pre>@item lf_contig
+this specifies a contiguous file, which is the same as a normal
+file except that, in operating systems which support it,
+all its space is allocated contiguously on the disk.  operating
+systems which do not allow contiguous allocation should silently treat
+this type as a normal file.</pre>
+    <pre>@item 'a' @dots{}
+@itemx 'z'
+these are reserved for custom implementations.  some of these are
+used in the gnu modified format, as described below.
+@end table</pre>
+    <pre>other values are reserved for specification in future revisions of
+the p1003 standard, and should not be used by any @code{tar} program.</pre>
+    <pre>the @code{magic} field indicates that this archive was output in the
+p1003 archive format.  if this field contains @code{tmagic}, the
+@code{uname} and @code{gname} fields will contain the ascii
+representation of the owner and group of the file respectively.  if
+found, the user and group id represented by these names will be used
+rather than the values within the @code{uid} and @code{gid} fields.</pre>
+    <pre>@section gnu extensions to the archive format
+the gnu format uses additional file types to describe new types of
+files in an archive.  these are listed below.</pre>
+    <pre>@table @code
+@item lf_dumpdir
+@itemx 'd'
+this represents a directory and a list of files created by the
+@samp{-g} option.  the @code{size} field gives the total size of the
+associated list of files.  each filename is preceded by either a @code{'y'}
+(the file should be in this archive) or an @code{'n'} (the file is a
+directory, or is not stored in the archive).  each filename is
+terminated by a null.  there is an additional null after the last
+filename.</pre>
+    <pre>@item lf_multivol
+@itemx 'm'
+this represents a file continued from another volume of a
+multi-volume archive created with the @samp{-m} option.  the original
+type of the file is not given here.  the @code{size} field gives the
+maximum size of this piece of the file (assuming the volume does not
+end before the file is written out).  the @code{offset} field gives
+the offset from the beginning of the file where this part of the
+file begins.  thus @code{size} plus @code{offset} should equal the
+original size of the file.</pre>
+    <pre>@item lf_volhdr
+@itemx 'v'
+this file type is used to mark the volume header that was given with
+the @samp{-v} option when the archive was created.  the @code{name}
+field contains the @code{name} given after the @samp{-v} option.
+the @code{size} field is zero.  only the first file in each volume
+of an archive should have this type.</pre>
+    <pre>@end table
+extension:
+occurences:
+programs:
+reference:
+see also:
+validation:
+offset              count type   description
+0000h                 256 byte   other header info ?
+0100h                   6 char   id='ustar',0
+extension:tar
+occurences:pc, unix
+programs:tar</pre>
+    </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

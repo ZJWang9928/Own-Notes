@@ -1,0 +1,595 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb_2312-80">
+<meta name="generator" content="microsoft frontpage 3.0">
+<title>bmp format</title>
+<meta name="subject" content="windows bitmap file format specifications">
+<meta name="major version" content="1">
+<meta name="minor version" content="0">
+<meta name="template" content="c:\msoffice\templates\c3word60.dot">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font face="book antiqua" size="6" color="#0000ff">bmp format</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%"><b><p align="justify"><font face="book antiqua" size="6">table of 
+    contents</font></p>
+    <font face="book antiqua" size="4"><p><a href="#_toc381201081">introduction</a> <br>
+    <a href="#_toc381201082">bitmap file format</a><br>
+    </font><font face="book antiqua" size="3"> 
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#_toc381201083">general</a> <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#_toc381201084">bmp contents</a> <br>
+    </font><font face="book antiqua" size="4"><a href="#_toc381201085">field details </a><br>
+    </font><font face="book antiqua" size="3"> 
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#_toc381201086">height field </a><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#_toc381201087">bits per pixel field</a> <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#_toc381201088">compression field</a> <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#_toc381201089">colors field</a> <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#_toc381201090">important colors field</a> </font><u><font face="book antiqua"
+    size="4"></p>
+    </font></u><font face="book antiqua" size="6"><a name="_toc381201081"><p>introduction</a></p>
+    </font></b><font face="book antiqua" size="3"><p align="justify">this document describes 
+    the microsoft windows and ibm os/2 picture bitmap files, called bitmaps or bmp files. most 
+    of the descriptions of the bmp file concentrate on the microsoft windows bmp structures 
+    like </font><font face="courier new" size="3">bmpinfoheader</font><font
+    face="book antiqua" size="3"> and </font><font face="courier new" size="3">bmpcoreinfo</font><font
+    face="book antiqua" size="3"> , but only a few describe the file contents on byte level. 
+    this information is therefor only intended to be used in applications where direct reading 
+    and writing of a bmp file is required.</p>
+    </font><b><font face="宋体" lang="zh-cn" size="6"><p align="justify"></font><font
+    face="book antiqua" size="6"><a name="_toc381201082">bitmap file format</a></p>
+    </font></b><font face="book antiqua" size="3"><p align="justify">the following chapters 
+    contain the detailed information on the contents of the bmp file. first more general 
+    information will be given regarding the byte order and file alignment. the second chapter 
+    will concentrate on the byte-level contents of a bmp file. the third chapter will 
+    elaborate on this chapter and explain some of the concepts - like compression - and/or 
+    values in detail.</p>
+    </font><b><font face="宋体" lang="zh-cn" size="5"><p></font><font face="book antiqua"
+    size="5"><a name="_toc381201083">general</a></p>
+    </font></b><font face="book antiqua" size="3"><p align="justify">the bmp file has been 
+    created by microsoft and ibm and is therefor very strictly bound to the architecture of 
+    the main hardware platform that both companies support: the ibm compatible pc. this means 
+    that all values stored in the bmp file are in the intel format, sometimes also called the 
+    little endian format because of the byte order that an intel processor uses internally to 
+    store values.</p>
+    <p align="justify">the bmp files are the way, windows stores bit mapped images. the bmp 
+    image data is bit packed but every line must end on a dword boundary - if that</font><font
+    face="宋体" lang="zh-cn" size="3">抯</font><font size="3"> </font><font
+    face="book antiqua" size="3">not the case, it must be padded with zeroes. bmp files are 
+    stored bottom-up, that means that the first scan line is the bottom line. </p>
+    <p align="justify">the bmp format has four incarnations, two under windows (new and old) 
+    and two under os/2, all are described here.</p>
+    </font><b><font face="宋体" lang="zh-cn" size="5"><p></font><font face="book antiqua"
+    size="5"><a name="_toc381201084">bmp contents</a></p>
+    </font></b><font face="book antiqua" size="3"><p align="justify">the following table 
+    contains a description of the contents of the bmp file. for every field, the file offset, 
+    the length and the contents will be given. for a more detailed discussion, see the 
+    following chapters.</p>
+    </font><table border="1" cellspacing="2" bordercolor="#000000" cellpadding="7" width="657">
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3" color="#808080"><b><p
+        align="justify">offset</b></font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3" color="#808080"><b><p
+        align="justify">field</b></font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3" color="#808080"><b><p
+        align="justify">size</b></font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3" color="#808080"><b><p
+        align="justify">contents</b></font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">0000h</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">identifier</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">2 bytes</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">the 
+        characters identifying the bitmap. the following entries are possible:</p>
+        </font><font face="宋体" lang="zh-cn" size="3"><p align="justify">態</font><font
+        face="book antiqua" size="3">m</font><font size="3">’ </font><font face="book antiqua"
+        size="3">- windows 3.1x, 95, nt, </font><font size="3">…</font><font face="book antiqua"
+        size="3"></p>
+        </font><font face="宋体" lang="zh-cn" size="3"><p align="justify">態</font><font
+        face="book antiqua" size="3">a</font><font size="3">’ </font><font face="book antiqua"
+        size="3">- os/2 bitmap array</p>
+        </font><font face="宋体" lang="zh-cn" size="3"><p align="justify">慍</font><font
+        face="book antiqua" size="3">i</font><font size="3">’ </font><font face="book antiqua"
+        size="3">- os/2 color icon</p>
+        </font><font face="宋体" lang="zh-cn" size="3"><p align="justify">慍</font><font
+        face="book antiqua" size="3">p</font><font size="3">’ </font><font face="book antiqua"
+        size="3">- os/2 color pointer</p>
+        </font><font face="宋体" lang="zh-cn" size="3"><p align="justify">慖</font><font
+        face="book antiqua" size="3">c</font><font size="3">’ </font><font face="book antiqua"
+        size="3">- os/2 icon</p>
+        </font><font face="宋体" lang="zh-cn" size="3"><p align="justify">慞</font><font
+        face="book antiqua" size="3">t</font><font size="3">’ </font><font face="book antiqua"
+        size="3">- os/2 pointer</font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">0002h</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">file 
+        size</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">1 dword</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">complete 
+        file size in bytes.</font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">0006h</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">reserved</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">1 dword</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">reserved 
+        for later use.</font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">000ah</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">bitmap 
+        data offset</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">1 dword</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">offset 
+        from beginning of file to the beginning of the bitmap data.</font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">000eh</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">bitmap 
+        header size</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">1 dword</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">length 
+        of the bitmap info header used to describe the bitmap colors, compression, </font><font
+        size="3">… </font><font face="book antiqua" size="3">the following sizes are possible:</p>
+        <p align="justify">28h - windows 3.1x, 95, nt, </font><font size="3">…</font><font
+        face="book antiqua" size="3"></p>
+        <p align="justify">0ch - os/2 1.x</p>
+        <p align="justify">f0h - os/2 2.x</font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">0012h</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">width</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">1 dword</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">horizontal 
+        width of bitmap in pixels.</font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">0016h</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">height</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">1 dword</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">vertical 
+        height of bitmap in pixels.</font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">001ah</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">planes</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">1 word</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">number 
+        of planes in this bitmap.</font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">001ch</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">bits 
+        per pixel</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">1 word</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">bits 
+        per pixel used to store palette entry information. this also identifies in an indirect way 
+        the number of possible colors. possible values are:</p>
+        <p align="justify">1 - monochrome bitmap</p>
+        <p align="justify">4 - 16 color bitmap</p>
+        <p align="justify">8 - 256 color bitmap</p>
+        <p align="justify">16 - 16bit (high color) bitmap</p>
+        <p align="justify">24 - 24bit (true color) bitmap</p>
+        <p align="justify">32 - 32bit (true color) bitmap</font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">001eh</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">compression</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">1 dword</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">compression 
+        specifications. the following values are possible:</p>
+        <p align="justify">0 - none (also identified by bi_rgb)</p>
+        <p align="justify">1 - rle 8-bit / pixel (also identified by bi_rle4)</p>
+        <p align="justify">2 - rle 4-bit / pixel (also identified by bi_rle8)</p>
+        <p align="justify">3 - bitfields (also identified by bi_bitfields)</font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">0022h</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">bitmap 
+        data size</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">1 dword</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">size of 
+        the bitmap data in bytes. this number must be rounded to the next 4 byte boundary.</font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">0026h</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">hresolution</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">1 dword</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">horizontal 
+        resolution expressed in pixel per meter.</font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">002ah</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">vresolution</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">1 dword</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">vertical 
+        resolution expressed in pixels per meter.</font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">002eh</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">colors</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">1 dword</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">number 
+        of colors used by this bitmap. for a 8-bit / pixel bitmap this will be 100h or 256.</font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">0032h</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">important 
+        colors</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">1 dword</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">number 
+        of important colors. this number will be equal to the number of colors when every color is 
+        important.</font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">0036h</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">palette</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">n * 4 
+        byte</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">the 
+        palette specification. for every entry in the palette four bytes are used to describe the 
+        rgb values of the color in the following way:</p>
+        <p align="justify">1 byte for blue component</p>
+        <p align="justify">1 byte for green component</p>
+        <p align="justify">1 byte for red component</p>
+        <p align="justify">1 byte filler which is set to 0 (zero)</font></td>
+      </tr>
+      <tr>
+        <td width="10%" valign="top"><font face="book antiqua" size="3"><p align="justify">0436h</font></td>
+        <td width="16%" valign="top"><font face="book antiqua" size="3"><p align="justify">bitmap 
+        data</font></td>
+        <td width="14%" valign="top"><font face="book antiqua" size="3"><p align="justify">x bytes</font></td>
+        <td width="61%" valign="top"><font face="book antiqua" size="3"><p align="justify">depending 
+        on the compression specifications, this field contains all the bitmap data bytes which 
+        represent indices in the color palette.</font></td>
+      </tr>
+    </table>
+    <font face="宋体" lang="zh-cn" size="3"><p align="justify">　</p>
+    </font><font face="book antiqua" size="3"><i><b><p align="justify">note:</b> the following 
+    sizes were used in the specification above: </p>
+    </i></font><table border="1" cellspacing="2" bordercolor="#000000" cellpadding="7"
+    width="226">
+      <tr>
+        <td width="30%" valign="top"><font face="book antiqua" size="3" color="#808080"><b><p
+        align="justify">size</b></font></td>
+        <td width="32%" valign="top"><font face="book antiqua" size="3" color="#808080"><b><p
+        align="justify"># bytes</b></font></td>
+        <td width="37%" valign="top"><font face="book antiqua" size="3" color="#808080"><b><p
+        align="justify">sign</b></font></td>
+      </tr>
+      <tr>
+        <td width="30%" valign="top"><font face="book antiqua" size="3"><p align="justify">char</font></td>
+        <td width="32%" valign="top"><font face="book antiqua" size="3"><p align="justify">1</font></td>
+        <td width="37%" valign="top"><font face="book antiqua" size="3"><p align="justify">signed</font></td>
+      </tr>
+      <tr>
+        <td width="30%" valign="top"><font face="book antiqua" size="3"><p align="justify">word</font></td>
+        <td width="32%" valign="top"><font face="book antiqua" size="3"><p align="justify">2</font></td>
+        <td width="37%" valign="top"><font face="book antiqua" size="3"><p align="justify">unsigned</font></td>
+      </tr>
+      <tr>
+        <td width="30%" valign="top"><font face="book antiqua" size="3"><p align="justify">dword</font></td>
+        <td width="32%" valign="top"><font face="book antiqua" size="3"><p align="justify">4</font></td>
+        <td width="37%" valign="top"><font face="book antiqua" size="3"><p align="justify">unsigned</font></td>
+      </tr>
+    </table>
+    <b><font face="宋体" lang="zh-cn" size="6"><p align="justify"></font><font
+    face="book antiqua" size="6"><a name="_toc381201085">field details</a></p>
+    </font></b><font face="book antiqua" size="3"><p align="justify">some of the fields 
+    require some more information. the following chapters will try to provide this 
+    information:</p>
+    </font><b><font face="宋体" lang="zh-cn" size="5"><p></font><font face="book antiqua"
+    size="5"><a name="_toc381201086">height field</a></p>
+    </font></b><font face="book antiqua" size="3"><p align="justify">the <i>height</i> field 
+    identifies the height of the bitmap in pixels. in other words, it describes the number of 
+    scan lines of the bitmap. if this field is negative, indicating a top-down dib, the <i>compression</i> 
+    field must be either bi_rgb or bi_bitfields. top-down dibs cannot be compressed.</p>
+    </font><b><font face="宋体" lang="zh-cn" size="5"><p></font><font face="book antiqua"
+    size="5"><a name="_toc381201087">bits per pixel field</a></p>
+    </font></b><font face="book antiqua" size="3"><p align="justify">the <i>bits per pixel</i> 
+    (bbp) field of the bitmap file determines the number of bits that define each pixel and 
+    the maximum number of colors in the bitmap.</p>
+    </font><font face="宋体" lang="zh-cn" size="3"><ul>
+      </font><font face="book antiqua" size="3"><b>
+      <li>when this field is equal to 1.</b></font></li>
+    </ul>
+    <font face="宋体" lang="zh-cn" size="3"><dir>
+      <dir>
+        </font><font face="book antiqua" size="3"><p align="justify">the bitmap is monochrome, and 
+        the palette contains two entries. each bit in the bitmap array represents a pixel. if the 
+        bit is clear, the pixel is displayed with the color of the first entry in the palette; if 
+        the bit is set, the pixel has the color of the second entry in the table.</p>
+        </font><font face="宋体" lang="zh-cn" size="3"><p align="justify">　</p>
+      </dir>
+    </dir>
+    <ul>
+      </font><font face="book antiqua" size="3"><b>
+      <li>when this field is equal to 4.</b></font></li>
+    </ul>
+    <font face="宋体" lang="zh-cn" size="3"><dir>
+      <dir>
+        </font><font face="book antiqua" size="3"><p align="justify">the bitmap has a maximum of 
+        16 colors, and the palette contains up to 16 entries. each pixel in the bitmap is 
+        represented by a 4-bit index into the palette. for example, if the first byte in the 
+        bitmap is 1fh, the byte represents two pixels. the first pixel contains the color in the 
+        second palette entry, and the second pixel contains the color in the sixteenth palette 
+        entry.</p>
+        </font><font face="宋体" lang="zh-cn" size="3"><p align="justify">　</p>
+      </dir>
+    </dir>
+    <ul>
+      </font><font face="book antiqua" size="3"><b>
+      <li>when this field is equal to 8.</b></font></li>
+    </ul>
+    <font face="宋体" lang="zh-cn" size="3"><dir>
+      <dir>
+        </font><font face="book antiqua" size="3"><p align="justify">the bitmap has a maximum of 
+        256 colors, and the palette contains up to 256 entries. in this case, each byte in the 
+        array represents a single pixel.</p>
+        <p align="justify"></font><font size="3">　</font><font face="book antiqua" size="3"></p>
+      </dir>
+    </dir>
+    <ul>
+      <b>
+      <li>when this field is equal to 16.</b></font></li>
+    </ul>
+    <font face="宋体" lang="zh-cn" size="3"><dir>
+      <dir>
+        </font><font face="book antiqua" size="3"><p align="justify">the bitmap has a maximum of 
+        2^16 colors. if the <i>compression</i> field of the bitmap file is set to bi_rgb, the <i>palette</i> 
+        field does not contain any entries. each word in the bitmap array represents a single 
+        pixel. the relative intensities of red, green, and blue are represented with 5 bits for 
+        each color component. the value for blue is in the least significant 5 bits, followed by 5 
+        bits each for green and red, respectively. the most significant bit is not used.</p>
+        <p align="justify">if the <i>compression</i> field of the bitmap file is set to 
+        bi_bitfields, the <i>palette</i> field contains three dword color masks that specify the 
+        red, green, and blue components, respectively, of each pixel. each word in the bitmap 
+        array represents a single pixel.</p>
+        <b><p align="justify">windows nt specific:</b> when the <i>compression</i> field is set to 
+        bi_bitfields, bits set in each dword mask must be contiguous and should not overlap the 
+        bits of another mask. all the bits in the pixel do not have to be used. </p>
+        <b><p align="justify">windows 95 specific:</b> when the <i>compression</i> field is set to 
+        bi_bitfields, windows 95 supports only the following 16bpp color masks: a 5-5-5 16-bit 
+        image, where the blue mask is 0x001f, the green mask is 0x03e0, and the red mask is 
+        0x7c00; and a 5-6-5 16-bit image, where the blue mask is 0x001f, the green mask is 0x07e0, 
+        and the red mask is 0xf800.</p>
+        <p align="justify"></font><font size="3">　</font><font face="book antiqua" size="3"></p>
+      </dir>
+    </dir>
+    <ul>
+      <b>
+      <li>when this field is equal to 24.</b></font></li>
+    </ul>
+    <font face="宋体" lang="zh-cn" size="3"><dir>
+      <dir>
+        </font><font face="book antiqua" size="3"><p align="justify">the bitmap has a maximum of 
+        2^24 colors, and the <i>palette</i> field does not contain any entries. each 3-byte 
+        triplet in the bitmap array represents the relative intensities of blue, green, and red, 
+        respectively, for a pixel.</p>
+        </font><font face="宋体" lang="zh-cn" size="3"><p align="justify">　</p>
+      </dir>
+    </dir>
+    <ul>
+      </font><font face="book antiqua" size="3"><b>
+      <li>when this field is equal to 32.</b></font></li>
+    </ul>
+    <font face="宋体" lang="zh-cn" size="3"><dir>
+      <dir>
+        </font><font face="book antiqua" size="3"><p align="justify">the bitmap has a maximum of 
+        2^32 colors. if the <i>compression</i> field of the bitmap is set to bi_rgb, the <i>palette</i> 
+        field does not contain any entries. each dword in the bitmap array represents the relative 
+        intensities of blue, green, and red, respectively, for a pixel. the high byte in each 
+        dword is not used.</p>
+        <p align="justify">if the <i>compression</i> field of the bitmap is set to bi_bitfields, 
+        the palette field contains three dword color masks that specify the red, green, and blue 
+        components, respectively, of each pixel. each dword in the bitmap array represents a 
+        single pixel.</p>
+        <b><p align="justify">windows nt specific:</b> when the <i>compression</i> field is set to 
+        bi_bitfields, bits set in each dword mask must be contiguous and should not overlap the 
+        bits of another mask. all the bits in the pixel do not have to be used. </p>
+        <b><p align="justify">windows 95 specific:</b> when the <i>compression</i> field is set to 
+        bi_bitfields, windows 95 supports only the following 32bpp color mask: the blue mask is 
+        0x000000ff, the green mask is 0x0000ff00, and the red mask is 0x00ff0000.</font></p>
+      </dir>
+    </dir>
+    <b><font face="宋体" lang="zh-cn" size="5"><p></font><font face="book antiqua" size="5"><a
+    name="_toc381201088">compression field</a></p>
+    </font></b><font face="book antiqua" size="3"><p align="justify">the <i>compression</i> 
+    field specifies the way the bitmap data is stored in the file. this information together 
+    with the <i>bits per pixel</i> (<i>bpp</i>) field identifies the compression algorithm to 
+    follow.</p>
+    <p align="justify">the following values are possible in this field:</p>
+    </font><table border="1" cellspacing="2" bordercolor="#000000" cellpadding="7" width="657">
+      <tr>
+        <td width="18%" valign="top"><font face="book antiqua" size="3" color="#808080"><b><p
+        align="justify">value</b></font></td>
+        <td width="82%" valign="top"><font face="book antiqua" size="3" color="#808080"><b><p
+        align="justify">meaning</b></font></td>
+      </tr>
+      <tr>
+        <td width="18%" valign="top"><font face="book antiqua" size="3"><p align="justify">bi_rgb</font></td>
+        <td width="82%" valign="top"><font face="book antiqua" size="3"><p align="justify">an 
+        uncompressed format.</font></td>
+      </tr>
+      <tr>
+        <td width="18%" valign="top"><font face="book antiqua" size="3"><p align="justify">bi_rle4</font></td>
+        <td width="82%" valign="top"><font face="book antiqua" size="3"><p align="justify">an rle 
+        format for bitmaps with 4 bits per pixel. the compression format is a two-byte format 
+        consisting of a count byte followed by two word-length color indices. for more 
+        information, see the following remarks section.</font></td>
+      </tr>
+      <tr>
+        <td width="18%" valign="top"><font face="book antiqua" size="3"><p align="justify">bi_rle8</font></td>
+        <td width="82%" valign="top"><font face="book antiqua" size="3"><p align="justify">a 
+        run-length encoded (rle) format for bitmaps with 8 bits per pixel. the compression format 
+        is a two-byte format consisting of a count byte followed by a byte containing a color 
+        index. for more information, see the following remarks section.</font></td>
+      </tr>
+      <tr>
+        <td width="18%" valign="top"><font face="book antiqua" size="3"><p align="justify">bi_bitfields</font></td>
+        <td width="82%" valign="top"><font face="book antiqua" size="3"><p align="justify">specifies 
+        that the bitmap is not compressed and that the color table consists of three double word 
+        color masks that specify the red, green, and blue components, respectively, of each pixel. 
+        this is valid when used with 16- and 32- bits-per-pixel bitmaps.</font></td>
+      </tr>
+    </table>
+    <font face="book antiqua" size="3"><p align="justify">when the compression field is 
+    bi_rle8, the bitmap is compressed by using a run-length encoding (rle) format for an 8-bit 
+    bitmap. this format can be compressed in encoded or absolute modes. both modes can occur 
+    anywhere in the same bitmap.</p>
+    <ul>
+      <b>
+      <li>encoded mode consists of two bytes: </b></font></li>
+    </ul>
+    <font face="宋体" lang="zh-cn" size="3"><dir>
+      <dir>
+        </font><font face="book antiqua" size="3"><p align="justify">the first byte specifies the 
+        number of consecutive pixels to be drawn using the color index contained in the second 
+        byte. in addition, the first byte of the pair can be set to zero to indicate an escape 
+        that denotes an end of line, end of bitmap, or delta. the interpretation of the escape 
+        depends on the value of the second byte of the pair, which can be one of the following:</font></p>
+      </dir>
+    </dir>
+    <table cellspacing="0" border="0" cellpadding="7" width="602">
+      <tr>
+        <td width="9%" valign="top"><font face="book antiqua" size="3"><p align="justify">0</font></td>
+        <td width="91%" valign="top"><font face="book antiqua" size="3"><p align="justify">end of 
+        line.</font></td>
+      </tr>
+      <tr>
+        <td width="9%" valign="top"><font face="book antiqua" size="3"><p align="justify">1</font></td>
+        <td width="91%" valign="top"><font face="book antiqua" size="3"><p align="justify">end of 
+        bitmap.</font></td>
+      </tr>
+      <tr>
+        <td width="9%" valign="top"><font face="book antiqua" size="3"><p align="justify">2</font></td>
+        <td width="91%" valign="top"><font face="book antiqua" size="3"><p align="justify">delta. 
+        the two bytes following the escape contain unsigned values indicating the horizontal and 
+        vertical offsets of the next pixel from the current position.</font></td>
+      </tr>
+    </table>
+    <font face="宋体" lang="zh-cn" size="3"><ul>
+      </font><font face="book antiqua" size="3"><b>
+      <li>absolute mode.</b></font></li>
+    </ul>
+    <font face="宋体" lang="zh-cn" size="3"><dir>
+      <dir>
+        </font><font face="book antiqua" size="3"><p align="justify">the first byte is zero and 
+        the second byte is a value in the range 03h through ffh. the second byte represents the 
+        number of bytes that follow, each of which contains the color index of a single pixel. 
+        when the second byte is 2 or less, the escape has the same meaning as in encoded mode. in 
+        absolute mode, each run must be aligned on a word boundary.</p>
+        </font><font face="宋体" lang="zh-cn" size="3"><p align="justify">　</p>
+        <p align="justify"></font>　</p>
+      </dir>
+    </dir>
+    <font face="book antiqua" size="3"><p align="justify">the following example shows the 
+    hexadecimal values of an 8-bit compressed bitmap.</p>
+    </font><font face="courier new" size="3"><p align="justify">03 04 05 06 00 03 45 56 67 00 
+    02 78 00 02 05 01 02 78 00 00 09 1e 00 01</p>
+    </font><font face="book antiqua" size="3"><p align="justify">this bitmap would expand as 
+    follows (two-digit values represent a color index for a single pixel):</p>
+    </font><font face="courier new" size="3"><p align="justify">04 04 04</p>
+    <p align="justify">06 06 06 06 06</p>
+    <p align="justify">45 56 67</p>
+    <p align="justify">78 78</p>
+    <p align="justify">move current position 5 right and 1 down</p>
+    <p align="justify">78 78</p>
+    <p align="justify">end of line</p>
+    <p align="justify">1e 1e 1e 1e 1e 1e 1e 1e 1e</p>
+    <p align="justify">end of rle bitmap</p>
+    </font><font face="宋体" lang="zh-cn" size="3"><p align="justify">　</p>
+    </font><font face="book antiqua" size="3"><p align="justify">when the compression field is 
+    bi_rle4, the bitmap is compressed by using a run-length encoding format for a 4-bit 
+    bitmap, which also uses encoded and absolute modes:</p>
+    <ul>
+      <b>
+      <li>in encoded mode.</b></font></li>
+    </ul>
+    <font face="宋体" lang="zh-cn" size="3"><dir>
+      <dir>
+        </font><font face="book antiqua" size="3"><p align="justify">the first byte of the pair 
+        contains the number of pixels to be drawn using the color indices in the second byte. the 
+        second byte contains two color indices, one in its high-order four bits and one in its 
+        low-order four bits. the first of the pixels is drawn using the color specified by the 
+        high-order four bits, the second is drawn using the color in the low-order four bits, the 
+        third is drawn using the color in the high-order four bits, and so on, until all the 
+        pixels specified by the first byte have been drawn.</p>
+        </font><font face="宋体" lang="zh-cn" size="3">
+      </dir>
+    </dir>
+    <ul>
+      </font><font face="book antiqua" size="3"><b>
+      <li>in absolute mode. </b></font></li>
+    </ul>
+    <font face="宋体" lang="zh-cn" size="3"><dir>
+      <dir>
+        </font><font face="book antiqua" size="3"><p align="justify">the first byte is zero, the 
+        second byte contains the number of color indices that follow, and subsequent bytes contain 
+        color indices in their high- and low-order four bits, one color index for each pixel. in 
+        absolute mode, each run must be aligned on a word boundary. </p>
+        <p align="justify">the end-of-line, end-of-bitmap, and delta escapes described for bi_rle8 
+        also apply to bi_rle4 compression.</p>
+        </font><font face="宋体" lang="zh-cn" size="3"><p align="justify"></font>　</p>
+      </dir>
+    </dir>
+    <font face="book antiqua" size="3"><p align="justify">the following example shows the 
+    hexadecimal values of a 4-bit compressed bitmap.</p>
+    </font><font face="courier new" size="3"><p align="justify">03 04 05 06 00 06 45 56 67 00 
+    04 78 00 02 05 01 04 78 00 00 09 1e 00 01</p>
+    </font><font face="book antiqua" size="3"><p align="justify">this bitmap would expand as 
+    follows (single-digit values represent a color index for a single pixel):</p>
+    </font><font face="courier new" size="3"><p align="justify">0 4 0</p>
+    <p align="justify">0 6 0 6 0</p>
+    <p align="justify">4 5 5 6 6 7</p>
+    <p align="justify">7 8 7 8</p>
+    <p align="justify">move current position 5 right and 1 down</p>
+    <p align="justify">7 8 7 8</p>
+    <p align="justify">end of line</p>
+    <p align="justify">1 e 1 e 1 e 1 e 1</p>
+    <p align="justify">end of rle bitmap</p>
+    </font><b><font face="宋体" lang="zh-cn" size="5"><p></font><font face="book antiqua"
+    size="5"><a name="_toc381201089">colors field</a></p>
+    </font></b><font face="book antiqua" size="3"><p align="justify">the <i>colors</i> field 
+    specifies the number of color indices in the color table that are actually used by the 
+    bitmap. if this value is zero, the bitmap uses the maximum number of colors corresponding 
+    to the value of the <i>bbp</i> field for the compression mode specified by the <i>compression</i> 
+    field. </p>
+    <p align="justify">if the <i>colors</i> field is nonzero and the <i>bbp</i> field less 
+    than 16, the <i>colors</i> field specifies the actual number of colors the graphics engine 
+    or device driver accesses. </p>
+    <p align="justify">if the <i>bbp</i> field is 16 or greater, then <i>colors</i> field 
+    specifies the size of the color table used to optimize performance of windows color 
+    palettes. </p>
+    <p align="justify">if <i>bbp</i> equals 16 or 32, the optimal color palette starts 
+    immediately following the three double word masks.</p>
+    <p align="justify">if the bitmap is a packed bitmap (a bitmap in which the bitmap array 
+    immediately follows the bitmap header and which is referenced by a single pointer), the <i>colors</i> 
+    field must be either 0 or the actual size of the color table. </p>
+    </font><b><font face="宋体" lang="zh-cn" size="5"><p></font><font face="book antiqua"
+    size="5"><a name="_toc381201090">important colors field</a></p>
+    </font></b><font face="arial" size="3"><p align="justify">the <i>important colors</i> 
+    field s</font><font face="book antiqua" size="3">pecifies the number of color indices that 
+    are considered important for displaying the bitmap. if this value is zero, all colors are 
+    important. </font></td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

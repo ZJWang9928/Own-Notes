@@ -1,0 +1,530 @@
+<html>
+
+<head>
+<title>file:///e:/kaifa/format/windows/winreg.txt</title>
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">windows registry files</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%">¡¡<pre>agreement:
+==========</pre>
+    <pre>the author of this document will not be responsible for any damage and/or
+license violation that may occur. the information within this document is
+provided &quot;as is&quot; without warranty of any kind...
+this information was &quot;collected&quot; during sleepless nights, and is not
+officially released by microsoft! it shall give you a peek at the windows(tm)
+internals to give you a chance to recover from corrupted data.</pre>
+    <pre>the author has nothing to do with microsoft, except that he uses their
+products...</pre>
+    <pre>if you don't agree with this, stop reading this document, and delete it at
+once!
+</pre>
+    <pre>history:
+========</pre>
+    <pre>what is the registry? where did it came from? two questions, which i will try to
+answer here. the registry is a database (at least microsoft thinks so:)
+which contains configuration information about the system.
+it mainly is a memory dump which is saved to one or more files on the windows
+host drive. it is loaded every system-boot and remains resident until
+shutdown. since parts of it are not used during normal operation it will be 
+swapped out very soon. the registry appeared with windows 3.?? (sorry, i can't 
+remember any earlier version :-), where it was used for file associations and 
+the &quot;ole&quot; functions (the conection between ole-id's and the applications).
+this is a critical information and since the registry has (almost) no
+checksum information (!), it sometimes gets corrupted. this is the main
+reason for this doc.</pre>
+    <pre>using windows 3.x, almost every configuration was done using good old &quot;.ini&quot;-
+files, which were readable but slow and limited in size (64k). in windows 95
+(and nt), the registry was used instead of these files. so, to edit a
+particular setting, you would have to run the application which manages these
+settings. :( but what if this app won't start? ms included a tool named
+regedit in windows 3.?? and 95, and a regedt32 in windows nt. you can use
+these apps to edit all contents of the registry (in windows nt the registry
+supports security, as well as it provides the security for the whole system!)</pre>
+    <pre>an application can open a &quot;key&quot;, write values (variables) to it and fill them
+with data. each key represents also a value called &quot;default&quot; and can contain
+any number of sub-keys. this will form a tree-structure as you can see at
+the left half of regedit. (note: regedit from windows 3.?? has to be started
+with /v or /y, i can't remember now)
+</pre>
+    <pre>where can i find the registry???
+================================</pre>
+    <pre>that differs for each windows-version:</pre>
+    <pre>version  file(s)                 contents
+3.1x     reg.dat                 complete windows 3.?? registry</pre>
+    <pre>95       system.dat              system-values (hkey_local_machine)
+         user.dat                user-values (hkey_users)</pre>
+    <pre>nt       system32\config\sam     sam-part of the registry (=nt security)
+         system32\config\software software-specific part
+                                  (hkey_local_machine\software)
+         system32\config\system  system-specific part
+                                 (hkey_local_machine\system)
+         profiles\%username%\ntuser.dat  user-specific part
+                                         (hkey_current_user\{s-1-xxx...})
+         profiles\%username%\ntuser.man  like ntuser.dat but a 
+                                         mandatory-profile</pre>
+    <pre>if you are using a roaming-profile with windows nt, ntuser.xxx can be on
+a network-share as well...
+
+</pre>
+    <pre>terms
+=====</pre>
+    <pre>the registry consists of the following elements:</pre>
+    <pre>        hive:   strating point of the structure. the name of an hive starts
+                with the &quot;hkey_&quot;-prefix. can be seen as a &quot;drive&quot; in a file
+                system.</pre>
+    <pre>hive name               beschreibung                   3.1     95      nt4
+hkey_classes_root       points to the &quot;class&quot; key in
+                        the &quot;hkey_local_machine&quot; hive,
+                        the only hive in windows 3.??   x       x       x</pre>
+    <pre>hkey_current_user       information and settings valid
+                        for the currently logged in
+                        user. (points to the correct            x       x
+                        key under &quot;hkey_users&quot;)</pre>
+    <pre>hkey_current_config     settings for the currently
+                        active hardware profile.
+                        points to &quot;hkey_local_machine\          x       x
+                        control\controlsetxxx</pre>
+    <pre>hkey_users              contains all currently active
+                        user settings. since nt is a
+                        single user system, there
+                        will be only one key (the s-id          x       x
+                        of the active user), and a
+                        &quot;.defualt&quot; key (the settings
+                        for the ctrl-alt-del environment)</pre>
+    <pre>hkey_localmachine       all local settings                      x       x</pre>
+    <pre>hkey_dyn_data           as the name says, here you'll find      x
+                        dynamic data (cpu-usage,...)
+</pre>
+    <pre>        key:    a key to the registry can be seen as a directory in a file
+                system.
+        value:  can be seen as the registrys &quot;file&quot;
+        data:   is the actual setting, can be seen as the contents of a
+                file
+</pre>
+    <pre>windows 3.x
+===========</pre>
+    <pre>this registry is the easiest one. it consists of 3 blocks, which are not
+&quot;signed&quot; at all:</pre>
+    <pre>block                   position        size
+header                  0               32 bytes
+navigation-info         0x00000020      ???
+data-block              ???             ???</pre>
+    <pre>the &quot;???&quot; marked values can be read from the header.</pre>
+    <pre>header
+======</pre>
+    <pre>offset  size    description
+0x0000  8 byte  ascii-text: &quot;shcc3.10&quot;
+0x0008  d-word  ?
+0x000c  d-word  ? (always equal the d-word at 0x0008)
+0x0010  d-word  number of entrys in the navigation-block
+0x0014  d-word  offset of the data-block
+0x0018  d-word  size of the data-block
+0x001c  word    ?
+0x001e  word    ?</pre>
+    <pre>values marked &quot;?&quot; are not important for a read-access, and therefore unknown
+to me...</pre>
+    <pre>navigation-block
+================</pre>
+    <pre>this is where chaos rules! it consists of two different, 8 byte long blocks:</pre>
+    <pre>        * navigation-info-record,
+        * text-info-record</pre>
+    <pre>the first record in the navigation block is a navigation info record.</pre>
+    <pre>navigation-info-record</pre>
+    <pre>offset  size    contents
+0x00    word    next key (same level)
+0x02    word    first sub-key (one level deeper)
+0x04    word    text-info-record key-namens
+0x06    word    text-info-record key-value (default)</pre>
+    <pre>the values are the locical number of the block inside the file:</pre>
+    <pre>	offset=blocksize*blocknumber+headersize</pre>
+    <pre>since 2 of this values are constant:</pre>
+    <pre>	offset=8*blocknumber+0x20
+</pre>
+    <pre>text-info-record
+================
+</pre>
+    <pre>offset  size    contents
+0x00    word    ?
+0x02    word    number of references to this text
+0x04    word    text-length
+0x06    word    offset of the text-string inside the data-block</pre>
+    <pre>to get the text-offset inside the file you have to add this offset to the
+data-offset inside the header.</pre>
+    <pre>data-block
+==========</pre>
+    <pre>the data-block only consists of a collection of text-strings. right in front
+of every text is a word which may or may not have a meaning. the offset in
+the text-info record points directly to the text, the text-size has to be
+defined in the text-info record too.
+</pre>
+    <pre>windows 95
+==========</pre>
+    <pre>the windows95-registry files:</pre>
+    <pre>inside the windows-directory (default: c:\windows) are 2 files which are
+loaded to form the registry:</pre>
+    <pre>        system.dat</pre>
+    <pre>and</pre>
+    <pre>        user.dat</pre>
+    <pre>this files are mapped to the following hives:</pre>
+    <pre>	hkey_local_machine in system.dat</pre>
+    <pre>and</pre>
+    <pre>	hkey_users in user.dat
+
+</pre>
+    <pre>the file structure:
+===================
+</pre>
+    <pre>both files have the same structure. each of them consists of 3 blocks where
+1 of these blocks can be repeated.
+every block has a 4 byte long signature to help identify its contents.</pre>
+    <pre>id      block-contents          max. size               
+creg    header                  32 bytes @ offset 0    
+rgkn    directory information
+        (tree-structure)        ??? @ offset 32
+rgdb    the real data
+        (values and data)       max. 65535 bytes an offset ??</pre>
+    <pre>these blocks are &quot;sticked together&quot; with no space between them, but always
+a multiple of 16 in size.</pre>
+    <pre>the creg-block
+==============</pre>
+    <pre>offset          size            inhalt
+0x00000000      d-word          ascii-&quot;creg&quot; = 0x47455243
+0x00000008      d-word          offset of 1st rgdb-block
+0x00000010      d-word          # of rgdb-blocks</pre>
+    <pre>all other values are not needed to read the registry...
+</pre>
+    <pre>the rgkn-block
+==============</pre>
+    <pre>i assume that rgkn stands for registry-key-navigation. this block contains
+the information needed to built the tree-structure of the registry. this
+block will be larger then 65536 bytes (0xffff)!</pre>
+    <pre>all offset-values are relative to the rgkn-block!</pre>
+    <pre>offset          size    contents
+0x00000000      d-word  ascii-&quot;rgkn&quot; = 0x4e4b4752
+0x00000004      d-word  size of the rgkn-block in bytes
+0x00000008      d-word  rel. offset of the root-record
+0x00000020      ????    tree-records (often the 1st record)</pre>
+    <pre>the tree-record
+===============</pre>
+    <pre>the tree-record is a &quot;complete&quot; registry-key. it contains the &quot;hash&quot;-info
+for the real data stored in this key.</pre>
+    <pre>offset  size    contents
+0x0000  d-word  always 0
+0x0004  d-word  hash of the key-name
+0x0008  d-word  always -1 (0xffffffff)
+0x000c  d-word  offset of the owner (parent)-records
+0x0010  d-word  offset of the 1st sub-sey record
+0x0014  d-word  offset of the next record in this level
+0x0018  d-word  id-number of the real key</pre>
+    <pre>the 1st entry in a &quot;usual&quot; registry file is a nul-entry with subkeys: the
+hive itself. it looks the same like other keys. even the id-number can
+be any value.</pre>
+    <pre>the &quot;hash&quot;-value is a value representing the key's name. windows will not
+search for the name, but for a matching hash-value. if it finds one, it
+will compare the actual string info, otherwise continue with the next key.</pre>
+    <pre>end of list-pointers are filled with -1 (0xffffffff)
+</pre>
+    <pre>the id-field has the following format:</pre>
+    <pre>        bits 31..16:    number of the corresponding rgdb-blocks
+        bits 15..0:     continuous number inside this rgdb-block.
+
+</pre>
+    <pre>the hash-method:
+================</pre>
+    <pre>you are looking for the key:    software\microsoft</pre>
+    <pre>first you take the first part of the string and convert it to upper case</pre>
+    <pre>        software</pre>
+    <pre>the &quot;\&quot; is used as a seperator only and has no meaning here.
+next you initialize a d-word with 0 and add all ascii-values of the string
+which are smaller than 0x80 (128) to this d-word.</pre>
+    <pre>        software = 0x0000026b</pre>
+    <pre>now you can start looking for this hash-value in the tree-record.
+if you want to modify key names, also modify the hash-values, since they
+cannot be found again (although they would be displayed in regedit)</pre>
+    <pre>the rgdb-block
+==============</pre>
+    <pre>header:</pre>
+    <pre>offset  size    contents
+0x0000  d-word  ascii-&quot;rgdb&quot; = 0x42444752
+0x0004  d-word  size of this rgdb-block
+0x0020  ????    rgdb records
+</pre>
+    <pre>rgdb-record (key-information)
+=============================</pre>
+    <pre>offset  size    contents
+0x0000  d-word  record length in bytes
+0x0004  d-word  id-number
+0x0008  d-word  ??? size ???
+0x000c  word    text length of key name
+0x000e  word    number of values inside this key
+0x0010  d-word  always 0
+0x0014  ????    key-name
+0x????  ????    values</pre>
+    <pre>the first size (record length) can be used to find the next record.
+the second size value is only correct if the key has at least one value, 
+otherwise it is a little lower.</pre>
+    <pre>the key-name is not 0-terminated, its length is defined by the key-
+text length field. the values are stored as records.
+</pre>
+    <pre>value-record
+============</pre>
+    <pre>offset	size	contents
+0x0000	d-word	type of data
+0x0004	d-word	always 0
+0x0008	word	length of value-name
+0x000a	word	length of value-data
+0x000c	????	value-name
+0x????	????	data</pre>
+    <pre>data-types
+==========</pre>
+    <pre>value		contents
+0x00000001	regsz - 0-terminated string (sometimes without the 0!)
+0x00000003	regbin - binary value (a simple data-block)
+0x00000004	regdword - d-word (always 4 bytes in size)
+
+</pre>
+    <pre>windows nt (version 4.0)
+========================</pre>
+    <pre>whoever thought that the registry of windows 95 and windows nt are similar
+will be surprised! they only look much the same, but have completely other
+structures!
+since the rgdb-blocks in the windows 95 registry are not larger than
+0xffff, we can see that it is optimized for a 16-bit os...
+windows nt stores its registry in a page-oriented format with blocks
+of 4kb (4096 = 0x1000 bytes)</pre>
+    <pre>the windows nt registry has 2 different blocks, where one can occure many
+times...</pre>
+    <pre>the &quot;regf&quot;-block
+================</pre>
+    <pre>&quot;regf&quot; is obviosly the abbreviation for &quot;registry file&quot;. &quot;regf&quot; is the 
+signature of the header-block which is always 4kb in size, although only
+the first 64 bytes seem to be used and a checksum is calculated over
+the first 0x200 bytes only!</pre>
+    <pre>offset		size	contents
+0x00000000	d-word	id: ascii-&quot;regf&quot; = 0x66676572
+0x00000004	d-word	????
+0x00000008	d-word	???? always the same value as at 0x00000004
+0x0000000c	q-word	last modify date in winnt date-format
+0x00000014	d-word	1
+0x00000018	d-word	3
+0x0000001c	d-word	0
+0x00000020	d-word	1
+0x00000024	d-word	offset of 1st key record
+0x00000028	d-word	size of the data-blocks (filesize-4kb)
+0x0000002c	d-word	1
+0x000001fc	d-word	sum of all d-words from 0x00000000 to 0x000001fb</pre>
+    <pre>i have analyzed more registry files (from multiple machines running
+nt 4.0 german version) and could not find an explanation for the values
+marked with ???? the rest of the first 4kb page is not important...
+</pre>
+    <pre>the &quot;hbin&quot;-block
+================</pre>
+    <pre>i don't know what &quot;hbin&quot; stands for, but this block is always a multiple 
+of 4kb in size.</pre>
+    <pre>inside these hbin-blocks the different records are placed. the memory-
+management looks like a c-compiler heap management to me...
+</pre>
+    <pre>hbin-header
+===========</pre>
+    <pre>offset	size	contents
+0x0000	d-word	id: ascii-&quot;hbin&quot; = 0x6e696268
+0x0004	d-word	offset from the 1st hbin-block
+0x0008	d-word	offset to the next hbin-block
+0x001c	d-word	block-size</pre>
+    <pre>the values in 0x0008 and 0x001c should be the same, so i don't know
+if they are correct or swapped...</pre>
+    <pre>from offset 0x0020 inside a hbin-block data is stored with the following
+format:
+</pre>
+    <pre>offset	size	contents
+0x0000	d-word	data-block size
+0x0004	????	data</pre>
+    <pre>if the size field is negative (bit 31 set), the corresponding block
+is free and has a size of -blocksize!
+the data is stored as one record per block. block size is a multiple
+of 4 and the last block reaches the next hbin-block, leaving no room.
+</pre>
+    <pre>records in the hbin-blocks
+==========================
+</pre>
+    <pre>nk-record</pre>
+    <pre>	the nk-record can be treated as a kombination of tree-record and 
+	key-record of the win 95 registry.</pre>
+    <pre>lf-record</pre>
+    <pre>	the lf-record is the counterpart to the rgkn-record (the hash-function)</pre>
+    <pre>vk-record</pre>
+    <pre>	the vk-record consists information to a single value.</pre>
+    <pre>sk-record</pre>
+    <pre>	sk (? security key ?) is the acl of the registry.</pre>
+    <pre>value-lists</pre>
+    <pre>	the value-lists contain information about which values are inside a
+	sub-key and don't have a header.</pre>
+    <pre>datas</pre>
+    <pre>	the datas of the registry are (like the value-list) stored without a 
+	header.
+</pre>
+    <pre>all offset-values are relative to the first hbin-block and point to the block-
+size field of the record-entry. to get the file offset, you have to add
+the header size (4kb) and the size field (4 bytes)...</pre>
+    <pre>the nk-record
+=============</pre>
+    <pre>offset	size	contents
+0x0000	word	id: ascii-&quot;nk&quot; = 0x6b6e
+0x0002	word	for the root-key: 0x2c, otherwise 0x20
+0x0004	q-word	write-date/time in windows nt notation
+0x0010	d-word	offset of owner/parent key
+0x0014	d-word	number of sub-keys
+0x001c	d-word	offset of the sub-key lf-records
+0x0024	d-word	number of values
+0x0028	d-word	offset of the value-list
+0x002c	d-word	offset of the sk-record
+0x0030	d-word	offset of the class-name
+0x0044	d-word	unused (data-trash)
+0x0048	word	name-length
+0x004a	word	class-name length
+0x004c	????	key-name</pre>
+    <pre>the value-list
+==============</pre>
+    <pre>offset	size	contents
+0x0000	d-word	offset 1st value
+0x0004	d-word	offset 2nd value
+0x????	d-word	offset nth value</pre>
+    <pre>to determine the number of values, you have to look at the
+owner-nk-record!</pre>
+    <pre>der vk-record
+=============</pre>
+    <pre>offset	size	contents
+0x0000	word	id: ascii-&quot;vk&quot; = 0x6b76
+0x0002	word	name length
+0x0004	d-word	length of the data
+0x0008	d-word	offset of data
+0x000c	d-word	type of value
+0x0010	word	flag
+0x0012	word	unused (data-trash)
+0x0014	????	name</pre>
+    <pre>if bit 0 of the flag-word is set, a name is present, otherwise the
+value has no name (=default)
+if the data-size is lower 5, the data-offset value is used to store
+the data itself!
+</pre>
+    <pre>the data-types
+==============</pre>
+    <pre>wert	beteutung
+0x0001	regsz: 		character string (in unicode!)
+0x0002	expandsz: 	string with &quot;%var%&quot; expanding (unicode!)
+0x0003	regbin:		raw-binary value
+0x0004	regdword:	dword
+0x0007	regmultisz:	multiple strings, seperated with 0
+			(unicode!)</pre>
+    <pre>the &quot;lf&quot;-record
+===============</pre>
+    <pre>offset	size	contents
+0x0000	word	id: ascii-&quot;lf&quot; = 0x666c
+0x0002	word	number of keys
+0x0004	????	hash-records</pre>
+    <pre>hash-record
+===========</pre>
+    <pre>offset	size	contents
+0x0000	d-word	offset of corresponding &quot;nk&quot;-record
+0x0004	d-word	ascii: the first 4 characters of the key-name, 
+		padded with 0's. case sensitiv!</pre>
+    <pre>keep in mind, that the value at 0x0004 is used for checking the
+data-consistency! if you change the key-name you have to change the
+hash-value too!</pre>
+    <pre>the &quot;sk&quot;-block
+==============</pre>
+    <pre>(due to the complexity of the sam-info, not clear jet)</pre>
+    <pre>offset	size	contents
+0x0000	word	id: ascii-&quot;sk&quot; = 0x6b73
+0x0002	word	unused
+0x0004	d-word	offset of previous &quot;sk&quot;-record
+0x0008	d-word	offset of next &quot;sk&quot;-record
+0x000c	d-word	usage-counter
+0x0010	d-word	size of &quot;sk&quot;-record in bytes
+????
+????	????	security and auditing settings...
+????</pre>
+    <pre>the usage counter counts the number of references to this
+&quot;sk&quot;-record. you can use one &quot;sk&quot;-record for the entire registry!
+</pre>
+    <pre>windows nt date/time format
+===========================</pre>
+    <pre>the time-format is a 64-bit integer which is incremented every
+0,0000001 seconds by 1 (i don't know how accurate it realy is!)
+it starts with 0 at the 1st of january 1601 0:00! all values are
+stored in gmt time! the time-zone is important to get the real
+time!
+
+</pre>
+    <pre>common values for win95 and win-nt
+==================================</pre>
+    <pre>offset values marking an &quot;end of list&quot;, are either 0 or -1 (0xffffffff).
+if a value has no name (length=0, flag(bit 0)=0), it is treated as the
+&quot;default&quot; entry...
+if a value has no data (length=0), it is displayed as empty.
+
+</pre>
+    <pre>simplyfied win-3.?? registry:
+=============================
+
+</pre>
+    <pre>+-----------+
+| next rec. |---+			+-----&gt;	+------------+
+| first sub |   |			|	| usage cnt. |
+| name      |	|  +--&gt;	+------------+	|	| length     |
+| value     |	|  |	| next rec.  |	|	| text       |-------&gt;	+-------+
++-----------+	|  |	| name rec.  |--+	+------------+		| xxxxx |
+   +------------+  |	| value rec. |--------&gt;	+------------+		+-------+
+   v		   |	+------------+		| usage cnt. |
++-----------+	   |				| length     |
+| next rec. |	   |				| text       |-------&gt;	+-------+
+| first sub |------+				+------------+		| xxxxx |
+| name      |								+-------+
+| value     |
++-----------+	
+
+</pre>
+    <pre>greatly simplyfied structure of the nt-registry:
+================================================
+</pre>
+    <pre>    +-------------------------------------------------------------------------+
+    v                                                                         |
++---------------+	+-------------&gt;	+-----------+  +------&gt;	+---------+   |
+| &quot;nk&quot;		|	|		| lf-rec.   |  |	| nk-rec. |   |
+| id		|	|		| # of keys |  |	| parent  |---+
+| date		|	|		| 1st key   |--+	| ....    |
+| parent	|	|		+-----------+		+---------+
+| suk-keys	|-------+
+| values	|---------------------&gt;	+----------+
+| sk-rec.	|---------------+	| 1. value |--&gt; +----------+
+| class		|--+		|	+----------+	| vk-rec.  |
++---------------+  |		|			| ....     |
+		   v		|			| data     |--&gt; +-------+
+		+------------+	|			+----------+	| xxxxx |
+		| class name |	|					+-------+
+		+------------+	|
+				v
+		+---------+	+---------+
+	+-----&gt;	| next sk |---&gt; | next sk |--+
+	|   +---| prev sk | &lt;---| prev sk |  |
+	|   |	| ....    |	| ...     |  |
+	|   |	+---------+	+---------+  |
+	|   |			 ^	     |
+	|   +--------------------+           |
+	+------------------------------------+</pre>
+    <pre>--------------------------------------------------------------------------------</pre>
+    <pre>hope this helps....  (although it was &quot;fun&quot; for me to uncover this things,
+			it took me several sleepless nights ;)</pre>
+    <pre>		b.d.</pre>
+    </td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

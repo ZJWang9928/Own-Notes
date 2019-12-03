@@ -1,0 +1,266 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>the </title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">the .reg file format</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%"><br>
+    <br>
+    1 introduction<br>
+    the .reg file format is used by regedit, the program supplied with windows 3.x,<br>
+    windows 95, and windows nt, to import and export settings from the registry.<br>
+    note that i will not explain what the registry is, how it works, or what it can<br>
+    be used for. there are other documents describing the registry and it's most<br>
+    interesting parts all over the net - check out some of the links at the end of<br>
+    this document. also, i will not provide you with information on regedit for<br>
+    windows 3.x - i know that it exists, but not if it's format is in any way like<br>
+    the regedit of 95/nt. besides, the registry is much less interesting on windows<br>
+    3.x.<br>
+    <br>
+    2 description<br>
+    the file is formatted as plain ascii text. every line is ended with a cr/lf<br>
+    combination.<br>
+    <br>
+    2.1 header<br>
+    it starts with regeditx, where x is regedit's version number - on 95/nt, it's<br>
+    4, making the string regedit4.<br>
+    <br>
+    this is also the only part of the file actually checked by regedit when it's<br>
+    importing - if the file contains any formatting errors, regedit will not notify<br>
+    you and simply skip the settings that contain errors.<br>
+    <br>
+    in particular, regedit will pretty much accept anything as long as it starts<br>
+    with regeditx, and ignore anything erroneous. yes, that does add up to the<br>
+    microsoft stupid mistakes list.<br>
+    <br>
+    2.2 keys <br>
+    key names are exported as they are encountered, but need not be in any order.<br>
+    subkeys are explicitly named. for example, if you had the key<br>
+    hkey_classes_root\clsid and it's subkey<br>
+    hkey_classes_root\clsid\{21ec2020-3aea-1069-a2dd-08002b30309d} (which<br>
+    represents the classid of the control panel, by the way), they would be<br>
+    exported as:<br>
+    <br>
+    [hkey_classes_root\clsid]<br>
+    <br>
+    [hkey_classes_root\clsid\{21ec2020-3aea-1069-a2dd-08002b30309d}]<br>
+    <br>
+    for a key name to be valid, it must start with one of the root key names:<br>
+    hkey_classes_root, hkey_current_user, hkey_local_machine, hkey_users,<br>
+    hkey_current_config and hkey_dyn_data.<br>
+    <br>
+    a key name may only contain printable ascii characters (that is, characters<br>
+    with values from 32 through 127) and may not contain spaces, backslashes \ or<br>
+    the wildcards * and ?.<br>
+    <br>
+    every key name is followed by it's values, starting on the line directly<br>
+    following it. the list of values is terminated with an empty line, and may be<br>
+    empty itself. <br>
+    <br>
+    for example:<br>
+    [key-name]<br>
+    <br>
+    [second-key-name]<br>
+    &quot;value1&quot;=something<br>
+    &quot;value2&quot;=something<br>
+    <br>
+    [third-key-name]<br>
+    <br>
+    if a key is specified which does not exist, it is created, along with any<br>
+    parent keys that do not exist. for example, if the key<br>
+    hkey_users\jeroen\test\subkey is specified, and only the key hkey_users\jeroen<br>
+    exists, the key hkey_users\jeroen\test is also created.<br>
+    <br>
+    note that you cannot delete keys or values - you can only add them if they<br>
+    don't already exist, or modify them if they do.<br>
+    <br>
+    2.3 values<br>
+    there are three kinds of values in the registry: strings, binary values, and<br>
+    dwords. they represent a collection of characters, a collection of bytes, and a<br>
+    32-bit integer, respectively.<br>
+    <br>
+    values consist of a name, enclosed in quotes &quot;&quot;, followed by an equal sign = ,<br>
+    followed by the value value (there's no other way to put it).<br>
+    <br>
+    every key, even if created empty, contains at least one string value - this is<br>
+    the value shown as (default) in regedit. to set it's value, use @ as the value<br>
+    name, and omit the usual quotes around the value name.<br>
+    <br>
+    example:<br>
+    @=&quot;this is the default value.&quot;<br>
+    <br>
+    2.3.1 strings<br>
+    strings may be any size. they are represented within quotes &quot;&quot;, and contain<br>
+    normal ascii characters.<br>
+    <br>
+    the quote &quot; and backslash \ are also allowed in strings - however, they must be<br>
+    represented as \&quot; and \\, respectively. also, regedit can import and export all<br>
+    non-ascii characters except for linefeed (or newline, ascii code 10). should a<br>
+    linefeed end up in a string, regedit will export this as a real newline,<br>
+    splitting the string in two lines. when reimporting this string, regedit will<br>
+    only read the first line. the moral of the story: don't store linefeeds in<br>
+    strings.<br>
+    <br>
+    examples of strings:<br>
+    &quot;foo&quot;=&quot;bar&quot;<br>
+    &quot;foopath&quot;=&quot;c:\\windows\\system&quot;<br>
+    &quot;foomessage&quot;=&quot;this/nmessage/nactually/nconsists/nof/one/nlong/nline.&quot;<br>
+    <br>
+    2.3.2 binary values<br>
+    binary values are used where strings and dwords fail. they can be used to<br>
+    represent any type of data. they are represented as hex:xx,yy,zz where xx,yy<br>
+    and zz are hexadecimal representations of single bytes. they may be any length.<br>
+    <br>
+    lengthy binary values can be divided into multiple lines using the c line<br>
+    separator \. for example:<br>
+    &quot;bar&quot;=hex:48,00,00,00,01,00,00,00,0a,00,0a,00,0a,00,0a,00,0a,00,0a,00,0a,\<br>
+    00,0a,00,0a,00,0a,00,0a,00,0a,00,0a,00,0a,00,0a,00,0a,00,0a,00,0a,00,0a,00,\<br>
+    0a,00,0a,00,0a,00,0a,00,0a,00,0a,00,0a,00,0a,00,0a,00,00,00,00,00,c4,ac,01,\<br>
+    00<br>
+    <br>
+    also take note that this is only allowed with binary values. in particular, you<br>
+    cannot divide strings this way. and yes, this is pretty stupid.<br>
+    <br>
+    although i usually ignore microsoft, they recommend you shouldn't store more<br>
+    than around two kilobytes of binary data at most, and i agree with them for<br>
+    once.<br>
+    <br>
+    example of binary values:<br>
+    &quot;foo&quot;=hex:00,de,ca,de,12,34<br>
+    <br>
+    2.3.2.1 types of binary values<br>
+    along with 'regular' binary values, there are also some special types of data<br>
+    which regedit represents as special binary values, like this:<br>
+    <br>
+    &quot;foobar&quot;=hex(type):xx,xx,xx,xx,...<br>
+    <br>
+    where type is a number ranging from zero to ten in the current versions of<br>
+    windows, as follows:<br>
+    <br>
+    type name <br>
+    0 reg_none <br>
+    1 reg_sz <br>
+    2 reg_expand_sz<br>
+    3 reg_binary <br>
+    4 reg_dword, reg_dword_little_endian<br>
+    5 reg_dword_big_endian<br>
+    6 reg_link<br>
+    7 reg_multi_sz<br>
+    8 reg_resource_list<br>
+    9 reg_full_resource_descriptor <br>
+    10 reg_resource_requirements_list<br>
+    <br>
+    2.3.2.1.1 reg_none<br>
+    reg_none means 'no defined value type'. no, i don't know what it's good for -<br>
+    reg_binary is already a catch-all type for everything that has no type. perhaps<br>
+    it's used for values that have no contents, although i can't imagine what that<br>
+    would be good for.<br>
+    <br>
+    2.3.2.1.2 reg_sz<br>
+    a null-terminated string. this is the same as the string type, represented as<br>
+    bytes. for example, these definitions are equal:<br>
+    <br>
+    &quot;barfoo&quot;=hex(1):41,42,43,44,00<br>
+    and<br>
+    &quot;barfoo&quot;=&quot;abcd&quot;<br>
+    <br>
+    see also 2.3.1, strings.<br>
+    <br>
+    2.3.2.1.3 reg_expand_sz<br>
+    a null-terminated string that contains unexpanded references to environment<br>
+    variables. when an application reads this string from the registry, it can let<br>
+    windows replace the references with the environment variable value.<br>
+    <br>
+    for example, the following value<br>
+    <br>
+    &quot;forbaa&quot;=hex(2):25,50,41,54,48,25,3b,53,6f,6d,65,74,68,69,6e,67,00<br>
+    <br>
+    represents the string &quot;%path%;something&quot;. when this string is read, the<br>
+    &quot;%path%&quot; section can be replaced with the contents of your path variable.<br>
+    <br>
+    2.3.2.1.4 reg_dword, reg_dword_little_endian<br>
+    represents a little-endian dword (the common format of windows dwords). in<br>
+    little-endian format, the most significant byte of a word is the high-order<br>
+    byte. see also 2.3.3, dwords.<br>
+    <br>
+    2.3.2.1.5 reg_dword_big_endian<br>
+    represents a big-endian dword (used on macintoshes, for example). as you can<br>
+    probably guess, in big-endian format, the most significant byte of a word is<br>
+    the low-order byte.<br>
+    <br>
+    2.3.2.1.6 reg_link<br>
+    represents a unicode symbolic link. no, i don't know what this is, and i<br>
+    probably don't want to know either.<br>
+    <br>
+    2.3.2.1.7 reg_multi_sz<br>
+    a collection of null-terminated strings, null-terminated. for example:<br>
+    <br>
+    &quot;farboo&quot;=hex(7):41,42,43,44,00,45,46,47,48,00,00<br>
+    <br>
+    represents two strings: &quot;abcd&quot; and &quot;efgh&quot;.<br>
+    <br>
+    2.3.2.1.8 reg_resource_list<br>
+    a device driver resource list. another one in the category &quot;don't know and<br>
+    don't want to know.&quot;<br>
+    <br>
+    2.3.2.1.9 reg_full_resource_descriptor<br>
+    undocumented. it's probably ment for windows itself only, as device driver<br>
+    stuff.<br>
+    <br>
+    2.3.2.1.10 reg_resource_requirements_list<br>
+    undocumented. it's probably ment for windows itself only, as device driver<br>
+    stuff.<br>
+    <br>
+    2.3.3. dwords<br>
+    dwords are 32-bit integers represented as dword:xxxxxxxx, where x is a<br>
+    hexadecimal digit. they're pretty boring, as that's all i can tell about them.<br>
+    <br>
+    example of dword values:<br>
+    &quot;foo&quot;=dword:00decade<br>
+    <br>
+    3. the end<br>
+    that's about it - the .reg format is pretty simple, but it does the job.<br>
+    should you find any unclarities, mistakes or things you think are missing,<br>
+    contact me by emailing to &quot;j.mostert@oke.nl&quot;.<br>
+    <br>
+    4. well, almost, we still need the links<br>
+    oh yeah, here are the links i promised, listed in no particular order. they<br>
+    were all valid on november 4th, 1997.<br>
+    <br>
+    http://help.mindspring.com/technotes/96dec/registry1.htm<br>
+    this is the registry page at technotes+, the site for a lot of tips and tricks<br>
+    about pretty much anything technical. it contains an introduction to the<br>
+    registry, and how it should be used. i recommend to read this first if you've<br>
+    never even heard about this registry thing.<br>
+    <br>
+    http://www.geocities.com/siliconvalley/pines/2857/<br>
+    this is a registry page by neil mcquarry, and a nice one it is, too. it<br>
+    contains a quick introduction to the registry, a brief description of .reg<br>
+    files, and a detailed description of various keys of interest. recommended if<br>
+    you want to get the most of the registry.<br>
+    <br>
+    http://www.amazon.com<br>
+    this is amazons home page, &quot;earth's biggest bookstore&quot;. try their search<br>
+    function to search for &quot;windows registry&quot; - this will provide you with more<br>
+    than enough literary references. no online information, however.<br>
+    <br>
+    http://www.windows95.com/tips<br>
+    this is the tips section of windows95.com. although it doesn't contain just<br>
+    registry tips, it's really worth checking out. but then again, all of<br>
+    windows95.com is worth checking out. if you have windows 95/nt, be sure to<br>
+    visit it.<br>
+    </td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

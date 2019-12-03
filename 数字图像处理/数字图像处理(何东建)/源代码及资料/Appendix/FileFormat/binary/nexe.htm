@@ -1,0 +1,117 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>exe format</title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">exe format</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%">ne exe format<br>
+    intel byte order<br>
+    <br>
+    information from file format list 2.0 by max maischein.<br>
+    <br>
+    the ne exe files are the new exe files used by windows and os/2 executables.<br>
+    they contain a small mz exe which prints &quot;this program requires microsoft<br>
+    windows&quot; or something similar but some files contain both dos and windows<br>
+    versions of the executable. the position of the new exe header can be found<br>
+    in the old exe header - see the mz exe topic for further information. all<br>
+    offsets within this header are from the start of the header if not noted<br>
+    otherwise.<br>
+    <br>
+    offset count type description<br>
+    0000h 2 char id='ne'<br>
+    0002h 1 byte linker major version<br>
+    0003h 1 byte linker minor version<br>
+    0004h 1 word offset of entry table (see below)<br>
+    0006h 1 word length of entry table in bytes<br>
+    0008h 1 dword file load crc (0 in borland's tpw)<br>
+    000ch 1 byte program flags, bitmapped :<br>
+    0-1 - dgroup type :<br>
+    0 - none<br>
+    1 - single shared<br>
+    2 - multiple<br>
+    3 - (null)<br>
+    2 - global initialization<br>
+    3 - protected mode only<br>
+    4 - 8086 instructions<br>
+    5 - 80286 instructions<br>
+    6 - 80386 instructions<br>
+    7 - 80x87 instructions<br>
+    000dh 1 byte application flags, bitmapped<br>
+    0-2 - application type<br>
+    1 - full screen (not aware of<br>
+    windows/p.m. api)<br>
+    2 - compatible with windows/p.m. api<br>
+    3 - uses windows/p.m. api<br>
+    3 - os/2 family application<br>
+    4 - reserved?<br>
+    5 - errors in image/executable<br>
+    6 - &quot;non-conforming program&quot; whatever<br>
+    7 - dll or driver (ss:sp info invalid, cs:ip<br>
+    points at far init routine called with<br>
+    ax=module handle which returns ax=0000h<br>
+    on failure, ax nonzero on successful<br>
+    initialization)<br>
+    000eh 1 byte auto data segment index<br>
+    0010h 1 word initial local heap size<br>
+    0012h 1 word initial stack size<br>
+    0014h 1 dword entry point (cs:ip),<br>
+    cs is index into segment table<br>
+    0018h 1 dword initial stack pointer (ss:sp)<br>
+    ss is index into segment table<br>
+    001ch 1 word segment count<br>
+    001eh 1 word module reference count<br>
+    0020h 1 word size of nonresident names table in bytes<br>
+    0022h 1 word offset of segment table (see below)<br>
+    0024h 1 word offset of resource table<br>
+    0026h 1 word offset of resident names table<br>
+    0028h 1 word offset of module reference table<br>
+    002ah 1 word offset of imported names table<br>
+    (array of counted strings, terminated with a<br>
+    string of length 00h)<br>
+    002ch 1 dword offset from start of file to nonresident<br>
+    names table<br>
+    0030h 1 word count of moveable entry point listed in<br>
+    entry table<br>
+    0032h 1 word file alignment size shift count<br>
+    0 is equivalent to 9 (default 512-byte pages)<br>
+    0034h 1 word number of resource table entries<br>
+    0036h 1 byte target operating system<br>
+    0 - unknown<br>
+    1 - os/2<br>
+    2 - windows<br>
+    3 - european ms-dos 4.x<br>
+    4 - windows 386<br>
+    5 - boss (borland operating system services)<br>
+    0037h 1 byte other os/2 exe flags, bitmapped<br>
+    0 - long filename support<br>
+    1 - 2.x protected mode<br>
+    2 - 2.x proportional fonts<br>
+    3 - executable has gangload area<br>
+    0038h 1 word offset to return thunks or start of gangload<br>
+    area - whatever that means.<br>
+    003ah 1 word offset to segment reference thunks or length<br>
+    of gangload area.<br>
+    003ch 1 word minimum code swap area size<br>
+    003eh 2 byte expected windows version (minor version first)<br>
+    <br>
+    extension:dll,exe,fot<br>
+    occurences:pc<br>
+    programs:<br>
+    reference:windows 3.1 sdk programmer's reference, vol 4.<br>
+    see also:exe,mz exe</td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

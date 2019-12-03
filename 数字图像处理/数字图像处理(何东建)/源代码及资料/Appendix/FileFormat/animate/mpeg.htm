@@ -1,0 +1,103 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>mpeg video</title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">mpeg video<br>
+</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%"><br>
+    sequence header<br>
+    <br>
+    this contains information related to one or more &quot;group-of-pictures&quot;<br>
+    <br>
+    byte# data details<br>
+    ===================================================================<br>
+    1-4 sequence header in hex 000001b3<br>
+    code<br>
+    12 bits horizontal size in pixels<br>
+    12 bits vertical size in pixels<br>
+    4 bits pel aspect ratio see below<br>
+    18 bits picture rate see below<br>
+    1 bit marker bit always 1<br>
+    10 bits vbv buffer size minimum buffer needed to decode this<br>
+    sequence of pictures; in 16kb units<br>
+    1 bit constrained<br>
+    parameter flag<br>
+    1 bit load intra 0: false; 1: true (matrix follows)<br>
+    quantizer matrix<br>
+    64 bytes intra quantizer optional<br>
+    matrix<br>
+    1 bit load nonintra 0: false; 1: true (matrix follows)<br>
+    quantizer matrix<br>
+    64 bytes nonintra quantizer optional<br>
+    matrix<br>
+    - squence extension optional<br>
+    data<br>
+    - user data optional application-dependent data<br>
+    ===================================================================<br>
+    <br>
+    aspect raios are defined by a code which represents the height and<br>
+    width of the video image.<br>
+    picture rates are also defined by a code that represents the number<br>
+    of pictures that may be displayed each second.<br>
+    <br>
+    each group of pictures has a header that contains one &quot;i picture&quot;<br>
+    and zero or more b and p pictures. the header is concerned with<br>
+    the time synchronisation for the first picture in this group, and<br>
+    the closeness of the previous group to this one.<br>
+    <br>
+    /*****************************************************************/<br>
+    <br>
+    for picture rate:<br>
+    1 = 23.976 frames/sec<br>
+    2 = 24<br>
+    3 = 25<br>
+    4 = 29.97<br>
+    5 = 30<br>
+    6 = 50<br>
+    7 = 59.94<br>
+    8 = 60<br>
+    <br>
+    here gives an example. below is hex dump of first 256 bytes of<br>
+    the first video frame of test.mpg from xingmpeg.<br>
+    <br>
+    00 00 01 b3 16 00 f0 c4 02 a3 20 a5 10 12 12 14<br>
+    14 14 16 16 16 16 18 18 19 18 18 1a 1b 1b 1b 1b<br>
+    1a 1c 1d 1e 1e 1e 1d 1c 1e 1f 20 21 21 20 1f 1e<br>
+    21 23 23 24 23 23 21 25 26 27 27 26 25 29 2a 2a<br>
+    2a 29 2d 2d 2d 2d 30 31 30 34 34 38 16 00 f0 c4<br>
+    00 00 01 b8 00 08 00 00 00 00 01 00 00 0a 72 00<br>
+    00 00 01 01 13 f9 50 02 bc b2 b8 be 68 8b a4 9f<br>
+    c5 b5 ca 00 56 76 39 65 f2 30 8b a6 9d 50 69 e7<br>
+    da fe 13 cf b7 ff 8f f4 ce 7b fa 0e f0 66 ae 1c<br>
+    5d e7 00 c8 0a 92 b9 29 3c 21 23 f1 d6 40 13 06<br>
+    f0 10 10 c6 27 80 a0 34 e1 c8 e4 0f 74 91 da c4<br>
+    03 a0 dc 03 12 60 18 49 27 1d d4 bc 67 0e 54 8c<br>
+    96 fc 5d c0 06 e0 1a 72 11 7c 9a 8d c9 45 89 6d<br>
+    cd c4 0b 63 dc 90 18 24 00 ec 84 90 18 10 c9 3b<br>
+    1e a7 60 3c 9d 74 80 76 05 0b 02 81 a9 29 39 68<br>
+    53 8f 59 f1 bf 93 fb a0 04 01 bc b0 ce 18 e1 25<br>
+    <br>
+    sequence header = (hex) 00 00 01 b3<br>
+    horizontal size = 0x160 = 352<br>
+    vertical size = 0x0f0 = 240<br>
+    pel aspect ratio = [i don't know]<br>
+    picture rate = 4 = 29.97 frames/sec<br>
+    marker bit = 1<br>
+    </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

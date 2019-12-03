@@ -1,0 +1,409 @@
+<!doctype html public "-//w3c//dtd html 3.2//en">
+<html>
+
+<head>
+<title>win32 resource file format</title>
+</head>
+<basefont size="3">
+
+<body bgcolor="#ffffff" text="#000000" topmargin="0"
+background="../jpg/di1.JPG">
+
+<hr align="left">
+<font size="+2">
+
+<p>win32 resource file format</font> </p>
+
+<hr align="left">
+<font size="-1">
+
+<p>by <a href="mailto:d3k@mdnet.it">marco cocco</a>, of <a
+href="http://www.mdlive.com/d3k/">d3k - the artisan of ware</a>, italy</font> </p>
+
+<p><b><font size="+1">introduction</font></b> </p>
+
+<p><b>preface</b><br>
+welcome to the win32 resource file format reference guide !<br>
+this document is a guide to reading/writing windows 95 and windows nt resource files (res 
+extension).<br>
+this guide has been written by <a href="mailto:d3k@mdnet.it">m.cocco</a> (of <a
+href="http://www.mdlive.com/d3k/">d3k - the artisan of ware</a>, italy) while developing 
+the makeres resource editor, a tool of the &quot;photoshop plug-in toolkit&quot; for 
+delphi 2.0. <br>
+<br>
+<font size="-2">copyright (c) 1997, marco cocco. all rights reserved.<br>
+copyright (c) 1997, d3k - the artisan of ware. all rights reserved.<br>
+</font></p>
+
+<p><b>audience</b><br>
+this guide is for any programmers who have written applications for windows systems and 
+wish to understand how to work with standalone binary resource file (res files, not in-exe 
+resources). this guide assumes you are proficient in the windows programming and have 
+worked in any development environments such as borland delphi 2.0, borland delphi 3.0, 
+borland c++ builder, microsoft visual c++ (on windows 95 or windows nt).<br>
+you should have a working knowledge of the different resource types, and understand how 
+handle binary files. this guide assumes you understand terminology such as records 
+(structures), word and dword types, strings (ansi and unicode), record (structure) 
+alignment, etc. </p>
+
+<p><b>remarks</b><br>
+this documentation is made to provide specific information on implementation and 
+structuring issues for win32 resource files only. win16 resource files are not explained 
+in this guide.<br>
+the best way to use this guide is to read it all without skipping any chapter.<br>
+<br>
+should you have any question, feel free to contact the author. </p>
+
+<p><b><font size="+1">getting started</font></b> </p>
+
+<p>this document details the structure of the resource binary file (.res) format for win32 
+platforms (w95 and wnt). the structure is very similar to the existing win16 
+(w3/w3.1/3.11) structure, but it supports some new data types and data structures.<br>
+one important enhancement is the dword/word alignment of structures/fields which increases 
+performance of new 32 bit microprocessors but makes resource reading/writing a bit more 
+complex (structures are of dynamic size). the order of the fields of resource data 
+structures is not changed due to alignment, but some padding is required between fields.<br>
+<br>
+the win32 resource file contains one or more binary resources merged in a single file and 
+aligned on dword boundaries. each resource has its own header structure followed by 
+resource data. immediately after the resource data comes the header for the next resource 
+followed by resource data, and so on.<br>
+<br>
+to read/write resource files you must have knowledge of binary files handling. resource 
+files cannot be read using text mode file routines.<br>
+<br>
+</p>
+
+<p><b><font size="+1">the resource header</font></b> </p>
+
+<p>the structure of the header is as follows:<br>
+<br>
+</p>
+
+<table border="1" bgcolor="white" cellpadding="2" cellspacing="0" width="100%">
+  <tr bgcolor="black">
+    <td><font color="white"><b>offset</b></font> </td>
+    <td><font color="white"><b>field</b></font> </td>
+    <td><font color="white"><b>data type</b></font> </td>
+    <td><font color="white"><b>description</b></font> </td>
+  </tr>
+  <tr>
+    <td align="center">0 </td>
+    <td>datasize </td>
+    <td>dword<br>
+    <font size="-1">4 bytes, 32 bit unsigned integer</font> </td>
+    <td>the size of the data that follows the header (not including any padding). </td>
+  </tr>
+  <tr>
+    <td align="center">4 </td>
+    <td>headersize </td>
+    <td>dword<br>
+    <font size="-1">4 bytes, 32 bit unsigned integer</font> </td>
+    <td>the size of the header structure. </td>
+  </tr>
+  <tr>
+    <td align="center">8 </td>
+    <td>restype </td>
+    <td>ordinal or unicode string<br>
+    <font size="-1">array of 16 bit unsigned integers (2 bytes each)</font> </td>
+    <td>resource type id (standard or custom). </td>
+  </tr>
+  <tr>
+    <td align="center">ofsof(restype)+sizeof(restype)+padding </td>
+    <td>resname </td>
+    <td>ordinal or unicode string<br>
+    <font size="-1">array of 16 bit unsigned integers (2 bytes each)</font> </td>
+    <td>resource name. </td>
+  </tr>
+  <tr>
+    <td align="center">ofsof(resname)+sizeof(resname)+padding </td>
+    <td>dataversion </td>
+    <td>dword<br>
+    <font size="-1">4 bytes, 32 bit unsigned integer</font> </td>
+    <td>determines the format of the information within the resource header that follows. not 
+    currently used. should be zeroed. </td>
+  </tr>
+  <tr>
+    <td align="center">ofsof(dataversion)+4 </td>
+    <td>memoryflags </td>
+    <td>word<br>
+    <font size="-1">2 bytes, 16 bit unsigned integer</font> </td>
+    <td>the state of the resource. </td>
+  </tr>
+  <tr>
+    <td align="center">ofsof(memoryflags)+2 </td>
+    <td>languageid </td>
+    <td>word<br>
+    <font size="-1">2 bytes, 16 bit unsigned integer</font> </td>
+    <td>the language that the strings are written with. </td>
+  </tr>
+  <tr>
+    <td align="center">ofsof(languageid)+2 </td>
+    <td>version </td>
+    <td>dword<br>
+    <font size="-2">4 bytes, 32 bit unsigned integer</font> </td>
+    <td>it has no significance to the system. used by resource editors. usually zeroed. </td>
+  </tr>
+  <tr>
+    <td align="center">ofsof(version)+4 </td>
+    <td>characteristics </td>
+    <td>dword<br>
+    <font size="-2">4 bytes, 32 bit unsigned integer</font> </td>
+    <td>it has no significance to the system. used by resource editors. usually zeroed. </td>
+  </tr>
+</table>
+
+<p><br>
+- resource header structure is not of fixed length. <b>you have to read/write header 
+fields one at a time.</b><br>
+- resource headers ever start on a dword boundary.<br>
+- when reading a res file you must move the file pointer to next nearest dword boundary 
+(only if current file pointer is not already on a dword boundary).<br>
+- when writing a res file you must write as much padding bytes as it is required to let 
+the header be dword aligned (only if current file pointer is not already on a dword 
+boundary).<br>
+<br>
+more about the resource header fields:<br>
+<br>
+</p>
+
+<table border="1" bgcolor="white" cellpadding="2" cellspacing="0" width="100%">
+  <tr bgcolor="black">
+    <td><font color="white"><b>field</b></font> </td>
+    <td><font color="white"><b>additional information</b></font> </td>
+  </tr>
+  <tr>
+    <td>datasize </td>
+    <td>the size of the data that follows the header. this value does not include any file 
+    padding bytes added after the actual data.<br>
+    the format of the data is different for any of the possible resource types. data size is 
+    expressed in bytes (8 bit unsigned integer). </td>
+  </tr>
+  <tr>
+    <td>headersize </td>
+    <td>the size of the resource header structure. this value <b>includes </b>the size of the 
+    datasize and headersize fields.<br>
+    the value of headersize is expressed in bytes and can be used to seek directly to resource 
+    data following the resource header (seek to filepos(datasize) + headersize).<br>
+    <font size="-1">the win32 sdk wrongly says: &quot;the headersize field gives the size of 
+    the resource header structure <i>that follows</i>&quot;. this should be read: &quot;the 
+    headersize field gives the size of the resource header structure, <i>including the 
+    datasize field and the headersize field itself</i>&quot;. </font></td>
+  </tr>
+  <tr>
+    <td>restype </td>
+    <td>specifies the resource type (its integer code or its alphabetic name).<br>
+    <font size="-1"><b>further explanation of this field can be found in &quot;the restype 
+    field&quot; chapter.</b></font> </td>
+  </tr>
+  <tr>
+    <td>resname </td>
+    <td>specifies the name of resource (its integer name-code or its alphabetic name).<br>
+    <font size="-1"><b>further explanation of this field can be found in &quot;the resname 
+    field&quot; chapter.</b></font> </td>
+  </tr>
+  <tr>
+    <td>dataversion </td>
+    <td>determines the format of the information within the resource header that follows. 
+    reserved for future expansion.<br>
+    this field is always zeroed but is supposed to change on next version of win32.<br>
+    <font size="-1"><b>resource editors should check this field and maintan unchaged the 
+    resource data if the format is not supported.</b></font> </td>
+  </tr>
+  <tr>
+    <td>memoryflags </td>
+    <td>contains flags about the state of the resource.<br>
+    <font size="-1"><b>further explanation of this field can be found in &quot;the memoryflags 
+    field&quot; chapter.</b></font> </td>
+  </tr>
+  <tr>
+    <td>languageid </td>
+    <td>specifies the language that the strings are written. by providing different values for 
+    this field it is possible to store different language versions of the same resource. the 
+    application can then choose the set of resources to load based on the currently system 
+    language.<br>
+    <font size="-1"><b>further explanation of this field can be found in &quot;language 
+    ids&quot; chapter.</b></font> </td>
+  </tr>
+  <tr>
+    <td>version </td>
+    <td>this field can be used to store custom version information. this lets resource editors 
+    to keep backward compatibility whith other version of the same resource editor.<br>
+    <font size="-1"><b>this value is stripped out when the resource is linked to the 
+    application executable file.</b></font> </td>
+  </tr>
+  <tr>
+    <td>characteristics </td>
+    <td>like the version field, this field can be used to store custom information flags.<br>
+    <font size="-1"><b>this value is stripped out when the resource is linked to the 
+    application executable file.</b></font> </td>
+  </tr>
+</table>
+
+<p><br>
+</p>
+
+<p><b>the restype field</b><br>
+<br>
+the restype field can either be:<br>
+
+<ul>
+  <li>1) a number </li>
+  <li>2) a null-terminated unicode string </li>
+</ul>
+
+<table border="1" bgcolor="white" cellpadding="2" cellspacing="0" width="100%">
+  <tr bgcolor="black">
+    <td><font color="white"><b>#</b></font> </td>
+    <td><font color="white"><b>description</b></font> </td>
+  </tr>
+  <tr>
+    <td><b>1)</b> </td>
+    <td>the first word of the restype field is 0xffff and the second word contains the 
+    resource type id.<br>
+    the restype field is always 4 bytes long (0xffff word + id word), thus it doesn't require 
+    any padding for dword boundary alignment.<br>
+    this kind of restype field is used for system defined resources (menu, dialogs, icons,...) 
+    but is can also be used for custom resource types.<br>
+    <font size="-1"><b>if you are going to use this kind of restype for your custom resources, 
+    be sure to use id values not already reserved for standard resources (i suggest you using 
+    ids greater than 0x8000 or like). or better: never use non numeric ids for your custom 
+    resources.</b></font><br>
+    <br>
+    all standard windows resource types have been assigned numeric ids as follows:<br>
+    <br>
+<xmp>    0x0001 = cursor 0x0002 = bitmap 0x0003 = icon 0x0004 = menu 0x0005 = dialog 0x0006 = 
+    string table 0x0007 = font directory 0x0008 = font 0x0009 = accelerators table 0x000a = rc 
+    data (custom binary data) 0x000b = message table 0x000c = group cursor 0x000e = group icon 
+    0x0010 = version information 0x0011 = dialog include 0x0013 = plug'n'play 0x0014 = vxd 
+    0x0015 = animated cursor 0x2002 = bitmap (new version) 0x2004 = menu (new version) 0x2005 
+    = dialog (new version) </xmp> </td>
+  </tr>
+  <tr>
+    <td><b>2)</b> </td>
+    <td>the first word of the restype field is not 0xffff.<br>
+    the restype field is an array of unicode characters (a string) terminated by a null 
+    (0x0000 word). an additional word may be inserted after the terminating null to make next 
+    field (resname) start on a dword boundary.<br>
+    <br>
+    if your application is not using the set of unicode api calls you have to convert the 
+    resource name to ansi encoding.<br>
+    <br>
+    standard resources never use this kind of restype field. </td>
+  </tr>
+</table>
+
+<p><b>the resname field</b><br>
+<br>
+the resname field can either be:<br>
+
+<ul>
+  <li>1) a number </li>
+  <li>2) a null-terminated unicode string </li>
+</ul>
+
+<table border="1" bgcolor="white" cellpadding="2" cellspacing="0" width="100%">
+  <tr bgcolor="black">
+    <td><font color="white"><b>#</b></font> </td>
+    <td><font color="white"><b>description</b></font> </td>
+  </tr>
+  <tr>
+    <td><b>1)</b> </td>
+    <td>the first word of the resname field is 0xffff and the second word contains the 
+    resource name id.<br>
+    the resname field is always 4 bytes long (0xffff word + id word), thus it doesn't require 
+    any padding for dword boundary alignment.<br>
+    <br>
+    <b>notice: string table resources are not allowed to be named using a unicode string: they 
+    must be have a numeric name id (case 1).</b> </td>
+  </tr>
+  <tr>
+    <td><b>2)</b> </td>
+    <td>the first word of the resname field is not 0xffff.<br>
+    the resname field is an array of unicode characters (a string) terminated by a null 
+    (0x0000 word). an additional word may be inserted after the terminating null to make next 
+    field (dataversion) start on a dword boundary.<br>
+    <br>
+    if your application is not using the set of unicode api calls you have to convert the 
+    resource name to ansi encoding.<br>
+    <br>
+    <b>notice: string table resources are not allowed to be named using a unicode string: they 
+    must be have a numeric name id (case 1).</b> </td>
+  </tr>
+</table>
+
+<p><b>the memoryflags field</b><br>
+<br>
+the memoryflags field contains flags about the state of a the resource.<br>
+<br>
+this field is a &quot;bit set&quot;, that is, each single bit of its value have a 
+different meaning as follows: <br>
+</p>
+
+<table border="1" bgcolor="white" cellpadding="2" cellspacing="0" width="100%">
+  <tr bgcolor="black">
+    <td><font color="white"><b>bit #</b></font> </td>
+    <td><font color="white"><b>bit mask</b></font> </td>
+    <td><font color="white"><b>description</b></font> </td>
+  </tr>
+  <tr>
+    <td>4 </td>
+    <td>0x0010 </td>
+    <td>if set: the resource is <b>moveable</b>, that is, the system can move the resource in 
+    memory.<br>
+    if not set: the resource is <b>fixed</b>, that is, the system cannot move the resource in 
+    memory. </td>
+  </tr>
+  <tr>
+    <td>5 </td>
+    <td>0x0020 </td>
+    <td>if set: the resource is <b>pure</b>, that is, the resource contains dword aligned data 
+    (padding is not needed).<br>
+    if not set: the resource is <b>impure</b>, that is, the resource contains non dword 
+    aligned data (padding is needed). </td>
+  </tr>
+  <tr>
+    <td>6 </td>
+    <td>0x0040 </td>
+    <td>if set: the resource must to be <b>preload</b>ed, that is, the resource must be loaded 
+    in memory just after the application has been loaded from disk.<br>
+    if not set: the resource must not be <b>preload</b>ed, that is, the resource must be 
+    loaded in memory only when the application requires it. </td>
+  </tr>
+  <tr>
+    <td>10 </td>
+    <td>0x1000 </td>
+    <td>if set: the resource is <b>discardable</b>, that is, on low memory conditions, the 
+    resource can be removed from memory and then reloaded when the application needs it.<br>
+    if not set: the resource isn't <b>discardable</b>, that is, on low memory conditions, the 
+    resource cannot be removed from memory. </td>
+  </tr>
+</table>
+
+<p><br>
+<font size="-1"><b>notice:</b><br>
+winnt ignores the setting of the moveable, impure, and preload flags. </font></p>
+
+<p><b>language ids</b><br>
+<br>
+the languageid field, included in each resource header, specifies the language that the 
+strings (of string tables and message tables) are written with.<br>
+the system must be informed of the language because it needs to know how to convert 
+characters from unicode to ansi (from double-byte to single-byte characters).<br>
+<br>
+the languageid field (found in any resource header) if a 16 bin unsigned integer (word) 
+containing not only the language id but also a sub-language id. the lower 10 bits (bits 
+0-9) of this value contain the languageid, remaining bits contain the sublanguageid (bits 
+11-15).<br>
+the languageid specifies the code of the primary language. the sublanguageid specifies a 
+variation of the primary language (a dialect).<br>
+<br>
+</p>
+
+<hr align="left">
+
+<p><br>
+win32 resource format guide v1.0 - released on october 27th, 1997 <br>
+</p>
+</body>
+</html>

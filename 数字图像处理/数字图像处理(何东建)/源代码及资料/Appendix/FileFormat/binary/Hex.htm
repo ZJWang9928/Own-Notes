@@ -1,0 +1,349 @@
+<html>
+
+<head>
+<title>file:///e:/kaifa/format/binary/hex.txt</title>
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="5" color="#0000ff">intel hexadecimal object file format 
+specification</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%"><pre>disclaimer</pre>
+    <pre>intel makes no representation or warranties with respect to the contents
+hereof and specifically disclaims any implied warranties of
+merchantability or fitness for any particular purpose.  further, intel
+reserves the right to revise this publication from time to time in the
+content hereof without obligation of intel to notify any person of such
+revision or changes.  the publication of this specification should not
+be construed as a commitment on intel's part to implement any product.
+</pre>
+    <pre>1. introduction
+this document describes the hexadecimal object file format for the intel
+8- bit, 16-bit, and 32-bit microprocessors.  the hexadecimal format is
+suitable as input to prom programmers or hardware emulators.
+hexadecimal object file format is a way of representing an absolute
+binary object file in ascii.  because the file is in ascii instead of
+binary, it is possible to store the file is non-binary medium such as
+paper-tape, punch cards, etc.; and the file can also be displayed on crt
+terminals, line printers, etc..  the 8-bit hexadecimal object file
+format allows for the placement of code and data within the 16-bit
+linear address space of the intel 8-bit processors.  the 16-bit
+hexadecimal format allows for the 20-bit segmented address space of the
+intel 16-bit processors.  and the 32-bit format allows for the 32-bit
+linear address space of the intel 32-bit processors.
+the hexadecimal representation of binary is coded in ascii alphanumeric
+characters. for example, the 8-bit binary value 0011-1111 is 3f in
+hexadecimal.  to code this in ascii, one 8-bit byte containing the ascii
+code for the character '3' (0011-0011 or 033h) and one 8-bit byte
+containing the ascii code for the character 'f' (0100-0110 or 046h) are
+required.  for each byte value, the high-order hexadecimal digit is
+always the first digit of the pair of hexadecimal digits.  this
+representation (ascii hexadecimal) requires twice as ma ny bytes as the
+binary representation.
+a hexadecimal object file is blocked into records, each of which
+contains the record type, length, memory load address and checksum in
+addition to the data.  there are currently six (6) different types of
+records that are defined, not all combinations of these records are
+meaningful, however. the records are:</pre>
+    <pre>data record (8-, 16-, or 32-bit formats)
+end of file record (8-, 16-, or 32-bit formats)
+extended segment address record (16- or 32-bit formats)
+start segment address record (16- or 32-bit formats)
+extended linear address record (32-bit format only)
+start linear address record (32-bit format only)
+</pre>
+    <pre>2. general record format
+| record  |     load     |         |         |  info   |         |
+|  mark   |    reclen    | offset  | rectyp  |   or    | chksum  |
+|  ':'    |              |         |         |  data   |         |
+  1-byte       1-byte      2-bytes   1-byte    n-bytes   1-byte</pre>
+    <pre>each record begins with a record mark field containing 03ah, the ascii
+code for the colon (':') character.
+each record has a reclen field which specifies the number of bytes of
+information or data which follows the rectyp field of the record.  note
+that one data byte is represented by two ascii characters.  the maximum
+value of the reclen field is hexadecimal 'ff' or 255.
+each record has a load offset field which specifies the 16-bit starting
+load offset of the data bytes, therefore this field is only used for
+data records.  in other records where this field is not used, it should
+be coded as four ascii zero characters ('0000' or 030303030h).
+each record has a rectyp field which specifies the record type of this
+record.  the rectyp field is used to interpret the remaining information
+within the record.  the encoding for all the current record types are:</pre>
+    <pre>'00' data record
+'01' end of file record
+'02' extended segment address record
+'03' start segment address record
+'04' extended linear address record
+'05' start linear address record</pre>
+    <pre>each record has a variable length info/data field, it consists of zero
+or more bytes encoded as pairs of hexadecimal digits.  the
+interpretation of this field depends on the rectyp field.
+each record ends with a chksum field that contains the ascii hexadecimal
+representation of the two's complement of  the 8-bit bytes that result
+from converting each pair of ascii hexadecimal digits to one byte of
+binary, from and including the reclen field to and including the last
+byte of the info/data field.  therefore, the sum of all the ascii pairs
+in a record after converting to binary, from the reclen field to and
+including the chksum field, is zero.
+</pre>
+    <pre>3. extended linear address record    (32-bit format only)
+| record  |     load     |         |         |         |         |
+|  mark   |    reclen    | offset  | rectyp  |  ulba   | chksum  |
+|  ':'    |    '02'      | '0000'  |  '04'   |         |         |
+  1-byte       1-byte      2-bytes   1-byte    2-bytes   1-byte</pre>
+    <pre>the 32-bit extended linear address record is used to specify bits 16-31
+of the linear base address (lba), where bits 0-15 of the lba are zero. 
+bits 16-31 of the lba are referred to as the upper linear base address
+(ulba). the absolute memory address of a content byte in a subsequent
+data record is obtained by adding the lba to an offset calculated by
+adding the load offset field of the containing data record to the index
+of the byte in the data record (0, 1, 2, ... n).  this offset addition
+is done modulo 4g (i.e., 32-bits), ignoring any carry, so that offset
+wrap-around loading (from offffffffh to oooooooooh) results in wrapping
+around from the end to the beginning of the 4g linear address defined by
+the lba.  the linear address at which a particular byte is loaded is
+calculated as:
+(lba + drlo + dri) mod 4g
+where:
+drlo is the load offset field of a data record.
+dri is the data byte index within the data record.</pre>
+    <pre>when an extended linear address record defines the value of lba, it may
+appear anywhere within a 32-bit hexadecimal object file. this value
+remains in effect until another extended linear address record is
+encountered.  the lba defaults to zero until an extended linear address
+record is encountered.
+the contents of the individual fields within the record are:</pre>
+    <pre>record mark
+this field contains 03ah, the hexadecimal encoding of the ascii colon
+(':') character.</pre>
+    <pre>reclen
+the field contains 03032h, the hexadecimal encoding of the ascii
+characters '02', which is the length, in bytes, of the ulba data
+information within this record.</pre>
+    <pre>load offset
+this field contains 030303030h, the hexadecimal encoding of the ascii
+characters '0000', since this field is not used for this record.</pre>
+    <pre>rectyp
+this field contains 03034h, the hexadecimal encoding of the ascii
+character '04', which specifies the record type to be an extended linear
+address record.</pre>
+    <pre>ulba
+this field contains four ascii hexadecimal digits that specify the
+16-bit upper linear base address value.  the high-order byte is the
+10th/llth character pair of the record.  the low-order byte is the
+12th/13th character pair of the record.</pre>
+    <pre>chksum
+this field contains the check sum on the reclen, load offset, rectyp,
+and ulba fields.
+</pre>
+    <pre>4. extended segment address record (16- or 32-bit formats)
+| record  |     load     |         |         |         |         |
+|  mark   |    reclen    | offset  | rectyp  |  usba   | chksum  |
+|  ':'    |    '02'      | '0000'  |  '02'   |         |         |
+  1-byte       1-byte      2-bytes   1-byte    2-bytes   1-byte</pre>
+    <pre>the 16-bit extended segment address record is used to specify bits 4-19
+of the segment base address (sba), where bits 0-3 of the sba are zero. 
+bits 4-19 of the sba are referred to as the upper segment base address
+(usba). the absolute memory address of a content byte in a subsequent
+data record is obtained by adding the sba to an offset calculated by
+adding the load offset field of the containing data record to the index
+of the byte in the data record (0, 1, 2, ... n).  this offset addition
+is done modulo 64k (i.e., 16-bits), ignoring any carry, so that offset
+wraparound loading (from offffh to oooooh) results in wrapping around
+from the end to the beginning of the 64k segment defined by the sba. 
+the address at which a particular byte is loaded is calculated as:</pre>
+    <pre>        sba +  ([drlo  +  dri]  mod  64k)</pre>
+    <pre>where:
+        drlo is the load offset field of a data record.
+        dri is the data byte index within the data record.</pre>
+    <pre>when an extended segment address record defines the value of sba, it
+may appear anywhere within a 16-bit hexadecimal object file.  this
+value remains in effect until another extended segment address
+record is encountered.  the sba defaults to zero until an extended
+segment address record is encountered.</pre>
+    <pre>the contents of the individual fields within the record are:</pre>
+    <pre>record mark
+this field contains 03ah, the hexadecimal encoding of the ascii
+colon (':') character.</pre>
+    <pre>reclen
+the field contains 03032h, the hexadecimal encoding of the ascii
+characters '02', which is the length, in bytes, of the usba data
+information within this record.</pre>
+    <pre>load offset
+this field contains 030303030h, the hexadecimal encoding of the
+ascii characters '0000', since this field is not used for this
+record.</pre>
+    <pre>rectyp
+this field contains 03032h, the hexadecimal encoding of the ascii
+character '02', which specifies the record type to be an extended
+segment address record.</pre>
+    <pre>usba
+this field contains four ascii hexadecimal digits that specify the
+16-bit upper segment base address value.  the high-order byte is the
+10th/1lth character pair of the record.  the low-order byte is the
+12th/13th character pair of the record.</pre>
+    <pre>chksum
+this field contains the check sum on the reclen, load offset,
+rectyp, and usba fields.</pre>
+    <pre>5.    data record   (8-, 16-, or 32-bit formats)</pre>
+    <pre>| record  |     load     |         |         |         |         |
+|  mark   |    reclen    | offset  | rectyp  |  data   | chksum  |
+|  ':'    |              |         |  '00'   |         |         |
+  1-byte       1-byte      2-bytes   1-byte    n-bytes   1-byte
+</pre>
+    <pre>the data record provides a set of hexadecimal digits that represent
+the ascii code for data bytes that make up a portion of a memory
+image.  the method for calculating the absolute address (linear in
+the 8-bit and 32-bit case and segmented in the 16-bit case) for each
+byte of data is described in the discussions of the extended linear
+address record and the extended segment address record.</pre>
+    <pre>the contents of the individual fields within the record are:</pre>
+    <pre>record mark
+this field contains 03ah, the hexadecimal encoding of the ascii
+colon (':') character.</pre>
+    <pre>reclen
+the field contains two ascii hexadecimal digits that specify the
+number of data bytes in the record.  the maximum value is 'ff' or
+04646h (255 decimal).</pre>
+    <pre>load offset
+this field contains four ascii hexadecimal digits representing the
+offset from the lba (see extended linear address record) or sba (see
+extended segment address record) defining the address which the
+first byte of the data is to be placed.</pre>
+    <pre>rectyp
+this field contains 03030h, the hexadecimal encoding of the ascii
+character '00', which specifies the record type to be a data record.</pre>
+    <pre>data
+this field contains pairs of ascii hexadecimal digits, one pair for
+each data byte.</pre>
+    <pre>chksum
+this field contains the check sum on the reclen, load offset,
+rectyp, and data fields.
+</pre>
+    <pre>6.    start linear address record  (32-bit format only)</pre>
+    <pre>| record  |     load     |         |         |         |         |
+|  mark   |    reclen    | offset  | rectyp  |  eip    | chksum  |
+|  ':'    |    '04'      | '0000'  |  '05'   |         |         |
+  1-byte       1-byte      2-bytes   1-byte    4-bytes   1-byte
+</pre>
+    <pre>the start linear address record is used to specify the execution
+start address for the object file.  the value given is the 32-bit
+linear address for the eip register.  note that this record only
+specifies the code address within the 32-bit linear address space of
+the 80386.  if the code is to start execution in the real mode of
+the 80386, then the start segment address record should be used
+instead, since that record specifies both the cs and ip register
+contents necessary for real mode.</pre>
+    <pre>the start linear address record can appear anywhere in a 32-bit
+hexadecimal object file.  if such a record is not present in a
+hexadecimal object file, a loader is free to assign a default start
+address.</pre>
+    <pre>the contents of the individual fields within the record are:</pre>
+    <pre>record mark
+this field contains 03ah, the hexadecimal encoding of the ascii
+colon (':') character.</pre>
+    <pre>reclen
+the field contains 03034h, the hexadecimal encoding of the ascii
+characters '04', which is the length, in bytes, of the eip register
+content within this record.</pre>
+    <pre>load offset
+this field contains 030303030h, the hexadecimal encoding of the
+ascii characters '0000', since this field is not used for this
+record.</pre>
+    <pre>rectyp
+this field contains 03035h, the hexadecimal encoding of the ascii
+character '05', which specifies the record type to be a start linear
+address record.</pre>
+    <pre>eip
+this field contains eight ascii hexadecimal digits that specify the
+32-bit eip register contents.  the high-order byte is the 10th/1lth
+character pair.</pre>
+    <pre>chksum
+this field contains the check sum on the reclen, load offset,
+rectyp, and eip fields.
+</pre>
+    <pre>7.    start segment address record (16- or 32-bit formats)</pre>
+    <pre>| record  |     load     |         |         |         |         |
+|  mark   |    reclen    | offset  | rectyp  |  cs/ip  | chksum  |
+|  ':'    |    '04'      | '0000'  |  '03'   |         |         |
+  1-byte       1-byte      2-bytes   1-byte    4-bytes   1-byte
+</pre>
+    <pre>the start segment address record is used to specify the execution
+start address for the object file.  the value given is the 20-bit
+segment address for the cs and ip registers.  note that this record
+only specifies the code address within the 20-bit segmented address
+space of the 8086/80186.</pre>
+    <pre>the start segment address record can appear anywhere in a 16-bit
+hexadecimal object file.   if such a record is not present in a
+hexadecimal object file, a loader is free to assign a default start
+address.</pre>
+    <pre>the contents of the individual fields within the record are:</pre>
+    <pre>record mark
+this field contains 03ah, the hexadecimal encoding of the ascii
+colon (':') character.</pre>
+    <pre>reclen
+the field contains 03034h, the hexadecimal encoding of the ascii
+characters '04', which is the length, in bytes, of the cs/ip
+register contents within this record.</pre>
+    <pre>load offset
+this field contains 030303030h, the hexadecimal encoding of the
+ascii characters '0000', since this field is not used for this
+record.</pre>
+    <pre>rectyp
+this field contains 03033h, the hexadecimal encoding of the ascii
+character '03', which specifies the record type to be a start
+segment address record.</pre>
+    <pre>cs/ip
+this field contains eight ascii hexadecimal digits that specify the
+16-bit cs register and 16-bit ip register contents.  the high-order
+byte of the cs register content is the 10th/llth character pair, the
+low-order byte is the 12th/13th character pair of the record.  the
+high-order byte of the ip register content is the 14th/15th
+character pair, the low-order byte is the 16th/17th character pair
+of the record.</pre>
+    <pre>chksum
+this field contains the check sum on the reclen, load offset,
+rectyp, and cs/ip fields.
+
+</pre>
+    <pre>8.   end of file record  (8-, 16-, or 32-bit formats)</pre>
+    <pre>| record  |     load     |         |         |         |
+|  mark   |    reclen    | offset  | rectyp  | chksum  |
+|  ':'    |    '00'      | '0000'  |  '01'   |         |
+  1-byte       1-byte      2-bytes   1-byte    1-byte</pre>
+    <pre>the end of file record specifies the end of the hexadecimal object
+file.</pre>
+    <pre>the contents of the individual fields within the record are:</pre>
+    <pre>record  mark
+this field contains 03ah, the hexadecimal encoding of the ascii
+colon (':') character.</pre>
+    <pre>reclen
+the field contains 03030h, the hexadecimal encoding of the ascii
+characters '00'.  since this record does not contain any info/data
+bytes, the length is zero.</pre>
+    <pre>load  offset
+this field contains 030303030h, the hexadecimal encoding of the
+ascii characters '0000', since this field is not used for this
+record.</pre>
+    <pre>rectyp
+this field contains 03031h, the hexadecimal encoding of the ascii
+character '01', which specifies the record type to be an end of file
+record.</pre>
+    <pre>chksum
+this field contains the check sum an the reclen, load offset, and
+rectyp fields.  since all the fields are static, the check sum can
+also be calculated statically, and the value is 04646h, the
+hexadecimal encoding of the ascii characters 'ff'.d</pre>
+    </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">·µ»Ø</a></p>
+</body>
+</html>

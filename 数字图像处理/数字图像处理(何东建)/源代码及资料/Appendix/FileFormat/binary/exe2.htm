@@ -1,0 +1,145 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>exe format</title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">exe format</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%">mz exe format<br>
+    intel byte order<br>
+    <br>
+    information from file format list 2.0 by max maischein.<br>
+    the old exe files are the exe files executed directly by ms-dos. they were a<br>
+    major improvement over the old 64k com files, since exe files can span multiple<br>
+    segments. an exe file consists of three different parts, the header, the<br>
+    relocation table and the binary code.<br>
+    the header is expanded by a lot of programs to store their copyright information<br>
+    in the executable, some extensions are documented below.<br>
+    the format of the header is as follows :<br>
+    offset count type description<br>
+    0000h 2 char id='mz'<br>
+    id='zm'<br>
+    0002h 1 word number of bytes in last 512-byte page<br>
+    of executable<br>
+    0004h 1 word total number of 512-byte pages in executable<br>
+    (including the last page)<br>
+    0006h 1 word number of relocation entries<br>
+    0008h 1 word header size in paragraphs<br>
+    000ah 1 word minimum paragraphs of memory allocated in<br>
+    addition to the code size<br>
+    000ch 1 word maximum number of paragraphs allocated in<br>
+    addition to the code size<br>
+    000eh 1 word initial ss relative to start of executable<br>
+    0010h 1 word initial sp<br>
+    0012h 1 word checksum (or 0) of executable<br>
+    0014h 1 dword cs:ip relative to start of executable<br>
+    (entry point)<br>
+    0018h 1 word offset of relocation table;<br>
+    40h for new-(ne,le,lx,w3,pe etc.) executable<br>
+    001ah 1 word overlay number (0h = main program)<br>
+    <br>
+    following are the header expansions by some other prorams like tlink, lzexe and<br>
+    other linkers, encryptors and compressors; all offsets are relative to the start<br>
+    of the whole header :<br>
+    <br>
+    ---new executable<br>
+    offset count type description<br>
+    001ch 4 byte ????<br>
+    0020h 1 word behaviour bits ??<br>
+    0022h 26 byte reserved (0)<br>
+    003ch 1 dword offset of new executable header from start of<br>
+    file (or 0 if plain mz executable)<br>
+    <br>
+    ---borland tlink<br>
+    offset count type description<br>
+    001ch 2 byte ?? (apparently always 01h 00h)<br>
+    001eh 1 byte id=0fbh<br>
+    001fh 1 byte tlink version, major in high nybble<br>
+    0020h 2 byte ??<br>
+    <br>
+    ---old arj self-extracting archive<br>
+    offset count type description<br>
+    001ch 4 char id='rjsx' (older versions)<br>
+    new signature is 'arjsf'&quot; in the first 1000<br>
+    bytes of the file)<br>
+    ---lzexe compressed executable<br>
+    offset count type description<br>
+    001ch 2 char id='lz'<br>
+    001eh 2 char version number :<br>
+    '09' - lzexe 0.90<br>
+    '91' - lzexe 0.91<br>
+    ---pklite compressed executable<br>
+    offset count type description<br>
+    001ch 1 byte minor version number<br>
+    001dh 1 byte bit mapped :<br>
+    0-3 - major version<br>
+    4 - extra compression<br>
+    5 - multi-segment file<br>
+    001eh 6 char id='pklite'<br>
+    ---lharc 1.x self-extracting archive<br>
+    offset count type description<br>
+    001ch 4 byte unused???<br>
+    0020h 3 byte jump to start of extraction code<br>
+    0023h 2 byte ???<br>
+    0025h 12 char id='lharc's sfx '<br>
+    --lha 2.x self-extracting archive<br>
+    offset count type description<br>
+    001ch 8 byte ???<br>
+    0024h 10 char id='lha's sfx '<br>
+    for version 2.10<br>
+    id='lha's sfx ' (v2.13)<br>
+    for version 2.13<br>
+    ---lh self-extracting archive<br>
+    offset count type description<br>
+    001ch 8 byte ???<br>
+    0024h 8 byte id='lh's sfx '<br>
+    ---topspeed c 3.0 crunch compressed file<br>
+    offset count type description<br>
+    001ch 1 dword id=018a0001h<br>
+    0020h 1 word id=1565h<br>
+    ---pkarc 3.5 self-extracting archive<br>
+    offset count type description<br>
+    001ch 1 dword id=00020001h<br>
+    0020h 1 word id=0700h<br>
+    ---bsa (soviet archiver) self-extracting archive<br>
+    offset count type description<br>
+    001ch 1 word id=000fh<br>
+    001eh 1 byte id=a7h<br>
+    ---larc self-extracting archive<br>
+    offset count type description<br>
+    001ch 4 byte ???<br>
+    0020h 11 byte id='sfx by larc '<br>
+    <br>
+    after the header, there follow the relocation items, which are used to span<br>
+    multpile segments. the relocation items have the following format :<br>
+    offset count type description<br>
+    0000h 1 word offset within segment<br>
+    0002h 1 word segment of relocation<br>
+    to get the position of the relocation within the file, you have to compute the<br>
+    physical adress from the segment:offset pair, which is done by multiplying the<br>
+    segment by 16 and adding the offset and then adding the offset of the binary<br>
+    start. note that the raw binary code starts on a paragraph boundary within the<br>
+    executable file. all segments are relative to the start of the executable in<br>
+    memory, and this value must be added to every segment if relocation is done<br>
+    manually.<br>
+    <br>
+    extension:exe,ovr,ovl<br>
+    occurences:pc<br>
+    programs:ms-dos<br>
+    reference:ralf brown's interrupt list<br>
+    see also:com,exe,ne exe</td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

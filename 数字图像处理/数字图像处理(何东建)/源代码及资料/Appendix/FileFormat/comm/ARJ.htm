@@ -1,0 +1,176 @@
+<html>
+
+<head>
+<title>file:///e:/kaifa/format/binary/arj.txt</title>
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p>¡¡</p>
+<div align="center"><center>
+
+<pre>arj technical information</pre>
+</center></div><div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%"><pre>     ** important news ****************************************************</pre>
+    <pre>     some archiver support programs have incorporated arj archive
+     identification schemes that are not reliable.  at arj 2.39, there
+     are now two versions of the large self-extraction module.	the 17k
+     byte arjsfx module supports arj-security.	the standard 15k byte
+     arjsfx module does not support arj-security.  for the first time, the
+     arj-security fields in the main arj header are publicly defined.</pre>
+    <pre>     in addition, the main arj header in self-extracting archives does not
+     immediately follow the exe module now.</pre>
+    <pre>     arj has used the same arj archive identification scheme since arj
+     1.0.  the following is the algorithm:</pre>
+    <pre>     (1) find the arj header id bytes 0x60, 0xea,
+     (2) read the next two bytes as the header record size in bytes,
+     (3) if the record size is greater than 2600, go back to the header
+	 id file position, increment the file position, and go back to
+	 step (1),
+     (4) read the header record based upon the previous byte count,
+     (5) calculate the 32 bit crc of the header record data,
+     (6) read the next four bytes as the actual header record crc,
+     (7) if the actual crc does not equal the calculated crc, go back
+	 to the header id file position, increment the file position,
+	 and go back to step (1).</pre>
+    <pre>     this algorithm is fully demonstrated in the unarj c source code.</pre>
+    <pre>     when using listfiles with arj, arj support programs should use the
+     &quot;-p&quot; option to ensure that arj will only extract the selected files
+     from an arj archive.  this is important for arj archives that have
+     pathname information stored.</pre>
+    <pre>     there is an extended header bug in older versions of arj, av.c and
+     unarj.c.  the extended header processing in read_header() should
+     skip 4 bytes for the extended header crc and not 2.  this is not a
+     current problem as no versions of arj use the extended header.</pre>
+    <pre>     **********************************************************************
+</pre>
+    <pre>     modification history:
+     date      description of modification:
+     --------  ------------------------------------------------------------
+     03/17/93  added information about arjsfx change.
+     02/17/93  added description of arj security fields.
+	       added archive date-modified field.
+     12/03/91  added backup flag to header arj flags.
+     11/21/91  described the two types of headers separately.
+     11/11/91  added information about the change in text mode processing.
+     06/28/91  added several new host os numbers.
+     05/19/91  improved the description of extended header processing.
+     05/11/91  simplified this document.  added volume label type.
+     03/11/91  added directory file type.
+     02/23/91  added more comments.
+     01/10/91  corrected timestamp description and header order of file mode.
+     10/30/90  corrected values of flags in arj flags.
+</pre>
+    <pre>     arj archives contains two types of header blocks:</pre>
+    <pre>	archive main header - this is located at the head of the archive
+	local file header   - this is located before each archived file</pre>
+    <pre>     structure of main header (low order byte first):</pre>
+    <pre>     bytes description
+     -----
+-------------------------------------------------------------------
+       2   header id (main and local file) = 0x60 0xea
+       2   basic header size (from 'first_hdr_size' thru 'comment' below)
+		 = first_hdr_size + strlen(filename) + 1 + strlen(comment) + 1
+		 = 0 if end of archive
+		 maximum header size is 2600</pre>
+    <pre>       1   first_hdr_size (size up to and including 'extra data')
+       1   archiver version number
+       1   minimum archiver version to extract
+       1   host os   (0 = msdos, 1 = primos, 2 = unix, 3 = amiga, 4 = mac-os)
+		     (5 = os/2, 6 = apple gs, 7 = atari st, 8 = next)
+		     (9 = vax vms)
+       1   arj flags
+		     (0x01 = not used)
+		     (0x02 = old_secured_flag)
+		     (0x04 = volume_flag)  indicates presence of succeeding
+					   volume
+		     (0x08 = not used)
+		     (0x10 = pathsym_flag) indicates archive name translated
+					   (&quot;\&quot; changed to &quot;/&quot;)
+		     (0x20 = backup_flag) indicates backup type archive
+		     (0x40 = secured_flag)
+       1   security version (2 = current)
+       1   file type	    (must equal 2)
+       1   reserved
+       4   date time when original archive was created
+       4   date time when archive was last modified
+       4   archive size (currently used only for secured archives)
+       4   security envelope file position
+       2   filespec position in filename
+       2   length in bytes of security envelope data
+       2   (currently not used)
+       ?   (currently none)</pre>
+    <pre>       ?   filename of archive when created (null-terminated string)
+       ?   archive comment  (null-terminated string)</pre>
+    <pre>       4   basic header crc</pre>
+    <pre>       2   1st extended header size (0 if none)
+       ?   1st extended header (currently not used)
+       4   1st extended header's crc (not present when 0 extended header size)
+</pre>
+    <pre>     structure of local file header (low order byte first):</pre>
+    <pre>     bytes description
+     -----
+-------------------------------------------------------------------
+       2   header id (main and local file) = 0x60 0xea
+       2   basic header size (from 'first_hdr_size' thru 'comment' below)
+		 = first_hdr_size + strlen(filename) + 1 + strlen(comment) + 1
+		 = 0 if end of archive
+		 maximum header size is 2600</pre>
+    <pre>       1   first_hdr_size (size up to and including 'extra data')
+       1   archiver version number
+       1   minimum archiver version to extract
+       1   host os   (0 = msdos, 1 = primos, 2 = unix, 3 = amiga, 4 = mac-os)
+		     (5 = os/2, 6 = apple gs, 7 = atari st, 8 = next)
+		     (9 = vax vms)
+       1   arj flags (0x01 = garbled_flag) indicates passworded file
+		     (0x02 = not used)
+		     (0x04 = volume_flag)  indicates continued file to next
+					   volume (file is split)
+		     (0x08 = extfile_flag) indicates file starting position
+					   field (for split files)
+		     (0x10 = pathsym_flag) indicates filename translated
+					   (&quot;\&quot; changed to &quot;/&quot;)
+		     (0x20 = backup_flag)  indicates file marked as backup
+       1   method    (0 = stored, 1 = compressed most ... 4 compressed fastest)
+       1   file type (0 = binary,    1 = 7-bit text)
+		     (3 = directory, 4 = volume label)
+       1   reserved
+       4   date time modified
+       4   compressed size
+       4   original size (this will be different for text mode compression)
+       4   original file's crc
+       2   filespec position in filename
+       2   file access mode
+       2   host data (currently not used)
+       ?   extra data
+	   4 bytes for extended file starting position when used
+	   (these bytes are present when extfile_flag is set).
+	   0 bytes otherwise.</pre>
+    <pre>       ?   filename (null-terminated string)
+       ?   comment  (null-terminated string)</pre>
+    <pre>       4   basic header crc</pre>
+    <pre>       2   1st extended header size (0 if none)
+       ?   1st extended header (currently not used)
+       4   1st extended header's crc (not present when 0 extended header size)</pre>
+    <pre>       ...</pre>
+    <pre>       ?   compressed file
+</pre>
+    <pre>     time stamp format:</pre>
+    <pre>	31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
+       |&lt;---- year-1980 ---&gt;|&lt;- month -&gt;|&lt;--- day ----&gt;|</pre>
+    <pre>	15 14 13 12 11 10  9  8  7  6  5  4  3	2  1  0
+       |&lt;--- hour ---&gt;|&lt;---- minute ---&gt;|&lt;- second/2 -&gt;|
+</pre>
+    <pre>     end of document
+</pre>
+    </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">·µ»Ø</a></p>
+</body>
+</html>

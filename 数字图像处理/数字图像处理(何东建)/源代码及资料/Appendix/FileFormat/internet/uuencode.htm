@@ -1,0 +1,315 @@
+<html>
+<body background="../jpg/di1.JPG">
+
+<head>
+<title>file:///d:/程序资料/format2/uuencode.txt</title>
+</head>
+
+<body>
+
+<p align="center"><font size="6" color="#0000ff">uuencode</font></p>
+<div align="center"><center>
+
+<table border="0" width="80%">
+<tr>
+<td width="100%"><pre>uuencode is a utility designed to enable arbitrary binary files to be
+transmitted using text-only media such as email. it does this by
+encoding the files in such a way that the encoded file contains only
+printable characters.</pre>
+<pre>(important note: this file is the result of an afternoon's hacking by
+myself. i make no guarantees as to its completeness and accuracy. i have
+coded my own uuencode and uudecode programs which haven't let me down
+yet)</pre>
+<pre>the uuencode algorithm hinges around a 3-byte-to-4-byte  (8-bit to 6-bit
+data) encoding to convert all data to printable characters. to perform
+this encoding read in 3 bytes from the file to be encoded whose binary
+representation is</pre>
+<pre>  a7a6a5a4a3a2a1a0 b7b6b5b4b3b2b1b0 c7c6c5c4c3c2c1c0</pre>
+<pre>and convert them into 4 bytes with values in the range 0-63 as follows:</pre>
+<pre>  0 0 a7a6a5a4a3a2 0 0 a1a0b7b6b5b4 0 0 b3b2b1b0c7c6 0 0 c5c4c3c2c1c0</pre>
+<pre>then convert these bytes to printable characters by adding 0x20 (32).
+exception: if you end up with a zero byte it should be converted to 0x60
+(back-quote '`') rather than 0x20 (space ' ').</pre>
+<pre>so if you read 3 bytes from the file as follows: 14 0f a8 (hex) i.e.</pre>
+<pre>  00010100 00001111 10101000</pre>
+<pre>your 4 bytes output should be 25 60 5e 48 (&quot;%`^h&quot;). the intermediate 4
+bytes in this case were</pre>
+<pre>  00000101 00000000 00111110 00101000</pre>
+<pre>note that the zero byte has been translated to 0x60 instead of 0x20. the
+body of a uuencoded file therefore only contains the characters 0x21 '!'
+to 0x60 '`', which are all printable and capable of being transmitted by
+email.
+(note: this of course means that uuencoded files are slightly more than
+33% longer than the originals. uuencoding text-only files is redundant
+and a silly thing to do. standard and sensible practice is to compress
+the files first using a standard compression utility and then to
+uuencode them).</pre>
+<pre>in addition, the start of the encoding is marked by the line &quot;start
+&lt;mode&gt; &lt;filename&gt;&quot;, where
+&lt;mode&gt; consists of 3 octal digits which are the unix mode of the file,
+and
+&lt;filename&gt; is the original filename of the file encoded.</pre>
+<pre>the end of the encoding is marked by the line &quot;end&quot;.</pre>
+<pre>the first character of each line contains the line length in bytes *in
+the original file*, encoded in the same way as an ordinary byte i.e.
+line length 0-&gt;0x60, all other lengths add 0x20 to convert to printable
+characters. line lengths vary from 0 to 45 (which encodes to 'm'; this
+is why lines in a uuencoded file all start with an m), which is a line
+length of 61 characters (including the length character) in the encoded
+file. this is a nice safe length to transmit via email.</pre>
+<pre>lines in the encoded file are always a multiple of 4 + 1 characters
+long; this sometimes means that 1 or 2 bytes are thrown away at the end
+of the decoding.</pre>
+<pre>(note: i can't see any reason why lines shouldn't be an arbitrary
+length, and don't know whether the proper definition disallows this.
+i've never seen a uuencoded file where any line apart from the last one
+wasn't 'm' followed by 60 characters, though)</pre>
+<pre>to decode, simply perform the inverse of the encoding algorithm.</pre>
+<pre>===== sample code =====</pre>
+<pre>i include here the c source code to a small uuencode and uudecode
+utility i coded myself. it isn't very sophisticated and probably not
+very complete, but it does its job, and is very useful for my pc where i
+don't have access to the standard unix stuff. it took me about half an
+hour to write, and another hour or so to iron out the obvious bugs. it
+works quite happily under dos (uuencoding needs practically no internal
+storage). it isn't a great masterpiece of software design and coding,
+but might be worth a look. feel free to do whatever you want to it, up
+to and including throwing it in the bin.</pre>
+<pre>===== uuencode.c =====</pre>
+<pre>/*
+* uuencode.c -
+*  simple uuencode utility
+*  jim cameron, 1997
+*/</pre>
+<pre>#include &quot;stdio.h&quot;
+#include &quot;stdlib.h&quot;</pre>
+<pre>#define max_linelen 45</pre>
+<pre>#define encode_byte(b) (((b) == 0) ? 0x60 : ((b) + 0x20))</pre>
+<pre>typedef unsigned char byte;</pre>
+<pre>int main (int argc, char *argv [])
+{</pre>
+<pre>  file *infile	= null;
+file *outfile = null;
+int	linelen;
+int linecnt;
+byte inbuf [max_linelen];
+byte *inbytep;
+char outbuf [5];</pre>
+<pre>  if (argc != 3)
+{
+fprintf (stderr, &quot;syntax: uuencode &lt;infile&gt; &lt;outfile&gt;\n&quot;);
+exit (1);
+}</pre>
+<pre>  /* try and open the input file (binary) */</pre>
+<pre>  infile = fopen (argv [1], &quot;rb&quot;);
+if (infile == null)
+{
+fprintf (stderr, &quot;uuencode: couldn't open input file %s\n&quot;, argv
+[1]);
+exit (1);
+}</pre>
+<pre>  /* try and open the output file (text) */</pre>
+<pre>  outfile = fopen (argv [2], &quot;wt&quot;);
+if (outfile == null)
+{
+fprintf (stderr, &quot;uuencode: couldn't open output file %s\n&quot;, argv
+[2]);
+exit (1);
+}</pre>
+<pre>  /* write the 'begin' line, giving it a mode of 0600 */</pre>
+<pre>  fprintf (outfile, &quot;begin 600 %s\n&quot;, argv [1]);</pre>
+<pre>  do
+{</pre>
+<pre>    /* read a line from input file */</pre>
+<pre>    linelen = fread (inbuf, 1, max_linelen, infile);</pre>
+<pre>    /* write the line length byte */</pre>
+<pre>    fputc (encode_byte (linelen), outfile);</pre>
+<pre>    /* encode the line */</pre>
+<pre>    for (linecnt = linelen, inbytep = inbuf;
+linecnt &gt; 0;
+linecnt -= 3, inbytep += 3)
+{</pre>
+<pre>      /* encode 3 bytes from the input buffer */</pre>
+<pre>      outbuf [0] = encode_byte ((inbytep [0] &amp; 0xfc) &gt;&gt; 2);
+outbuf [1] = encode_byte (((inbytep [0] &amp; 0x03) &lt;&lt; 4) +
+((inbytep [1] &amp; 0xf0) &gt;&gt; 4));
+outbuf [2] = encode_byte (((inbytep [1] &amp; 0x0f) &lt;&lt; 2) +
+((inbytep [2] &amp; 0xc0) &gt;&gt; 6));
+outbuf [3] = encode_byte (inbytep [2] &amp; 0x3f);
+outbuf [4] = '\0';</pre>
+<pre>      /* write the 4 encoded bytes to the file */</pre>
+<pre>      fprintf (outfile, &quot;%s&quot;, outbuf);</pre>
+<pre>    }</pre>
+<pre>    fprintf (outfile, &quot;\n&quot;);</pre>
+<pre>  } while (linelen != 0);</pre>
+<pre>  /* write the 'end' marker */</pre>
+<pre>  fprintf (outfile, &quot;end\n&quot;);</pre>
+<pre>  /* tidy up and return */</pre>
+<pre>  fclose (infile);
+fclose (outfile);</pre>
+<pre>  return 0;</pre>
+<pre>}</pre>
+<pre>===== uudecode.c =====</pre>
+<pre>/*
+* uudecode.c -
+*  simple uudecode utility
+*  jim cameron, 1997
+*/</pre>
+<pre>#include &lt;ctype.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;</pre>
+<pre>/* we all hate magic numbers! */</pre>
+<pre>#define line_buf_size 256</pre>
+<pre>/* decode a byte */</pre>
+<pre>#define decode_byte(b) ((b == 0x60) ? 0 : b - 0x20)</pre>
+<pre>typedef unsigned char byte;</pre>
+<pre>int main (int argc, char *argv [])
+{</pre>
+<pre>  file *infile	= null;
+file *outfile = null;
+char linebuf [line_buf_size];
+char *linep	= null;
+char *tempcp	= null;
+int   linelen	= 0;
+int   linecnt	= 0;
+char outfname [line_buf_size];
+byte outbyte	[3];</pre>
+<pre>  /* check that we have the right number of arguments */</pre>
+<pre>  if (argc != 2)
+{
+fprintf (stderr, &quot;syntax: uudecode &lt;filename&gt;\n&quot;);
+exit (1);
+}</pre>
+<pre>  /* open the input file */</pre>
+<pre>  infile = fopen (argv [1], &quot;rt&quot;);
+if (infile == null)
+{
+fprintf (stderr, &quot;uudecode: couldn't open file %s\n&quot;, argv [1]);
+exit (1);
+}</pre>
+<pre>  /* uu-encoded files always have a 'begin' marker, so go and look for
+this */</pre>
+<pre>  for (;;)
+{</pre>
+<pre>    /* read a line */</pre>
+<pre>    if (fgets (linebuf, line_buf_size, infile) == null)
+{
+fprintf (stderr, &quot;uudecode: not a valid uu-encoded file\n&quot;);
+exit (1);
+}</pre>
+<pre>    /* see if it is the 'begin' marker */</pre>
+<pre>    if ((strncmp (linebuf, &quot;begin&quot;, 5) == 0) &amp;&amp; isspace (linebuf [5]))
+{
+break;
+}</pre>
+<pre>  }</pre>
+<pre>  /* if we have reached this point, we have found a begin marker */</pre>
+<pre>  linep = linebuf + 5;</pre>
+<pre>  /* next comes the mode, which we ignore */</pre>
+<pre>  while (isspace (*linep))
+{
+linep++;
+}
+if (*linep == '\0')
+{
+fprintf (stderr, &quot;uudecode: not a valid uu-encoded file\n&quot;);
+exit (1);
+}</pre>
+<pre>  while (isdigit (*linep))
+{
+linep++;
+}
+while (isspace (*linep))
+{
+linep++;
+}
+if (*linep == '\0')
+{
+fprintf (stderr, &quot;uudecode: not a valid uu-encoded file/n&quot;);
+exit (1);
+}</pre>
+<pre>  /* the rest of the begin line is the output file name */</pre>
+<pre>  strcpy (outfname, linep);
+tempcp = outfname;
+while (!isspace (*tempcp) &amp;&amp; (*tempcp != '\0'))
+{
+tempcp++;
+}
+*tempcp = '\0';</pre>
+<pre>  /* now open the output file */</pre>
+<pre>  outfile = fopen (outfname, &quot;wb&quot;);
+if (outfile == null)
+{
+fprintf (stderr, &quot;uudecode: couldn't open output file %s\n&quot;,
+outfname);
+exit (1);
+}</pre>
+<pre>  /* now for the uu-decode proper */</pre>
+<pre>  do
+{</pre>
+<pre>    if (fgets (linebuf, line_buf_size, infile) == null)
+{
+fprintf (stderr, &quot;uudecode: read error\n&quot;);
+exit (1);
+}</pre>
+<pre>    /* the first byte of the line represents the length of the decoded
+line */</pre>
+<pre>    linelen = decode_byte (linebuf [0]);
+linep = linebuf + 1;
+for (linecnt = linelen; linecnt &gt; 0; linecnt -= 3, linep += 4)
+{</pre>
+<pre>      /* check for premature end-of-line */</pre>
+<pre>      if ((linep [0] == '\0') || (linep [1] == '\0') ||
+(linep [2] == '\0') || (linep [3] == '\0'))
+{
+fprintf (stderr, &quot;uudecode: error in encoded block\n&quot;);
+exit (1);
+}</pre>
+<pre>      /* decode the 4-byte block */</pre>
+<pre>      outbyte [0] = decode_byte (linep [0]);
+outbyte [1] = decode_byte (linep [1]);
+outbyte [0] &lt;&lt;= 2;
+outbyte [0] |= (outbyte [1] &gt;&gt; 4) &amp; 0x03;
+outbyte [1] &lt;&lt;= 4;
+outbyte [2] = decode_byte (linep [2]);
+outbyte [1] |= (outbyte [2] &gt;&gt; 2) &amp; 0x0f;
+outbyte [2] &lt;&lt;= 6;
+outbyte [2] |= decode_byte (linep [3]) &amp; 0x3f;</pre>
+<pre>      /* write the decoded bytes to the output file */</pre>
+<pre>      if (linecnt &gt; 3)
+{
+if (fwrite (outbyte, 1, 3, outfile) != 3)
+{
+fprintf (stderr, &quot;uudecode: error writing to output file\n&quot;);
+exit (1);
+}
+}
+else
+{
+if (fwrite (outbyte, 1, linecnt, outfile) != linecnt)
+{
+fprintf (stderr, &quot;uudecode: error writing to output file\n&quot;);
+exit (1);
+}
+linecnt = 3;
+}</pre>
+<pre>    }</pre>
+<pre>  } while (linelen != 0);</pre>
+<pre>  /* all is ok, tidy up and exit */</pre>
+<pre>  fclose (infile);
+fclose (outfile);</pre>
+<pre>  return 0;</pre>
+<pre>}</pre>
+<pre>
+</pre>
+<pre>jim
+--
+j.cameron@physiology.ucl.ac.uk</pre>
+</td>
+</tr>
+</table>
+</center></div>
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

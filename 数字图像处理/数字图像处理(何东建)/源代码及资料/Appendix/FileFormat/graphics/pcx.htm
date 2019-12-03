@@ -1,0 +1,612 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>zsoft pcx file format technical reference manual introduction 2 image file </title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">pcx file format reference</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%"><font size="5"><a href="#introduction">introduction</a></font>&nbsp; <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#image file (.pcx) format">image file (.pcx) format</a>&nbsp; <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#zsoft .pcx file header format">zsoft .pcx file header format</a><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#decoding .pcx files">decoding .pcx files</a> <br>
+    <font size="5"><a href="#palette information description">palette information description </a></font><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#ega/vga 16 color palette information">ega/vga 16 color palette information </a><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#vga 256 color palette information">vga 256 color palette information</a> <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#24-bit .pcx files">24-bit .pcx files 8</a> <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#cga color palette information">cga color palette information</a> <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#cga color map">cga color map</a> <br>
+    <a href="#pc paintbrush bitmap character format"><font size="5">pc paintbrush bitmap 
+    character format</font></a><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#sample &quot;c&quot; routines">sample &quot;c&quot; routines</a> <br>
+    <font size="5"><a href="#frieze technical information">frieze technical information</a></font> 
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#general frieze information">general frieze information</a> <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#7.00 and later frieze">7.00 and later frieze</a> <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+    href="#frieze function calls">frieze function calls</a> <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#frieze error codes">frieze 
+    error codes</a> <br>
+    &#12;<br>
+    <a name="introduction">introduction</a><br>
+    <br>
+    this booklet was designed to aid developers and users in understanding<br>
+    the technical aspects of the .pcx file format and the use of frieze.<br>
+    any comments, questions or suggestions about this booklet should be<br>
+    sent to:<br>
+    <br>
+    zsoft corporation<br>
+    technical services<br>
+    attn: code librarian<br>
+    450 franklin rd. suite 100<br>
+    marietta, ga 30067<br>
+    <br>
+    <br>
+    <br>
+    technical reference manual information compiled by:<br>
+    dean ansley<br>
+    <br>
+    <br>
+    revision 5<br>
+    <br>
+    to down load additional information and the source for a complete<br>
+    turbo pascal program to show .pcx files on a cga/ega/vga graphics<br>
+    display, call our bbs at (404)427-1045. you may use a 9600 baud <br>
+    modem or a 2400 baud standard modem. your modem should be set for<br>
+    8 data bits, 1 stop bit, and no parity.<br>
+    <br>
+    <a name="image file (.pcx) format">image file (.pcx) format</a><br>
+    <br>
+    if you have technical questions on the format, please do not call<br>
+    technical support. zsoft provides this document as a courtesy to<br>
+    its users and developers. it is not the function of technical support<br>
+    to provide programming assistance. if something is not clear, leave a<br>
+    message on our bbs, compuserve, or write us a letter at the above address.<br>
+    <br>
+    the information in this section will be useful if you want to write a<br>
+    program to read or write pcx files (images). if you want to write a<br>
+    special case program for one particular image format you should be able<br>
+    to produce something that runs twice as fast as &quot;load from...&quot; in<br>
+    pc paintbrush. <br>
+    <br>
+    image files used by pc paintbrush product family and frieze (those with a<br>
+    .pcx extension) begin with a 128 byte header. usually you can ignore this<br>
+    header, since your images will probably all have the same resolution. if<br>
+    you want to process different resolutions or colors, you will need to<br>
+    interpret the header correctly. the remainder of the image file consists<br>
+    of encoded graphic data. the encoding method is a simple byte oriented<br>
+    run-length technique. we reserve the right to change this method to<br>
+    improve space efficiency. when more than one color plane is stored in<br>
+    the file, each line of the image is stored by color plane (generally ordered<br>
+    red, green, blue, intensity), as shown below.<br>
+    <br>
+    scan line 0: rrr... (plane 0)<br>
+    ggg... (plane 1)<br>
+    bbb... (plane 2)<br>
+    iii... (plane 3)<br>
+    scan line 1: rrr...<br>
+    ggg...<br>
+    bbb...<br>
+    iii... (etc.)<br>
+    <br>
+    the encoding method is:<br>
+    for each byte, x, read from the file<br>
+    if the top two bits of x are 1's then<br>
+    count = 6 lowest bits of x<br>
+    data = next byte following x<br>
+    else<br>
+    count = 1<br>
+    data = x<br>
+    <br>
+    since the overhead this technique requires is, on average, 25% of<br>
+    the non-repeating data and is at least offset whenever bytes are repeated,<br>
+    the file storage savings are usually considerable.<br>
+    <br>
+    <a name="zsoft .pcx file header format">zsoft .pcx file header format</a><br>
+    <br>
+    byte item size description/comments <br>
+    0 manufacturer 1 constant flag, 10 = zsoft .pcx <br>
+    1 version 1 version information <br>
+    0 = version 2.5 of pc paintbrush <br>
+    2 = version 2.8 w/palette information <br>
+    3 = version 2.8 w/o palette information <br>
+    4 = pc paintbrush for windows(plus for<br>
+    windows uses ver 5) <br>
+    5 = version 3.0 and &gt; of pc paintbrush<br>
+    and pc paintbrush +, includes<br>
+    publisher's paintbrush . includes<br>
+    24-bit .pcx files <br>
+    2 encoding 1 1 = .pcx run length encoding <br>
+    3 bitsperpixel 1 number of bits to represent a pixel<br>
+    (per plane) - 1, 2, 4, or 8 <br>
+    4 window 8 image dimensions: xmin,ymin,xmax,ymax <br>
+    12 hdpi 2 horizontal resolution of image in dpi* <br>
+    14 vdpi 2 vertical resolution of image in dpi* <br>
+    16 colormap 48 color palette setting, see text <br>
+    64 reserved 1 should be set to 0. <br>
+    65 nplanes 1 number of color planes <br>
+    66 bytesperline 2 number of bytes to allocate for a scanline<br>
+    plane. must be an even number. do not<br>
+    calculate from xmax-xmin. <br>
+    68 paletteinfo 2 how to interpret palette- 1 = color/bw,<br>
+    2 = grayscale (ignored in pb iv/ iv +) <br>
+    70 hscreensize 2 horizontal screen size in pixels. new field<br>
+    found only in pb iv/iv plus <br>
+    72 vscreensize 2 vertical screen size in pixels. new field<br>
+    found only in pb iv/iv plus <br>
+    74 filler 54 blank to fill out 128 byte header. set all<br>
+    bytes to 0 <br>
+    <br>
+    &#12;notes:<br>
+    <br>
+    all sizes are measured in bytes. <br>
+    <br>
+    all variables of size 2 are integers. <br>
+    <br>
+    *hdpi and vdpi represent the horizontal and vertical resolutions which the<br>
+    image was created (either printer or scanner); i.e. an image which was<br>
+    scanned might have 300 and 300 in each of these fields.<br>
+    <br>
+    <a name="decoding .pcx files">decoding .pcx files</a><br>
+    <br>
+    first, find the pixel dimensions of the image by calculating<br>
+    [xsize = xmax - xmin + 1] and [ysize = ymax - ymin + 1]. then calculate<br>
+    how many bytes are required to hold one complete uncompressed scan line:<br>
+    <br>
+    totalbytes = nplanes * bytesperline<br>
+    <br>
+    note that since there are always an even number of bytes per scan line,<br>
+    there will probably be unused data at the end of each scan line. totalbytes<br>
+    shows how much storage must be available to decode each scan line, including<br>
+    any blank area on the right side of the image. you can now begin decoding<br>
+    the first scan line - read the first byte of data from the file. if the<br>
+    top two bits are set, the remaining six bits in the byte show how many times<br>
+    to duplicate the next byte in the file. if the top two bits are not set,<br>
+    the first byte is the data itself, with a count of one.<br>
+    <br>
+    continue decoding the rest of the line. keep a running subtotal of how<br>
+    many bytes are moved and duplicated into the output buffer. when the<br>
+    subtotal equals totalbytes, the scan line is complete. there should always<br>
+    be a decoding break at the end of each scan line. but there will not be a<br>
+    decoding break at the end of each plane within each scan line. when the<br>
+    scan line is completed, there may be extra blank data at the end of each<br>
+    plane within the scan line. use the xsize and ysize values to find where<br>
+    the valid image data is. if the data is multi-plane, bytesperline shows<br>
+    where each plane ends within the scan line.<br>
+    <br>
+    continue decoding the remainder of the scan lines (do not just read to<br>
+    end-of-file). there may be additional data after the end of the image<br>
+    (palette, etc.)<br>
+    <br>
+    &#12;<a name="palette information description">palette information description</a><br>
+    <br>
+    <a name="ega/vga 16 color palette information">ega/vga 16 color palette information</a><br>
+    <br>
+    in standard rgb format (ibm ega, ibm vga) the data is stored as 16 triples.<br>
+    each triple is a 3 byte quantity of red, green, blue values. the values can<br>
+    range from 0-255, so some interpretation may be necessary. on an ibm ega,<br>
+    for example, there are 4 possible levels of rgb for each color. since<br>
+    256/4 = 64, the following is a list of the settings and levels:<br>
+    <br>
+    setting level<br>
+    0-63 0<br>
+    64-127 1<br>
+    128-192 2<br>
+    193-254 3<br>
+    <br>
+    <a name="vga 256 color palette information">vga 256 color palette information</a><br>
+    <br>
+    zsoft has recently added the capability to store palettes containing more<br>
+    than 16 colors in the .pcx image file. the 256 color palette is formatted<br>
+    and treated the same as the 16 color palette, except that it is substantially<br>
+    longer. the palette (number of colors x 3 bytes in length) is appended to<br>
+    the end of the .pcx file, and is preceded by a 12 decimal. since the vga<br>
+    device expects a palette value to be 0-63 instead of 0-255, you need to<br>
+    divide the values read in the palette by 4.<br>
+    <br>
+    to access a 256 color palette:<br>
+    <br>
+    first, check the version number in the header; if it contains a 5 there is<br>
+    a palette.<br>
+    <br>
+    second, read to the end of the file and count back 769 bytes. the value<br>
+    you find should be a 12 decimal, showing the presence of a 256 color palette.<br>
+    <br>
+    &#12;<a name="24-bit .pcx files">24-bit .pcx files</a><br>
+    <br>
+    24 bit images are stored as version 5 or above as 8 bit, 3 plane images.<br>
+    <br>
+    24 bit images do not contain a palette.<br>
+    <br>
+    bit planes are ordered as lines of red, green, blue in that order.<br>
+    <br>
+    <a name="cga color palette information">cga color palette information</a><br>
+    <br>
+    note: this is no longer supported for pc paintbrush iv/iv plus.<br>
+    <br>
+    for a standard ibm cga board, the palette settings are a bit more complex.<br>
+    only the first byte of the triple is used. the first triple has a valid<br>
+    first byte which represents the background../jpg/di1.JPG. to find the background,<br>
+    take the (unsigned) byte value and divide by 16. this will give a result<br>
+    between 0-15, hence the background../jpg/di1.JPG. the second triple has a valid<br>
+    first byte, which represents the foreground palette. pc paintbrush supports<br>
+    8 possible cga palettes, so when the foreground setting is encoded between<br>
+    0 and 255, there are 8 ranges of numbers and the divisor is 32.<br>
+    <br>
+    <a name="cga color map">cga color map</a><br>
+    <br>
+    header byte #16 <br>
+    <br>
+    background../jpg/di1.JPGr is determined in the upper four bits.<br>
+    <br>
+    header byte #19<br>
+    <br>
+    only upper 3 bits are used, lower 5 bits are ignored. the first three bits<br>
+    that are used are ordered c, p, i. these bits are interpreted as follows:<br>
+    <br>
+    c: color burst enable - 0 = color; 1 = monochrome<br>
+    <br>
+    p: palette - 0 = yellow; 1 = white<br>
+    <br>
+    i: intensity - 0 = dim; 1 = bright<br>
+    <br>
+    <a name="pc paintbrush bitmap character format">&#12;pc paintbrush bitmap character format</a><br>
+    <br>
+    note: this format is for pc paintbrush (up to vers 3.7) and pc paintbrush<br>
+    plus (up to vers 1.65)<br>
+    <br>
+    the bitmap character fonts are stored in a particularly simple format. the<br>
+    format of these characters is as follows:<br>
+    <br>
+    <br>
+    header<br>
+    <br>
+    font width byte 0xa0 + character width (in pixels)<br>
+    font height byte character height (in pixels)<br>
+    <br>
+    character width table<br>
+    <br>
+    char widths (256 bytes) each char's width + 1 pixel of kerning<br>
+    <br>
+    character images<br>
+    <br>
+    (remainder of the file) starts at char 0 (null)<br>
+    <br>
+    the characters are stored in ascii order and as many as 256 may be provided.<br>
+    each character is left justified in the character block, all characters take<br>
+    up the same number of bytes.<br>
+    <br>
+    bytes are organized as n strings, where each string is one scan line of the<br>
+    character.<br>
+    <br>
+    for example, each character in a 5x7 font requires 7 bytes. a 9x14 font<br>
+    uses 28 bytes per character (stored two bytes per scan line in 14 sets of<br>
+    2 byte packets). custom fonts may be any size up to the current maximum of<br>
+    10k bytes allowed for a font file. there is a maximum of 4 bytes per scan<br>
+    line.<br>
+    <br>
+    &#12;<a name="sample &quot;c&quot; routines">sample &quot;c&quot; routines</a><br>
+    <br>
+    the following is a simple set of c subroutines to read data from a .pcx file.<br>
+    <br>
+    /* this procedure reads one encoded block from the image file and stores a<br>
+    count and data byte.<br>
+    <br>
+    return result: 0 = valid data stored, eof = out of data in file */<br>
+    <br>
+    encget(pbyt, pcnt, fid)<br>
+    int *pbyt; /* where to place data */<br>
+    int *pcnt; /* where to place count */<br>
+    file *fid; /* image file handle */<br>
+    {<br>
+    int i;<br>
+    *pcnt = 1; /* assume a &quot;run&quot; length of one */<br>
+    if (eof == (i = getc(fid)))<br>
+    return (eof);<br>
+    if (0xc0 == (0xc0 &amp; i))<br>
+    {<br>
+    *pcnt = 0x3f &amp; i;<br>
+    if (eof == (i = getc(fid)))<br>
+    return (eof);<br>
+    }<br>
+    *pbyt = i;<br>
+    return (0);<br>
+    }<br>
+    /* here's a program fragment using encget. this reads an entire file and<br>
+    stores it in a (large) buffer, pointed to by the variable &quot;bufr&quot;. &quot;fp&quot; 
+    is<br>
+    the file pointer for the image */<br>
+    <br>
+    int i;<br>
+    long l, lsize;<br>
+    lsize = (long )hdr.bytesperline * hdr.nplanes * (1 + hdr.ymax - hdr.ymin);<br>
+    for (l = 0; l &lt; lsize; ) /* increment by cnt below */<br>
+    {<br>
+    if (eof == encget(&amp;chr, &amp;cnt, fp))<br>
+    break;<br>
+    for (i = 0; i &lt; cnt; i++)<br>
+    *bufr++ = chr;<br>
+    l += cnt;<br>
+    }<br>
+    <br>
+    the following is a set of c subroutines to write data to a .pcx file.<br>
+    <br>
+    /* subroutine for writing an encoded byte pair (or single byte if it<br>
+    doesn't encode) to a file. it returns the count of bytes written, 0 if error */<br>
+    <br>
+    encput(byt, cnt, fid)<br>
+    unsigned char byt, cnt;<br>
+    file *fid;<br>
+    {<br>
+    if (cnt) {<br>
+    if ((cnt == 1) &amp;&amp; (0xc0 != (0xc0 &amp; byt)))<br>
+    {<br>
+    if (eof == putc((int )byt, fid))<br>
+    return(0); /* disk write error (probably full) */<br>
+    return(1);<br>
+    }<br>
+    else<br>
+    {<br>
+    if (eof == putc((int )0xc0 | cnt, fid))<br>
+    return (0); /* disk write error */<br>
+    if (eof == putc((int )byt, fid))<br>
+    return (0); /* disk write error */<br>
+    return (2);<br>
+    }<br>
+    }<br>
+    return (0);<br>
+    }<br>
+    <br>
+    &#12;/* this subroutine encodes one scanline and writes it to a file.<br>
+    it returns number of bytes written into outbuff, 0 if failed. */<br>
+    <br>
+    encline(inbuff, inlen, fp)<br>
+    unsigned char *inbuff; /* pointer to scanline data */<br>
+    int inlen; /* length of raw scanline in bytes */<br>
+    file *fp; /* file to be written to */<br>
+    {<br>
+    unsigned char this, last;<br>
+    int srcindex, i;<br>
+    register int total;<br>
+    register unsigned char runcount; /* max single runlength is 63 */<br>
+    total = 0;<br>
+    runcount = 1;<br>
+    last = *(inbuff);<br>
+    <br>
+    /* find the pixel dimensions of the image by calculating <br>
+    [xsize = xmax - xmin + 1] and [ysize = ymax - ymin + 1]. <br>
+    then calculate how many bytes are in a &quot;run&quot; */<br>
+    <br>
+    for (srcindex = 1; srcindex &lt; inlen; srcindex++)<br>
+    {<br>
+    this = *(++inbuff);<br>
+    if (this == last) /* there is a &quot;run&quot; in the data, encode it */<br>
+    {<br>
+    runcount++;<br>
+    if (runcount == 63)<br>
+    {<br>
+    if (! (i = encput(last, runcount, fp)))<br>
+    return (0);<br>
+    total += i;<br>
+    runcount = 0;<br>
+    }<br>
+    }<br>
+    else /* no &quot;run&quot; - this != last */<br>
+    {<br>
+    if (runcount)<br>
+    {<br>
+    if (! (i = encput(last, runcount, fp)))<br>
+    return(0);<br>
+    total += i;<br>
+    }<br>
+    last = this;<br>
+    runcount = 1;<br>
+    }<br>
+    } /* endloop */<br>
+    if (runcount) /* finish up */<br>
+    {<br>
+    if (! (i = encput(last, runcount, fp)))<br>
+    return (0);<br>
+    return (total + i);<br>
+    }<br>
+    return (total);<br>
+    }<br>
+    <br>
+    &#12;<a name="frieze technical information">frieze technical information</a><br>
+    <br>
+    <a name="general frieze information">general frieze information</a><br>
+    <br>
+    frieze is a memory-resident utility that allows you to capture and save<br>
+    graphic images from other programs. you can then bring these images into<br>
+    pc paintbrush for editing and enhancement.<br>
+    <br>
+    frieze 7.10 and later can be removed from memory (this can return you up<br>
+    to 90k of dos ram, depending on your configuration). to remove frieze from<br>
+    memory, change directories to your paintbrush directory and type the word<br>
+    &quot;frieze&quot;.<br>
+    <br>
+    <a name="7.00 and later frieze">7.00 and later frieze</a><br>
+    <br>
+    the frieze command line format is:<br>
+    <br>
+    frieze {pd} {xn[aarr]} {flags} {video} {hres} {vres} {vnum}<br>
+    where:<br>
+    {pd} printer driver filename (without the .pdv extension)<br>
+    {xn[aarr]}<br>
+    x=s for serial printer, p for parallel printer, d for disk file.<br>
+    (file is always named frieze.prn)<br>
+    n = port number<br>
+    aa = two digit hex code for which return bits cause<br>
+    an abort (optional)<br>
+    rr = two digit hex code for which return bits cause<br>
+    a retry (optional)<br>
+    note: these codes represent return values from serial or<br>
+    parallel port bios calls. for values see and ibm<br>
+    bios reference (such as ray duncan's advanced ms-dos<br>
+    programming).<br>
+    {flags}four digit hex code<br>
+    first digit controls length flag<br>
+    second digit controls width flag<br>
+    third digit controls mode flag<br>
+    fourth digit controls bios flag<br>
+    0 - none<br>
+    1 - dual monitor present<br>
+    2 - use internal (true) b/w palette for dithering<br>
+    2 color images<br>
+    4 - capture palette along with screen in vga only<br>
+    frieze 8.08 &amp; up only)<br>
+    <br>
+    note: the length, width and mode flags are printer driver specific.<br>
+    see printers.dat on disk 1 (or setup disk) for correct use. in general<br>
+    width flag of 1 means wide carriage, and 0 means standard width. length<br>
+    flag of 0 and mode flag of 0 means use default printer driver settings.<br>
+    <br>
+    if you need to use more than one bios flag option, add the needed flag values<br>
+    and use the sum as the flag value.<br>
+    <br>
+    {video} video driver combination, where the leading digit signifies the<br>
+    high level video driver and the rest signifies the low<br>
+    level video driver<br>
+    example = 1ega - uses drive1 and ega.dev<br>
+    {hres} horizontal resolution of the desired graphics mode<br>
+    {vres} vertical resolution of the desired graphics mode<br>
+    {vnum} hardware specific parameter (usually number of color planes)<br>
+    <br>
+    note: the last four parameters can be obtained from the cards.dat file,<br>
+    in your pc paintbrush product directory.<br>
+    <br>
+    <br>
+    <a name="frieze function calls">frieze function calls</a><br>
+    <br>
+    frieze is operated using software interrupt number 10h (the video interrupt<br>
+    call).<br>
+    <br>
+    to make a frieze function call, load 75 (decimal) into the ah register and<br>
+    the function number into the cl register, then either load al with the<br>
+    function argument or load es and bx with a segment and offset which point<br>
+    to the function argument. do an int 10h. frieze will return a result code<br>
+    number in ax. all other registers are preserved. in general, a result<br>
+    code of 0 means success and other values indicate errors. however, function<br>
+    20 (get frieze version) behaves differently; see below.<br>
+    no. definition arguments<br>
+    0 reserved<br>
+    1 load window<br>
+    es:bx - string (filename to read from)<br>
+    2 save window<br>
+    es:bx - string (filename to write to)<br>
+    3 reserved<br>
+    4 reserved <br>
+    6 reserved <br>
+    7 set window size<br>
+    es:bx - 4 element word vector of window settings:<br>
+    xmin, ymin, xmax, ymax<br>
+    8 reserved<br>
+    9 set patterns <br>
+    es:bx - 16 element vector of byte values<br>
+    containing the screen-to-printer color correspondence<br>
+    10 get patterns<br>
+    es:bx - room for 16 bytes as above<br>
+    11 set mode<br>
+    12,13,14 reserved<br>
+    15 get window<br>
+    es:bx - room for 4 words of the current window<br>
+    settings<br>
+    16 set print options<br>
+    es:bx - character string of printer options.<br>
+    same format as for the frieze command.<br>
+    17, 18, 19 reserved<br>
+    20 get frieze version.<br>
+    ah gets the whole number portion and al gets the<br>
+    decimal portion of the version number. (eg. for<br>
+    freize vesion 7.41, ah will contain 7 and al will<br>
+    contain 41. if ah =0, you are calling a pre-7.0<br>
+    version of frieze).<br>
+    21 set parameters<br>
+    es:bx points to an 8 word table (16 bytes) of<br>
+    parameter settings: topmargin, leftmargin,<br>
+    hsize,vsize, quality/draft mode, printhres,<br>
+    printvres, reserved.<br>
+    margins and sizes are specified in hundredths<br>
+    of inches.<br>
+    q/d mode parameter values:<br>
+    0 - draft print mode<br>
+    1 - quality print mode<br>
+    print resolutions are specified in dpi.<br>
+    any parameter which should be left unchanged may<br>
+    be filled with a (-1) (0ffff hex). the reserved<br>
+    settings should be filled with a (-1).<br>
+    22 get parameters<br>
+    es:bx points to an 8 word table (16 bytes) where<br>
+    parameter settings are held.<br>
+    23 get printer res<br>
+    es:bx points to a 12 word table (24 bytes) that<br>
+    holds six printer resolution pairs.<br>
+    24 reserved (versions 8.00 &amp; up)<br>
+    <br>
+    <a name="frieze error codes">frieze error codes</a><br>
+    <br>
+    when frieze is called using interrupt 10 hex, it will return an error code<br>
+    in the ax register. a value of zero shows that there was no error. a<br>
+    nonzero result means there was an error. these error codes are explained<br>
+    below.<br>
+    <br>
+    0 no error<br>
+    1 printout was stopped by user with the esc key<br>
+    2 reserved<br>
+    3 file read error<br>
+    4 file write error<br>
+    5 file not found<br>
+    6 invalid header - not an image, wrong screen mode<br>
+    7 file close error<br>
+    8 disk error - usually drive door open<br>
+    9 printer error - printer is off or out of paper<br>
+    10 invalid command - cl was set to call a nonexistent frieze function<br>
+    11 can't create file - write protect tab or disk is full<br>
+    12 wrong video mode - frieze cannot capture text screens.&#12;<br>
+    <br>
+    technical reference manual<br>
+    <br>
+    including information for:<br>
+    publisher's paintbrushr<br>
+    pc paintbrush ivtm<br>
+    pc paintbrush iv plustm<br>
+    pc paintbrush plustm<br>
+    pc paintbrushr<br>
+    friezetm graphics<br>
+    paintbrushtm<br>
+    revision 5<br>
+    <br>
+    zsoft corporation<br>
+    450 franklin rd. suite 100<br>
+    marietta, ga 30067<br>
+    (404) 428-0008<br>
+    (404) 427-1150 fax<br>
+    (404) 427-1045 bbs<br>
+    <br>
+    copyright c 1985, 1987, 1988, 1990, 1991, zsoft corporation <br>
+    all rights reserved</td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>borland </title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">borland .map file format</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%">the map file is simply a list of the segments contained in the <br>
+    compiled program together with information about the segment type <br>
+    and where it appears in the compiled code.<br>
+    <br>
+    <br>
+    here is an example of a .map file for a tasm prog i wrote:<br>
+    <br>
+    start stop length name class<br>
+    <br>
+    00000h 00000h 00000h _text code<br>
+    00000h 00356h 00357h _codeseg code<br>
+    00358h 00358h 00000h _data data<br>
+    00360h 00ee9h 00b8ah _varseg data<br>
+    00ef0h 108efh 0fa00h _scrnseg scrn<br>
+    108f0h 1092fh 00040h _stackseg stack<br>
+    <br>
+    program entry point at 0000:02c7<br>
+    warning: no stack<br>
+    <br>
+    first it displays headings for each column (start, stop, length, name,<br>
+    and class).. then it lists all the segments in the order they appear in<br>
+    the executable... the start is how far into the code (in hex) that the<br>
+    segment starts at, stop is how far into the code the segment ends.. and<br>
+    the length is stop - start. under name is just the name of the segment<br>
+    that the programmer gave it when programming it.. (default segs are<br>
+    _text and _data if you just use .code and .data to start your segs) and<br>
+    class is the alias that you give the seg.. for example.. if you declare<br>
+    the seg like the following in your program:<br>
+    <br>
+    _scrnseg&nbsp;&nbsp;&nbsp; segment public 'scrn'<br>
+    _scrnseg&nbsp;&nbsp;&nbsp; ends<br>
+    <br>
+    the name will be _scrnseg and the class will be scrn. the program entry<br>
+    point is the state of cs:ip upon entry to the program (cs will be offset<br>
+    however depending on where in memory the program is loaded).. after that<br>
+    it lists any warnings or errors in the program.. in this case it gave a<br>
+    no stack warning because i manually declared a stack seg rather than<br>
+    using the conventional .stack &lt;size&gt; directive.<br>
+    <br>
+    --------------------------------<br>
+    brad kimmel<br>
+    intrepid@accessv.com<br>
+    mississauga, ontario, canada<br>
+    --------------------------------&#26;</td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

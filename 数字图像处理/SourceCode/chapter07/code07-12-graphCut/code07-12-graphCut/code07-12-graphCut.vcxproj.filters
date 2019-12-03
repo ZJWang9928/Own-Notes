@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="code07-12-graphCut.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gc\GCoptimization.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gc\graph.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gc\LinkedBlockList.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gc\maxflow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{b5040730-c5e9-4573-82d1-253d7985f656}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{30dc977f-7bb4-4420-9b32-1042e9bff08f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="gc\block.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gc\energy.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gc\GCoptimization.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gc\graph.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gc\LinkedBlockList.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

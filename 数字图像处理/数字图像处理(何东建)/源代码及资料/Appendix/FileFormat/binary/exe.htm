@@ -1,0 +1,57 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>dos exe file structure</title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">dos exe file structure</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%">offset size&nbsp;&nbsp;&nbsp; description<br>
+    <br>
+    00 word &quot;mz&quot; - link file .exe signature (mark zbikowski?)<br>
+    02 word length of image mod 512<br>
+    04 word size of file in 512 byte pages<br>
+    06 word number of relocation items following header<br>
+    08 word size of header in 16 byte paragraphs, used to locate<br>
+    &nbsp;&nbsp;&nbsp; the beginning of the load module<br>
+    0a word min # of paragraphs needed to run program<br>
+    0c word max # of paragraphs the program would like<br>
+    0e word offset in load module of stack segment (in paras)<br>
+    10 word initial sp value to be loaded<br>
+    12 word negative checksum of pgm used while by exec loads pgm<br>
+    14 word program entry point, (initial ip value)<br>
+    16 word offset in load module of the code segment (in paras)<br>
+    18 word offset in .exe file of first relocation item<br>
+    1a word overlay number (0 for root program)<br>
+    <br>
+    - relocation table and the program load module follow the header<br>
+    - relocation entries are 32 bit values representing the offset<br>
+    into the load module needing patched<br>
+    - once the relocatable item is found, the cs register is added to<br>
+    the value found at the calculated offset<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; registers at load time of the exe file are as follows:<br>
+    <br>
+    ax:&nbsp;&nbsp;&nbsp; contains number of characters in command tail, or 0<br>
+    bx:cx&nbsp;&nbsp;&nbsp; 32 bit value indicating the load module memory size<br>
+    dx&nbsp;&nbsp;&nbsp; zero<br>
+    ss:sp&nbsp;&nbsp;&nbsp; set to stack segment if defined else, ss = cs and<br>
+    &nbsp;&nbsp;&nbsp; sp=ffffh or top of memory.<br>
+    ds&nbsp;&nbsp;&nbsp; set to segment address of exe header<br>
+    es&nbsp;&nbsp;&nbsp; set to segment address of exe header<br>
+    cs:ip&nbsp;&nbsp;&nbsp; far address of program entry point, (label on &quot;end&quot;<br>
+    &nbsp;&nbsp;&nbsp; statement of program)</td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

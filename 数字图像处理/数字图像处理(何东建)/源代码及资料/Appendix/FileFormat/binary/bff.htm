@@ -1,0 +1,156 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>a grammar for binary file formats</title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">a grammar for binary file formats</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%">with a growing number of binary formats that are being used, there is a 
+    need for specifying these formats in a well-defined way. context free grammars have been 
+    used to specify the syntax of programming langauges. to use a grammar for binary file 
+    formats seems to be a logical choice.<br>
+    <br>
+    in this page such a grammar, named bff, is described. it has several construct that are 
+    not traditionally found in context free grammars for programming language. due to the 
+    nature of binary file formats, it is important to be able to reference information that 
+    has been read before. for example, a string of characters might be preceded by a number 
+    that indicates the lengt of the string.<br>
+    <br>
+    the terminal symbols of the grammar consist of a number of bytes, representing one of the 
+    basic data types, such as: char, short int, long int, float and double. differences in 
+    byte ordering for integers, and the different formats for floating point numbers should be 
+    taken into account.<br>
+    <br>
+    due to the nature of binary formats, it is not too restrictive to use only recursive 
+    descent grammars, e.i., grammars that can be parsed top-down, and belong to the ll(1) 
+    class.<br>
+    <br>
+    the bff is tested for the dwg file format. as we start with this file format, bff will 
+    naturally first focus on the requirements based on this format, and because of this it 
+    will be slightly biased.<br>
+    <br>
+    to specify the grammar of bff we will use a form of extended bnf.<br>
+    <br>
+    tool support for bff<br>
+    <br>
+    the first tool i am thinking about is a program that can read the grammar and apply this 
+    to a given binary file, resulting in an annotated output.<br>
+    <br>
+    with this tool should also support the reverse engineering of binary file formats.<br>
+    <br>
+    in a later state, a tool could be made that generates a parser and the needed data 
+    structures for reading a binary file into memory according to the grammar. as it is not 
+    always required (nor possible) to read the whole file into memory, it should be possible 
+    to generate procedures to read the file interactively.<br>
+    <br>
+    the form of the bff grammar<br>
+    <br>
+    a grammar that describes a binary file format consists of the specification of the 
+    elementary units of data, and the rules by which these should be grouped together.<br>
+    <br>
+    the elementary units<br>
+    <br>
+    we assume that a binary file can be viewed as a stream of bytes (as this is the most 
+    commonly used unit of data). usually a number of bytes are grouped together to form data 
+    values that cannot be represented by a single byte. to specify a word value consisting of 
+    two bytes, for example, we propose the following defintion style:<br>
+    <br>
+    type word :=<br>
+    byte : first,<br>
+    byte : second<br>
+    return ((word)first | ((word)second &lt;&lt; 8)).<br>
+    <br>
+    a word representation where the lower order byte comes before the higher order is usually 
+    used by small endian processors. the expression used on will be based on c. we assume that 
+    the following types have been defined on top of the default types of c:<br>
+    <br>
+    typedef unsigned char byte;<br>
+    typedef unsigned short int word;<br>
+    typedef unsigned long int longword;<br>
+    <br>
+    this leeds us to the definition of the basic types that will be supported:<br>
+    <br>
+    c_data_types :=<br>
+    &quot;char&quot; | &quot;byte&quot; |<br>
+    &quot;short&quot; | &quot;word&quot; |<br>
+    &quot;long&quot; | &quot;longword&quot; |<br>
+    &quot;float&quot; | &quot;double&quot; .<br>
+    <br>
+    (we assume for the moment that float and double represent floating numbers of 4, 
+    respectively 10 bytes.) the grammar of the rule used for defining types is:<br>
+    <br>
+    type_def_rule :=<br>
+    &quot;typedef&quot; c_data_type basic_type_name &quot;:=&quot;<br>
+    (&quot;byte&quot; &quot;:&quot; byte_name) list<br>
+    &quot;return&quot; expr &quot;.&quot; .<br>
+    <br>
+    here expr stands for c-like expression using the byte_names as they are used in the rule. 
+    the basic_type_names should not be confused with the c_type_names. it is possible that the 
+    same name is both used as a basic_type_name and a c_type_name.<br>
+    <br>
+    the rules<br>
+    <br>
+    the grammar that specifies in which order elementary units are taken from a binary file, 
+    makes use of non-terminal symbols and rules for each non-terminal symbol. there will be 
+    one non-terminal symbol that will parse the whole binary file, which will be called the 
+    root non-terminal symbol. for each non-terminal symbol there has to be a rule describing 
+    the elements it consists of, where each element is either an elementary elements or a 
+    non-terminal symbols. the rule of the root non-terminal symbol comes as the first rule, 
+    and is preceded with the word `root'. the whole bff grammar follows the following grammar:<br>
+    <br>
+    bff_grammar :=<br>
+    type_def_rule seq<br>
+    &quot;root&quot; rule<br>
+    rule seq.<br>
+    <br>
+    each rule has a non-terminal symbol on the left-hand side, and a list of elements on the 
+    right-hand side. each element is either a elementary element, a non-terminal symbol, or a 
+    grouping of elements. because bff assumes a top-down parsing method, it is possible to 
+    give each non-terminal symbol a number of parameters. this leads to the following grammar 
+    for the rules:<br>
+    <br>
+    rule :=<br>
+    non_term_name ( &quot;(&quot; param list &quot;)&quot; )opt<br>
+    &quot;:=&quot; elem list &quot;.&quot;.<br>
+    <br>
+    each element consist of the following parts:<br>
+    <br>
+    * an (optional) range, which specifies the range of the file that element may read.<br>
+    * a data type, which can either be a elementary unit, a non-terminal symbol, or a list of 
+    elements enclosed by brackets.<br>
+    * an (optional) times expression, to indicate that the element can be repeated, either for 
+    a given number of times or for an unknown number of times.<br>
+    * an (optional) identifying name, which can be used later to reference the value found.<br>
+    * an (optional) equivalence expression, which can be used for checking.<br>
+    <br>
+    the following grammar describes an element:<br>
+    <br>
+    elem := range opt<br>
+    data_type<br>
+    ( &quot;[&quot; expr &quot;]&quot;<br>
+    | &quot;*&quot; )<br>
+    ( &quot;:&quot; elem_name )opt<br>
+    ( &quot;=&quot; c_expr )opt.<br>
+    <br>
+    range := &quot;[&quot; file_pos (&quot;:&quot; file_pos)opt &quot;]&quot;.<br>
+    <br>
+    file_pos := &quot;begin&quot; | &quot;end&quot; | &quot;cur&quot; | expr.<br>
+    <br>
+    data_type := &quot;(&quot; elem list &quot;)&quot;<br>
+    | basic_type_name<br>
+    | non_term_name ( &quot;(&quot; expr list &quot;)&quot; )opt.</td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

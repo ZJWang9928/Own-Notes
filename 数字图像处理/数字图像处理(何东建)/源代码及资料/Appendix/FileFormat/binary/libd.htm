@@ -1,0 +1,149 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>dictionary hashing algorithm</title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">dictionary hashing algorithm</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%"><br>
+    product: microsoft exemod, exepack, or lib utility<br>
+    title: dictionary hashing algorithm used by the lib utility<br>
+    <br>
+    updated: 16-may-1991<br>
+    operating system versions: 3.0x 3.10 3.11 3.14 3.15 3.17 3.18 | 3.1<br>
+    operating systems: ms-dos | os/2<br>
+    <br>
+    summary:<br>
+    <br>
+    the last part of each library produced by the microsoft library<br>
+    manager (lib) contains a dictionary that holds all the public symbols<br>
+    in the library. the hashing algorithm mentioned on page 63 of the<br>
+    &quot;microsoft c developer's toolkit reference&quot; is used to place data in<br>
+    the dictionary. the code required to implement the hashing algorithm<br>
+    is shown at the end of this article.<br>
+    <br>
+    more information:<br>
+    <br>
+    the library dictionary is divided into pages that are 512 bytes long.<br>
+    each page starts with a 37-byte bucket table, which contains 37<br>
+    separate offsets to the symbols in the rest of the page. the values in<br>
+    the buckets are multiplied by 2 to get the actual offset (since 1 byte<br>
+    can contain only 256 different values).<br>
+    <br>
+    the hashing algorithm analyzes a symbol's name and produces two<br>
+    indexes (page index and bucket index) and two deltas (page index delta<br>
+    and bucket index delta). using the offset contained in the bucket at<br>
+    bucket index in the page at page index, you must compare the symbol at<br>
+    that location with the one you are looking for.<br>
+    <br>
+    if (due to symbol collision) you have not found the correct symbol,<br>
+    add the bucket index delta to the current bucket index, modulo 37, and<br>
+    try again. continue until all the buckets in the current page are<br>
+    tried. then, add the page index delta to the current page, modulo by<br>
+    the page count, and try all the buckets in that page starting at<br>
+    bucket index. continue this process until all of the possible page and<br>
+    offset combinations have been tried.<br>
+    <br>
+    for more information on the actual format of the symbols in the<br>
+    dictionary, and information on the format for the rest of the library,<br>
+    see the &quot;microsoft c developer's toolkit reference.&quot;<br>
+    <br>
+    sample code<br>
+    -----------<br>
+    <br>
+    /* this code illustrates the hashing algorithm used by lib */<br>
+    <br>
+    /* compile options needed: none<br>
+    */<br>
+    <br>
+    #include &lt;stdio.h&gt;<br>
+    #include &lt;string.h&gt;<br>
+    #include &lt;malloc.h&gt;<br>
+    #include &lt;stdlib.h&gt;<br>
+    <br>
+    #define xor ^<br>
+    #define modulo %<br>
+    <br>
+    char *symbol; /* symbol to find (or to place) */<br>
+    int dictlength; /* dictionary length in pages */<br>
+    int buckets; /* number of buckets on one page */<br>
+    <br>
+    char *pb; /* a pointer to the beginning of the symbol */<br>
+    char *pe; /* a pointer to the end of the symbol */<br>
+    int slength; /* length of the symbol's name */<br>
+    <br>
+    int page_index; /* page index */<br>
+    int page_index_delta; /* page index delta */<br>
+    int bucket_index; /* bucket index */<br>
+    int bucket_index_delta; /* bucket index delta */<br>
+    <br>
+    unsigned c;<br>
+    <br>
+    void hash(void)<br>
+    {<br>
+    page_index = 0;<br>
+    page_index_delta = 0;<br>
+    bucket_index = 0;<br>
+    bucket_index_delta = 0;<br>
+    <br>
+    while( slength--)<br>
+    {<br>
+    c = *(pb++) | 32; /* convert character to lower case */<br>
+    page_index = (page_index&lt;&lt;2) xor c; /* hash */<br>
+    bucket_index_delta = (bucket_index_delta&gt;&gt;2) xor c; /* hash */<br>
+    c = *(pe--) | 32;<br>
+    bucket_index = (bucket_index&gt;&gt;2) xor c; /* hash */<br>
+    page_index_delta = (page_index_delta&lt;&lt;2) xor c; /* hash */<br>
+    }<br>
+    /* calculate page index */<br>
+    page_index = page_index modulo dictlength;<br>
+    <br>
+    /* calculate page index delta */<br>
+    if( (page_index_delta = page_index_delta modulo dictlength) == 0)<br>
+    page_index_delta = 1;<br>
+    <br>
+    /* calculate bucket offset */<br>
+    bucket_index = bucket_index modulo buckets;<br>
+    <br>
+    /* calculate bucket offset delta */<br>
+    if( (bucket_index_delta = bucket_index_delta modulo buckets) == 0)<br>
+    bucket_index_delta = 1;<br>
+    }<br>
+    <br>
+    void main(void)<br>
+    {<br>
+    int i;<br>
+    dictlength = 3;<br>
+    buckets = 37;<br>
+    <br>
+    if ( (symbol = (char *) malloc( sizeof(char) * 4 )) == null )<br>
+    exit(1);<br>
+    <br>
+    strcpy( symbol, &quot;one&quot;);<br>
+    <br>
+    for( i = 0; i &lt; 2; i++ ) {<br>
+    slength = strlen(symbol);<br>
+    pb = symbol;<br>
+    pe = symbol + slength ;<br>
+    hash();<br>
+    printf(&quot;\npage_index: %2d page_index_delta: %d&quot;,<br>
+    page_index, page_index_delta);<br>
+    printf(&quot;\nbucket_index: %2d bucket_index_delta: %d&quot;,<br>
+    bucket_index, bucket_index_delta);<br>
+    strcpy( symbol, &quot;two&quot;);<br>
+    }</td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

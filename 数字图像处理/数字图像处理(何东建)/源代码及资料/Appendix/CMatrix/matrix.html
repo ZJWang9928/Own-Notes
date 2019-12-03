@@ -1,0 +1,508 @@
+<html>
+
+<head>
+<title>计算机图形学－光栅图形学</title>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+
+<script type="text/javascript" src="mtmtrack.js">
+</script>
+</head>
+
+<body background="../snow.GIF">
+<div align="center">
+
+<table border="0" cellpadding="0" cellspacing="0" height="48" width="739">
+  <tr align="left">
+    <td bgcolor="#009eea" height="30" width="457">
+    <p style="line-height: 150%"><small><font color="#000000">您现在的位置&gt;&gt;</font><font
+    color="#FFFFFF">网上教程</font><font color="#000080">&gt;&gt;</font></small><font face="宋体" color="#000080" size="2">计算机图形学&gt;&gt;附录D 
+    矩阵运算类</font></td>        
+    <td height="30" width="282">        
+    <p style="line-height: 150%"></td>        
+  </tr>        
+  <tr align="center">        
+    <td colspan="2" height="1" width="739">        
+    <p style="line-height: 150%"><br>        
+    </p>        
+        <table border="1" bordercolor="#009eea" cellpadding="0" cellspacing="0" width="652">        
+          <tbody>         
+          <tr>        
+            <td width="648">         
+              <table border="0" cellpadding="0" cellspacing="0" height="962"        
+        width="101%" style="border-top-width: 0; border-bottom-width: 0">        
+<tbody>        
+          <tr>        
+            <td bgcolor="#009eea" colspan="3" height="25" width="100%">        
+                    <p align="center" style="line-height: 150%">        
+                    <font color="#FFFFFF">矩阵运算及其在C++中的实现</font>       
+                  </td>       
+          </tr>       
+          <tr>       
+            <td height="937" width="4%" style="border-right-style: none; border-right-width: medium">       
+            <p style="line-height: 150%"></td>       
+            <td height="937" width="91%" valign="top" style="border-style: none; border-width: medium">       
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; LINE-HEIGHT: 150%">       
+            <font face="宋体" size="3">&nbsp;&nbsp;&nbsp;</font></p>      
+            <p style="LINE-HEIGHT: 150%">      
+            <b><font face="宋体" size="5"><a name="001"></a>D.1 矩阵类定义</font></b></p>     
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; LINE-HEIGHT: 150%">      
+            <font face="宋体" size="3">&nbsp;&nbsp;&nbsp; 
+            在计算机图形学中，很多运算都可以用矩阵运算（特别是矩阵乘）来描述，在程序设计过程中也不可避免的要使用到矩阵。一个比较自然的思路是用二维数组表示矩阵，但这样一来，矩阵的加，乘，拷贝等一系列运算都不方便实现。考虑面向对象程序设计技术，在C++语言中可以设计一个矩阵类，以完成矩阵的加，乘，拷贝等一系列运算是一个比较好的办法。</font></p>     
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; LINE-HEIGHT: 150%">      
+            <font face="宋体" size="3">&nbsp;&nbsp;&nbsp; 可以如下来定义一个矩阵类：</font></p>     
+            <blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            <font face="宋体"><font color="#008000">// CMatrix.h: interface for 
+            the CMatrix class.<br>
+            //<br>
+            //////////////////////////////////////////////////////////////////////</font><br>
+            <br>
+            <font color="#0000FF">#if</font></font></p>     
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            <font face="宋体">!<font color="#0000FF">defined</font>(AFX_CMATRIX_H__CC2F3E15_9F82_11D4_A203_0000E81BB9DD__INCLUDED_)<br>
+            <font color="#0000FF">#define</font> 
+            AFX_CMATRIX_H__CC2F3E15_9F82_11D4_A203_0000E81BB9DD__INCLUDED_<br>
+            <br>
+            <font color="#0000FF">#if</font> _MSC_VER &gt; 1000<br>
+            <font color="#0000FF">#pragma once</font><br>
+            <font color="#0000FF">#endif</font> // _MSC_VER &gt; 1000<br>
+            <br>
+            <font color="#008000">//用TYPE来定义double数据类型</font><br>
+            <font color="#0000FF">#define</font> TYPE <font color="#0000FF">
+            double</font><br>
+            <br>
+            <font color="#0000FF">class</font> CMatrix <br>
+            {</font></p>     
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            <font face="宋体"><font color="#0000FF">public</font>:</font></p>     
+              <blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            <font face="宋体"><font color="#008000">//构造函数<br>
+            //无参构造函数</font><br>
+            CMatrix();<br>
+            <font color="#008000">//利用参数RowNumber和ColumnNumber构造矩阵</font><br>
+            CMatrix(<font color="#0000FF">int</font> RowNumber,
+            <font color="#0000FF">int</font> ColumnNumber);<br>
+            <font color="#008000">//拷贝构造函数，利用传入的矩阵Matrix拷贝构造另一个矩阵</font><br>
+            CMatrix(CMatrix&amp; Matrix);<br>
+            <br>
+            <font color="#008000">//析构函数</font><br>
+            <font color="#0000FF">virtual</font> ~CMatrix();<br>
+            <br>
+            <font color="#008000">//用指定的RowNumber和ColumnNumber创建矩阵</font><br>
+            Create(<font color="#0000FF">int</font> RowNumber,
+            <font color="#0000FF">int</font> ColumnNumber);<br>
+            <br>
+            <font color="#008000">//获得矩阵的行数</font><br>
+            <font color="#0000FF">int</font> GetRowNumber();<br>
+            <font color="#008000">//获得矩阵的列数</font><br>
+            <font color="#0000FF">int</font> GetColumnNumber();<br>
+            <br>
+            <font color="#008000">//操作符重载<br>
+            // * 操作符</font><br>
+            CMatrix <font color="#0000FF">operator</font> *(CMatrix &amp;Num2);<br>
+            <font color="#008000">// [] 操作符</font><br>
+            TYPE* CMatrix::<font color="#0000FF">operator</font>[](int Row);<br>
+            <font color="#008000">// *= 操作符</font><br>
+            <font color="#0000FF">void</font> CMatrix::<font color="#0000FF">operator</font> 
+            *=(TYPE Number);<br>
+            <font color="#008000">// += 操作符</font><br>
+            <font color="#0000FF">void</font> CMatrix::<font color="#0000FF">operator</font> 
+            +=(CMatrix&amp; Other);<br>
+            <font color="#008000">// = 操作符</font><br>
+            <font color="#0000FF">void</font> CMatrix::<font color="#0000FF">operator</font> 
+            =(CMatrix&amp; Other);<br>
+            <font color="#008000">// + 操作符</font><br>
+            CMatrix CMatrix::<font color="#0000FF">operator</font> +(CMatrix 
+            &amp;Other);<br>
+            <br>
+            <font color="#008000">//用于调试的转储函数</font><br>
+            <font color="#0000FF">void</font> Dump();<br>
+            <font color="#0000FF">void</font> Fill(TYPE FillNumber);<br>
+            <font color="#008000">//生成单位阵</font><br>
+            <font color="#0000FF">void</font> MakeUnit();</font></p>     
+              </blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            <font face="宋体"><br>
+            <font color="#0000FF">private</font>:</font></p>     
+              <blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            <font face="宋体"><font color="#008000">//矩阵列数</font><br>
+            <font color="#0000FF">int</font> ColumnNumber;<br>
+            <font color="#008000">//矩阵行数</font><br>
+            <font color="#0000FF">int</font> RowNumber;<br>
+            <font color="#008000">//矩阵元素</font><br>
+            TYPE *data;</font></p>     
+              </blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            <font face="宋体">};<br>
+            <br>
+            <font color="#0000FF">#endif</font> // !<font color="#0000FF">defined</font>(AFX_CMATRIX_H__CC2F3E15_9F82_11D4_A203_0000E81BB9DD__INCLUDED_)</font></p>     
+            </blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; LINE-HEIGHT: 150%">      
+            <font face="宋体" size="3">
+            由上述类结构可见，这个类实际上主要是重载了很多的运算符，这样一来，在程序中可以类似于这样去写：</font></p>     
+            <p style="line-height: 150%; margin-top: 0px; margin-bottom: 0px">
+            <font face="宋体" size="3">&nbsp;&nbsp;&nbsp; Matrix3 = Matrix1 * Matrix2;</font></p>
+            <p style="line-height: 150%; margin-top: 0px; margin-bottom: 0px">
+            <font face="宋体" size="3">以实现两个矩阵的相乘。这样的写法无疑是非常清晰明了的，而且利于代码重用。</font></p>
+            <p style="line-height: 150%; margin-top: 0px; margin-bottom: 0px">
+            <font face="宋体" size="3">&nbsp;&nbsp;&nbsp; 在矩阵设计的过程中规定了每个元素必须是double（</font><font face="宋体"><font color="#0000FF">#define</font> 
+            TYPE <font color="#0000FF">double</font></font><font face="宋体" size="3">）型，其实这里更好的写法是使用类模板。这个类是很多图形学算法的基础，希望大家能够将其进一步扩展以实现矩阵运算的更多功能。</font></p>
+            <p style="MARGIN-TOP: 10px; MARGIN-BOTTOM: 10px; LINE-HEIGHT: 150%">      
+            <b><font face="宋体" size="5"><a name="002"></a>D.2 矩阵类关键技术的实现</font></b></p>     
+            <p style="line-height: 150%; margin-top: 0px; margin-bottom: 0px">&nbsp;&nbsp;&nbsp; 
+            在CMatrix类中主要是类的创建和操作符的重载。</p>
+            <p style="line-height: 150%; margin-top: 0px; margin-bottom: 0px">
+            <b><font face="宋体" size="3">D.2.1 构造函数</font></b></p>
+            <blockquote>
+              <p style="margin-top: 0px; margin-bottom: 0px">
+              <font color="#008000">
+              ////////////////////////////////////////////////////////////////////////<br>
+              //构造函数CMatrix()<br>
+              //----------------------------------------------------------------------<br>
+              //基本功能：用传入的参数构造矩阵类对象。这里动态生成一个二维数组，用于存<br>
+              //&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+              储矩阵数据，数组类形已定义为double型。<br>
+              //----------------------------------------------------------------------<br>
+              //参数说明：int RowNumber&nbsp;&nbsp;&nbsp; 矩阵的行数<br>
+              //&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int 
+              ColumnNumber 矩阵的列数<br>
+              //----------------------------------------------------------------------<br>
+              //返 回：矩阵类对象指针<br>
+              //----------------------------------------------------------------------<br>
+              //编 者：耿 楠<br>
+              //----------------------------------------------------------------------<br>
+              //最后编改：2002年10月18日<br>
+              ////////////////////////////////////////////////////////////////////////</font><br>
+              CMatrix::CMatrix(<font color="#0000FF">int</font> RowNumber,
+              <font color="#0000FF">int</font> ColumnNumber)<br>
+              {</p>
+              <blockquote>
+                <p style="margin-top: 0px; margin-bottom: 0px">//为矩阵元素分配内空间<br>
+                data = <font color="#0000FF">new</font> TYPE[RowNumber*ColumnNumber];<br>
+                //为行数赋值<br>
+                <font color="#0000FF">this</font>-&gt;RowNumber = RowNumber;<br>
+                //为列数赋值<br>
+                <font color="#0000FF">this</font>-&gt;ColumnNumber = ColumnNumber;</p>
+              </blockquote>
+              <p style="margin-top: 0px; margin-bottom: 0px">}</p>
+            </blockquote>
+            <p style="line-height: 150%; margin-top: 0px; margin-bottom: 0px">&nbsp;&nbsp;&nbsp;
+            <font face="宋体" size="3">
+            这里动态生成了一个二维数组内存堆，用于存储矩阵数据，数组类型已定义为double型。当然，在析构函数中一定要要释放堆空间。</font></p>
+            <p style="line-height: 150%; margin-top: 0px; margin-bottom: 0px">&nbsp;&nbsp;&nbsp; 
+            另外还定义了<font face="宋体" size="3">无参构造函数CMatrix()用以生成一个空的矩阵对象，拷贝构造函数CMatrix(CMatrix&amp; 
+            Matrix)用以完成矩阵的拷贝</font><font face="宋体">。</font></p>
+            <p style="line-height: 150%; margin-top: 0px; margin-bottom: 0px">
+            <b><font face="宋体" size="3">D.2.2 </font></b>
+            <font face="宋体" size="3"><b><font color="#0000FF">operator</font>[]操作符的重载</b></font></p>
+            <blockquote>
+              <p style="margin-top: 0px; margin-bottom: 0px">
+              <font color="#008000">
+              ////////////////////////////////////////////////////////////////////////<br>
+              //操作符重载operator[]()<br>
+              //----------------------------------------------------------------------<br>
+              //基本功能：用于重载操作符[]，允许用Matrix[i][j]的形式直接对矩阵的元素进<br>
+              // 操作。<br>
+              //----------------------------------------------------------------------<br>
+              //参数说明：int Row 矩阵元素的下标<br>
+              //----------------------------------------------------------------------<br>
+              //返 回：指定矩阵元素的值，为TYPE型。<br>
+              //----------------------------------------------------------------------<br>
+              //编 者：耿 楠<br>
+              //----------------------------------------------------------------------<br>
+              //最后编改：2002年10月18日<br>
+              ////////////////////////////////////////////////////////////////////////</font><br>
+              TYPE* CMatrix::operator[](int Row)<br>
+              {</p>
+              <blockquote>
+                <p style="margin-top: 0px; margin-bottom: 0px">
+                <font color="#0000FF">return</font> &amp;(data[ColumnNumber*Row]);</p>
+              </blockquote>
+              <p style="margin-top: 0px; margin-bottom: 0px">}</p>
+            </blockquote>
+            <p style="line-height: 150%; margin-top: 0px; margin-bottom: 0px">&nbsp;&nbsp;&nbsp;
+            <font face="宋体" size="3">这个函数返回一个指针，它的作用是允许我们用Matrix[i][j]的形式直接操作矩阵中的某个元素。这种写法显然比Matrix.data[i 
+            * ColumnNumber + j]的形式来的直观。</font></p>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; LINE-HEIGHT: 150%">      
+            <b><font face="宋体" size="3">D.2.3 </font></b>
+            <font face="宋体" size="3"><b><font color="#0000FF">operator </font>
+            *操作符的重载</b></font></p>     
+            <blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            <font color="#008000">
+            ////////////////////////////////////////////////////////////////////////<br>
+            //操作符重载operator*()<br>
+            //----------------------------------------------------------------------<br>
+            //基本功能：用于重载操作符*，用当前矩阵乘上另一个矩阵，得到一个新矩阵。<br>
+            //----------------------------------------------------------------------<br>
+            //参数说明：CMatrix&amp; Other 另一个矩阵<br>
+            //----------------------------------------------------------------------<br>
+            //返 回：CMatrix 一个新矩阵。<br>
+            //----------------------------------------------------------------------<br>
+            //编 者：耿 楠<br>
+            //----------------------------------------------------------------------<br>
+            //最后编改：2002年10月18日<br>
+            ////////////////////////////////////////////////////////////////////////</font><br>
+            CMatrix CMatrix::<font color="#0000FF">operator</font> *(CMatrix 
+            &amp;Num2)<br>
+            {</p>     
+              <blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            <font color="#0000FF">int</font> RetRow, RetColumn;<br>
+            <br>
+            <font color="#008000">//定义一个矩阵对象，并用当前矩阵的行数和列数对RetRow和//RetColumn赋值</font><br>
+            CMatrix RetValue(RetRow = <font color="#0000FF">this</font>-&gt;RowNumber,RetColumn 
+            = Num2.GetColumnNumber());<br>
+            <br>
+            <font color="#008000">//用0对新矩阵进行初始化</font><br>
+            RetValue.Fill(0);<br>
+            <br>
+            <font color="#008000">//如果当前矩阵的列数不等于传入矩阵的行数，无法进行*操作，返回//矩阵</font><br>
+            if(<font color="#0000FF">this</font>-&gt;ColumnNumber != 
+            Num2.GetRowNumber())</p>     
+                <blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            <font color="#0000FF">return</font> RetValue;</p>     
+                </blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            <font color="#0000FF">int</font> i, j, counter;<br>
+            TYPE sum;<br>
+            <font color="#0000FF">for</font>(i = 0; i &lt; RetRow; i++)</p>     
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            {</p>     
+                <blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            <font color="#0000FF">for</font>(j = 0; j &lt; RetColumn; j++)<br>
+            {</p>     
+                  <blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            <font color="#0000FF">for</font>(sum = 0, counter = 0; counter &lt;<font color="#0000FF"> 
+            this</font>-&gt;ColumnNumber; counter++)</p>     
+                    <blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            sum += (*<font color="#0000FF">this</font>)[i][counter] *&nbsp;&nbsp;&nbsp;&nbsp; 
+            Num2[counter][j];</p>     
+                    </blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            RetValue[i][j] = sum;</p>     
+                  </blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            }<br>
+　</p>     
+                </blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            }<br>
+            <br>
+            <font color="#008000">//返回新矩阵的指针</font><br>
+            <font color="#0000FF">return</font> RetValue;</p>     
+              </blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; ">      
+            }</p>     
+            </blockquote>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; LINE-HEIGHT: 150%">      
+            &nbsp;&nbsp;&nbsp; <font face="宋体" size="3">
+            这个函数将当前矩阵中的各行元素与传入矩阵的各列中对应元素相乘再对其累加求各，作为新元素值，以完成两矩阵的乘运算，它返回一个指向结果矩阵的指针。其作用是允许用</font></p>     
+            <p style="line-height: 150%; margin-top: 0px; margin-bottom: 0px">
+            <font face="宋体" size="3">Matrix3 = Matrix1 * Matrix2的形式实现两个矩阵的相乘。</font></p>
+            <p style="line-height: 150%; margin-top: 0px; margin-bottom: 0px">&nbsp;&nbsp;&nbsp; 
+            该矩阵类中其它函数的作用与此类似请大家自行分析。</p>
+            <p style="line-height: 150%; margin-top: 10px; margin-bottom: 10px">
+            <b><font face="宋体" size="5"><a name="003"></a>D.3 CMatrix矩阵类的使用</font></b></p>
+            <p style="line-height: 150%; margin-top: 0px; margin-bottom: 0px">
+            <font face="宋体" size="3">&nbsp;&nbsp;&nbsp; 为方便大家学习，在此提供<a href="../../Download/CMatrix.zip">CMatrix类</a>下载。</font></p>
+            <p style="line-height: 150%; margin-top: 0px; margin-bottom: 0px">
+            <b><font face="宋体" size="3">D.3.1 将</font><font face="宋体">CMatrix类加入工程</font></b></p>
+            <p style="line-height: 150%; margin-top: 0px; margin-bottom: 0px">&nbsp;&nbsp;&nbsp;
+            <font face="宋体" size="3">下载CMatrix类的ZIP包解压缩后会得到两个文件Matrix.h和Matrix.cpp，并将它们拷贝到当前工程目录中。然后用以下方法将CMatrix类添加到工程中：</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%">
+            <font face="宋体" size="3">&nbsp;&nbsp;&nbsp; 1.如图所示选择Project→Add To 
+            Project→Files...菜单</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="center">
+            <img src="images/image001.gif" border="0" width="444" height="179"></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体" size="3">&nbsp;&nbsp;&nbsp; 2.打开如图所示的文件选择对话框</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="center">
+            <img border="0" src="images/image002.gif" width="444" height="295"></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体" size="3">&nbsp;&nbsp;&nbsp; 3.选择对话框Matrix.h和Matrix.cpp两个文件，单击OK，便可将CMatrix类添加到工程中。</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体" size="3">&nbsp;&nbsp;&nbsp; 添加CMatrix类后的类结构如图所示：</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="center">
+            <img border="0" src="images/image003.gif" width="160" height="145"></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体" size="3">&nbsp;&nbsp;&nbsp; </font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <b><font face="宋体" size="3">D.3.2 </font><font face="宋体">包含头文件Matrix.h</font></b></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体" size="3">&nbsp;&nbsp;&nbsp; 将CMatrix类添加到工程后，还需将类定义头文件Matrix.h包含到相应的.cpp文件中才能使用它。在此</font><font face="宋体">可以用另一种简便的方法，即将</font><font face="宋体" size="3">类定义头文件Matrix.h包含到工程预编译文件stdafx.h头文件中，在stdafx.h头文件中添加以下代码：</font></p>
+            <blockquote>
+              <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+              <font face="宋体"><font color="#0000FF">#include</font> &lt;math.h&gt;<br>
+              <font color="#0000FF">#include</font> &quot;matrix.h&quot;</font></p>
+            </blockquote>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体" size="3">此处包含</font><font face="宋体">math.h头文件的作用是为能够使用C++的数学函数。<br>
+            </font><font face="宋体" size="3">&nbsp;&nbsp;&nbsp; 这样就不必为每一个.cpp文件包含类定义头文件Matrix.h了。</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <b><font face="宋体" size="3">D.3.3 </font><font face="宋体">创建CMatrix类对象</font></b><font face="宋体"><br>
+            </font>
+            <font face="宋体" size="3">&nbsp;&nbsp;&nbsp; 将CMatrix类添加到工程并包含了类定义头文件Matrix.h要使用矩阵类，首先得创建其类对象，有三种方法用以创建矩阵类对象。</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体" size="3" color="#008000">&nbsp;&nbsp;&nbsp; </font>
+            <b>
+            <font face="宋体" size="3">1. 用无参构造函数CMatrix（）</font></b></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体">&nbsp;&nbsp;&nbsp; 在.h头文件或.cpp实现文件中，加入如下代码：</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CMatrix 
+            m_matOrigin;</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体">&nbsp;&nbsp;&nbsp; 便可创建一个名为m_matOrigin的矩阵类对象。值得注意的是，由于采用的是无参构造函数，所以并未分配用于存储矩阵各个元素内存，因此，还应调用CMatrix类的成员函数:<br>
+            	Create(<font color="#0000FF">int</font> RowNumber,
+            <font color="#0000FF">int</font> ColumnNumber)<br>
+            创建RowNumber×ColumnNumber的矩阵内存堆，此后才能进行矩阵单元的访问。</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体"><font size="3" color="#008000">&nbsp;&nbsp;&nbsp;
+            </font></font><b><font face="宋体" size="3">2. 用构造函数CMatrix（int RowNumber, int ColumnNumber）</font></b><font face="宋体"><br>
+&nbsp;&nbsp;&nbsp; 在.h头文件或.cpp实现文件中，加入如下代码：</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CMatrix 
+            m_matOrigin(<font color="#0000FF">int</font> RowNumber,
+            <font color="#0000FF">int</font> ColumnNumber);</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体">&nbsp;&nbsp;&nbsp; 便可创建一个名为m_matOrigin的RowNumber×ColumnNumber的矩阵类对象。该构造函数在创建矩阵类对象的同时并为其分配RowNumber×ColumnNumber的内存堆，此后可直接对其矩阵单元的访问。</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体"><font size="3" color="#008000">&nbsp;&nbsp;&nbsp;
+            </font></font><b><font face="宋体" size="3">3. 用构造函数CMatrix（CMatrix&amp; 
+            Matrix）</font></b><font face="宋体"><br>
+&nbsp;&nbsp;&nbsp; 在.h头文件或.cpp实现文件中，加入如下代码：</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CMatrix 
+            m_matOrigin(CMatrix&amp; Matrix);</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体">&nbsp;&nbsp;&nbsp; 便可创建一个名为m_matOrigin的矩阵类对象，并得到与传入的矩阵Matrix相同大小的内存堆，同时复制传入的矩阵单元到m_matOrigin矩阵的相应单元中，此后也直接对其矩阵单元的访问。</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <b><font face="宋体" size="3">D.3.4 对</font><font face="宋体">CMatrix类对象
+            的操作</font></b></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体">&nbsp;&nbsp;&nbsp; 
+            完成了矩阵类对象的创建后，便可通过该对象调用其相应的成员函数来完成对该矩阵的单元访问、两矩阵的相乘等操作。</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <b><font face="宋体" size="3">&nbsp;&nbsp;&nbsp; 1. 利用<font color="#FF00FF">[]</font>操作符完成对矩阵单元的访问</font></b></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体">&nbsp;&nbsp;&nbsp; 设有一顶点数为m_nVertexNum多边形的顶点集如下：</font></p>
+            <blockquote>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; " align="left">
+            <font face="宋体"><font color="#008000">//顶点坐标（采用世界坐标系）</font><br>
+            m_ptsOrigin[0] = CPoint(0 , 0 );<br>
+            m_ptsOrigin[1] = CPoint(40, 0 );<br>
+            m_ptsOrigin[2] = CPoint(40, 80);<br>
+            m_ptsOrigin[3] = CPoint(0 , 80);</font></p>
+            </blockquote>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体">其中m_nVertexNum为int型的类成员变量，m_ptsOrigin为CPoint对象数组类成员变量，在相应.h头文件中定义（当然可以采用各种合法的方法定义该变量和数组）。可以采用下述方法将顶点集赋于m_matOrigin矩阵并将其转换为齐次坐标。</font></p>
+            <blockquote>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; " align="left">
+            <font face="宋体"><font color="#008000">//创建m_nVertexNum×3的矩阵</font><br>
+            m_matOrigin.Create(m_nVertexNum, 3);</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; " align="left">
+            <font face="宋体"><font color="#008000">//将矩阵单元赋0.0</font><br>
+            m_matOrigin.Fill(0.0);</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; " align="left">
+            　</p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; " align="left">
+            <font face="宋体"><font color="#0000FF">int </font>i;<br>
+            <br>
+            <font color="#0000FF">for</font>(i = 0; i &lt; m_nVertexNum; i++)<br>
+            {</font></p>
+              <blockquote>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; " align="left">
+            <font color="#008000">//将顶点的x坐标赋给矩阵的第[0]列</font><br>
+            <font face="宋体">m_matOrigin[i][0] = (double)m_ptsOrigin[i].x;<br>
+            </font><font color="#008000">//将顶点的x坐标赋给矩阵的第[1]列</font><br>
+            <font face="宋体">m_matOrigin[i][1] = (double)m_ptsOrigin[i].y;<br>
+            </font><font color="#008000">//将1.0赋给矩阵的第[2]列</font><br>
+            <font face="宋体">m_matOrigin[i][2] = 1.0;<br>
+　</font></p>
+              </blockquote>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; " align="left">
+            <font face="宋体">}</font></p>
+            </blockquote>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体">至此，便用<b><font color="#FF00FF" size="3">[]</font></b>操作符完成了对矩阵单元的赋值，矩阵m_matOrigin中的各个单元存储的是给定点集的相应齐次坐标。当然，也可以此操作符完成任何矩阵相关的操作。</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; " align="left">
+            <b><font face="宋体" size="3">&nbsp;&nbsp;&nbsp; 2. 利用<font color="#FF00FF">*</font>操作符完成矩阵乘运算</font></b><font face="宋体"><br>
+&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 为完成矩阵的乘法，应定义另一个矩阵，可以在程序中加入如下代码：</font></p>
+            <blockquote>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; " align="left">
+            <font face="宋体">CMatrix Trans(3, 3);<br>
+            <font color="#008000">//初始化变换矩阵 </font><br>
+            Trans.Fill(0.0);<br>
+            Trans[2][2] = 1.0;</font></p>
+            </blockquote>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; " align="left">
+            <font face="宋体">
+            这将创建一个名为Trans的3×3矩阵，并将除Trans[2][2]单元外的所有单元赋零。在此，称其为变换矩阵。</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; " align="left">
+            <font face="宋体">&nbsp;&nbsp;&nbsp; 下面仍用<b><font color="#FF00FF" size="3">[]</font></b>操作符完成对变换矩阵的赋值操作，可在程序中加入如下代码：</font></p>
+            <blockquote>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; " align="left">
+            <font face="宋体"><font color="#008000">//变换矩阵为：<br>
+            // 1&nbsp; 0&nbsp; 0<br>
+            //<br>
+            // 0 -1&nbsp; 0<br>
+            //<br>
+            // 0&nbsp; 0&nbsp; 1</font><br>
+            Trans[0][0] = 1.0;<br>
+            Trans[1][1] = -1.0;</font></p>
+            </blockquote>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; " align="left">
+            <font face="宋体">&nbsp;&nbsp;&nbsp; 完成变换矩阵的定义和设置后，用如下代码：</font></p>
+            <blockquote>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; " align="left">
+            <font face="宋体">m_matOrigin = m_matOrigin * Trans;</font></p>
+            </blockquote>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体">便可完成m_matOrigin矩阵和Trans矩阵的乘运算。显然，在此的变换矩阵是完成点集沿x轴的对称变换。</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体">&nbsp;&nbsp;&nbsp; 便可创建一个名为m_matOrigin的矩阵类对象。值得注意的是，由于采用的是无参构造函数，所以并未分配用于存储矩阵各个元素内存，因此，还应调用CMatrix类的成员函数:<br>
+            	Create(<font color="#0000FF">int</font> RowNumber,
+            <font color="#0000FF">int</font> ColumnNumber)<br>
+            创建RowNumber×ColumnNumber的矩阵内存堆，此后才能进行矩阵单元的访问。</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体">&nbsp;&nbsp;&nbsp; 与此类似，对于矩阵类中其它的应用，请大家自行学习，在此不再冗述。</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <b><font face="宋体" size="5"><a name="004"></a>D.4 小</font></b><font face="宋体"><font size="5"><b>结</b></font></font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            <font face="宋体">&nbsp;&nbsp;&nbsp; 
+            矩阵的运算是图形学中非常很重要的基础，在图形的变换、图形显示、投影变换中有着非常广泛的应用。矩阵类CMatrix的设计只是面向对象C++语言的一个简单的应用，在此未能用到对象C++语言的所有功能，希望大家在学习和使用中能够进行多方面的测试，并能多提建议和意见，以便我们能进一步对其进行完善。</font></p>
+            <p style="MARGIN-TOP: 6px; MARGIN-BOTTOM: 6px; LINE-HEIGHT: 150%" align="left">
+            　</p>
+            <p style="MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; LINE-HEIGHT: 150%" align="center">      
+            <font size="-2">
+                    <a href="../../main.html">[返回]</a></font></p>     
+            <p style="LINE-HEIGHT: 150%">　</td>     
+            <td height="937" width="5%" style="border-left-style: none; border-left-width: medium">     
+            <p style="line-height: 150%">　</td>     
+          </tr>     
+</tbody>     
+        </table>     
+        </td>     
+      </tr>     
+</tbody>     
+    </table>     
+    <p style="line-height: 150%">　</p>     
+    <p style="line-height: 150%">　</td>     
+  </tr>     
+</table>     
+     
+<hr color="#00007b" size="1" width="80%" align="center">     
+     
+<p align="center" style="line-height: 150%"><font size="2">西北农林科技大学信息工程学院<br>     
+Copyright &copy; 2000-2002</font></p>       
+</div>       
+</body>       
+</html>

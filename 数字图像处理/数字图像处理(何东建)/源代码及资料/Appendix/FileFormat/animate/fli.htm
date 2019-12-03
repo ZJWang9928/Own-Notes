@@ -1,0 +1,259 @@
+<html>
+
+<head>
+<title>file:///d:/程序资料/format2/fli.txt</title>
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">flic files (.fli) format description</font></p>
+<div align="center"><center>
+
+<table border="0" width="80%">
+  <tr>
+    <td width="100%"><pre>    the details of a fli file are moderately complex, but the
+idea behind it is simple: don't bother storing the parts of a
+frame that are the same as the last frame.  not only does this
+save space, but it's very quick.  it's faster to leave a pixel
+alone than to set it.
+ </pre>
+    <pre>     a fli file has a 128-byte header followed by a sequence of
+frames. the first frame is compressed using a bytewise run-length
+compression scheme.  subsequent frames are stored as the
+difference from the previous frame.  (occasionally the first
+frame and/or subsequent frames are uncompressed.)  there is one
+extra frame at the end of a fli which contains the difference
+between the last frame and the first frame.
+ </pre>
+    <pre>     the fli header:
+ </pre>
+    <pre>     byte size name      meaning
+     offset
+ </pre>
+    <pre>     0    4    size      length of file, for programs that want
+                         to read the fli all at once if possible.
+     4    2    magic     set to hex af11.  please use another
+                         value here if you change format (even to
+                         a different resolution) so autodesk
+                         animator won't crash trying to read it.
+     6    2    frames    number of frames in fli.  fli files have
+                         a maxium length of 4000 frames.
+     8    2    width     screen width (320).
+     10   2    height    screen height (200).
+     12   2    depth     depth of a pixel (8).
+     14   4    flags     must be 0.
+     18   2    speed     number of video ticks between frames.
+     20   4    next      set to 0.
+     24   4    frit      set to 0.
+     28   100  expand    all zeroes -- for future enhancement.
+ </pre>
+    <pre>     next are the frames, each of which has a header:
+ </pre>
+    <pre>     byte size name      meaning
+     offset
+     0    4    size      bytes in this frame.  autodesk animator
+                         demands that this be less than 64k.
+     4    2    magic     always hexadecimal f1fa
+     6    2    chunks    number of 'chunks' in frame.
+     8    8    expand    space for future enhancements.  all
+                         zeros.
+ </pre>
+    <pre>     after the frame header come the chunks that make up the
+frame.  first comes a color chunk if the color map has changed
+from the last frame.  then comes a pixel chunk if the pixels have
+changed.  if the frame is absolutely identical to the last frame
+there will be no chunks at all.
+ </pre>
+    <pre>     a chunk itself has a header, followed by the data.  the
+chunk header is:
+ </pre>
+    <pre>     byte size name meaning
+     offset
+     0    4    size bytes in this chunk.
+     4    2    type type of chunk (see below).
+ </pre>
+    <pre>     there are currently five types of chunks you'll see in a fli
+file.
+ </pre>
+    <pre>     number    name      meaning
+     11        fli_color compressed color map
+     12        fli_lc    line compressed -- the most common type
+                         of compression for any but the first
+                         frame.  describes the pixel difference
+                         from the previous frame.
+     13        fli_black set whole screen to color 0 (only occurs
+                         on the first frame).
+     15        fli_brun  bytewise run-length compression -- first
+                         frame only
+     16        fli_copy  indicates uncompressed 64000 bytes soon
+                         to follow.  for those times when
+                         compression just doesn't work!
+ </pre>
+    <pre>     the compression schemes are all byte-oriented.  if the
+compressed data ends up being an odd length a single pad byte is
+inserted so that the fli_copy's always start at an even address
+for faster dma.
+ </pre>
+    <pre>fli_color chunks
+     the first word is the number of packets in this chunk. this
+is followed directly by the packets.  the first byte of a packet
+says how many colors to skip.  the next byte says how many colors
+to change.  if this byte is zero it is interpreted to mean 256. 
+next follows 3 bytes for each color to change (one each for red,
+green and blue).
+ </pre>
+    <pre>fli_lc chunks
+     this is the most common, and alas, most complex chunk.   the
+first word (16 bits) is the number of lines starting from the top
+of the screen that are the same as the previous frame. (for
+example, if there is motion only on the bottom line of screen
+you'd have a 199 here.)  the next word is the number of lines
+that do change.  next there is the data for the changing lines
+themselves.  each line is compressed individually; among other
+things this makes it much easier to play back the fli at a
+reduced size.
+ </pre>
+    <pre>     the first byte of a compressed line is the number of packets
+in this line.  if the line is unchanged from the last frame this 
+is zero.  the format of an individual packet is:
+ </pre>
+    <pre>skip_count
+size_count
+data
+ </pre>
+    <pre>     the skip count is a single byte.  if more than 255 pixels
+are to be skipped it must be broken into 2 packets. the size
+count is also a byte.  if it is positive, that many bytes of data
+follow and are to be copied to the screen.  if it's negative a
+single byte follows, and is repeated -size_count times.
+ </pre>
+    <pre>     in the worst case a fli_lc frame can be about 70k.  if it
+comes out to be 60000 bytes or more autodesk animator decides
+compression isn't worthwhile and saves the frame as fli_copy.
+ </pre>
+    <pre>fli_black chunks
+     these are very simple.  there is no data associated with
+them at all. in fact they are only generated for the first frame
+in autodesk animator after the user selects new under the flic
+menu.
+ </pre>
+    <pre>fli_brun chunks
+     these are much like fli_lc chunks without the skips.  they
+start immediately with the data for the first line, and go line-
+by-line from there.  the first byte contains the number of
+packets in that line.  the format for a packet is:</pre>
+    <pre>size_count
+data
+ </pre>
+    <pre>     if size_count is positive the data consists of a single byte
+which is repeated size_count times. if size_count is negative
+there are -size_count bytes of data which are copied to the
+screen. in autodesk animator if the &quot;compressed&quot; data shows signs
+of exceeding 60000 bytes the frame is stored as fli_copy instead.
+ </pre>
+    <pre>fli_copy chunks
+     these are 64000 bytes of data for direct reading onto the
+screen.
+ </pre>
+    <pre>-----------------------------------------------------------------------
+and here's the pro extensions:
+-----------------------------------------------------------------------
+ </pre>
+    <pre>this is supplemental info on the autodesk animator fli and flc formats.
+ </pre>
+    <pre>the following is an attempt at describing the newer chunks and frames
+that are not described in the turbo c fli library documentation.
+ </pre>
+    <pre>  chunk type       chunk id 
+  ----------       -----------
+  fli_delta        7 (decimal)
+  </pre>
+    <pre>  first word (16 bits) is the number of compressed lines to follow.  next
+  is the data for the changing lines themselves, always starting with the
+  first line.   each line is compressed individually.
+ </pre>
+    <pre>  the first word (16 bits) of a compressed line is the number of packets in
+  the line.  if the number of packets is a negative skip -packets lines.
+  if the number of packets is positive, decode the packets.  the format of
+  an individual packet is:
+ </pre>
+    <pre>  skip_count
+  size_count
+  data
+ </pre>
+    <pre>  the skip count is a single byte.  if more than 255 pixels are to be
+  skipped, it must be broken into 2 packets.  the size_count is also a byte.
+  if it is positive, that many words of data follow and are to be copied to
+  the screen.  if it is negative, a single words value follows, and is to be
+  repeated -size_count times.</pre>
+    <pre>  chunk type       chunk id 
+  ----------       -----------
+  fli_256_color    4 (decimal)
+ </pre>
+    <pre>  the first word is the number of packets in this chunk.  this is followed
+  directly by the packets.  the first byte of a packet is how many colors
+  to skip.  the next byte is how many colors to change.  if this number is
+  0, (zero), it means 256.  next follow 3 bytes for each color to change.
+  (one each for red, green and blue).
+ </pre>
+    <pre>  the only difference between a fli_256_color chunk (type 4 decimal) and a
+  fli_color chunk (type 11 decimal) is that the values in the type 4 chunk
+  range from 0 to 255, and the values in a type 11 chunk range from 0 to 63.
+ </pre>
+    <pre>  note:  word  refer to a 16 bit int in intel (little endian) format.
+         words refer to two-bytes (16 bits) of consecutive data. (big endian)
+ </pre>
+    <pre>  .flc special frames and chunks
+ </pre>
+    <pre>  flc's may contain all the above chunks plus one other:
+ </pre>
+    <pre>  chunk type       chunk id 
+  ----------       -----------
+  fli_mini         18 (decimal) 12 (hex)
+ </pre>
+    <pre>  from what i understand,  this is a miniture 64 x 32 version of the first
+  frame in fli_brun format, used as an button for selecting flc's from
+  within animator pro.  simply do nothing with this chunk.
+ </pre>
+    <pre>  flc new frame
+ </pre>
+    <pre>  flc's also contains a frame with the magic bytes set to hex 00a1.  this
+  is the first frame in the .flc file.  actually it isn't a frame at all
+  but to have several chunks within it that specify file location info
+  specific to animator pro.  ie:  filepath, font to use, and .col file info.
+  this frame may be skipped while loading.  that's right!  ignore it!  the
+  frame header is the same length as all other frames.  so you may read the
+  frame header, then skip past the rest of the frame.
+ </pre>
+    <pre>　
+  note:  when reading the fli header on the newer fli and flc files, the
+  fli signature bytes are af12 instead of af11 used in the older fli files.
+  also, you cannot ignore the screen width and height they may not be
+  320 x 200.</pre>
+    <pre>  allowable screen sizes include:
+ </pre>
+    <pre>  320 x 200, 640 x 480, 800 x 600, 1280 x 1024
+ </pre>
+    <pre>　
+  note:  the delay value between frames appears to be in 1000th's of a
+  second instead of 70th's.
+ </pre>
+    <pre>if you have any questions or more info on the fli or flc formats,
+please let me know.
+ </pre>
+    <pre>mike haaland
+(corrected by p. oliver 30 may 1997 using information supplied by reeves hall)
+ </pre>
+    <pre>compuserve : 72300,1433
+delphi     : mikehaaland
+internet   : mike@htsmm1.las-vegas.nv.us
+usenet     : ...!htsmm1.las-vegas.nv.us!mike
+ </pre>
+    </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

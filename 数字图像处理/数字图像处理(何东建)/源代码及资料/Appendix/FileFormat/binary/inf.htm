@@ -1,0 +1,90 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>windows95 inf files format</title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">windows95 inf files format</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%">;this is a template for use when creating inf files. <br>
+    ;if should be given an .inf extension for use<br>
+    <br>
+    ;a very good source of information for windows95 inf files is the <br>
+    ;windows95 resource kit help file, which comes on the windows95 cd. <br>
+    ;usually under \admin\reskit\helpfile\win95rk.hlp read it carefully.<br>
+    <br>
+    ;--------------------------------------------------------------------------<br>
+    ; version section: required<br>
+    ;-------------------------------------------------------------------------- <br>
+    [version]<br>
+    setupclass=base<br>
+    signature=$chicago$ ; windows 95 will not accept inf without this.<br>
+    <br>
+    <br>
+    ;[sourcedisksnames]<br>
+    ;1=&quot;install disk 1&quot;,disk_label,<br>
+    <br>
+    ;[sourcedisksfiles]<br>
+    ;file1.ext=1<br>
+    ;file2.bat=1<br>
+    ;file3.exe=1<br>
+    ;file4.dll=1<br>
+    <br>
+    <br>
+    ;--------------------------------------------------------------------------<br>
+    ; destinationdir: <br>
+    ; defines the destination directories for the [file_list] sections<br>
+    ;--------------------------------------------------------------------------<br>
+    <br>
+    ;[destinationdirs]<br>
+    ;anything=04 ; backup directory<br>
+    ;anything=10 ;windows directory<br>
+    ;anything=11 ;system dir<br>
+    ;anything=12 ;iosubsys<br>
+    ;anything=13 ;command<br>
+    ;anything=14 ;control panel directory<br>
+    ;anything=15 ;printers directory<br>
+    ;anything=16 ;workgrou dir<br>
+    ;anything=17 ;inf dir<br>
+    ;anything=18 ;help dir<br>
+    ;anything=19 ;administration dir<br>
+    ;anything=20 ;fonts<br>
+    ;anything=21 ;viewers<br>
+    ;anything=22 ;vmm32<br>
+    ;anything=23 ;color dir<br>
+    ;anything=25 ;shared dir<br>
+    ;anything=26 ;winboot<br>
+    ;anything=28 ;host winboot<br>
+    ;anything=30 ;root of boot drive<br>
+    ;anything=31 ;root of host drive of a virtual boot drive<br>
+    ;anything=32 ;old windows dir if exists<br>
+    ;anything=10,startm~1\programs<br>
+    <br>
+    [defaultinstall]<br>
+    ;delreg=anything<br>
+    ;addreg=anything<br>
+    ;copyfiles=anything<br>
+    ;delfiles=anything<br>
+    addreg=test<br>
+    <br>
+    [test]<br>
+    hklm,%key_runonce%,&quot;explorer&quot;,=&quot;explorer&quot;<br>
+    <br>
+    <br>
+    [strings]<br>
+    key_runonce = &quot;software\microsoft\windows\currentversion\runonce&quot;<br>
+    key_current = &quot;software\microsoft\windows\currentversion&quot; </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

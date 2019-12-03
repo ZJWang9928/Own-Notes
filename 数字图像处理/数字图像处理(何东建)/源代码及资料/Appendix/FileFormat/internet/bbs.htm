@@ -1,0 +1,315 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>new page 1</title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p>　</p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+<tr>
+<td width="100%">/***************************************************************************\<br>
+* msgbase.h - message base header file *<br>
+*****************************************************************************<br>
+* *<br>
+* mb_lib (msgbase library) v1.00 *<br>
+* (hudson message base access / manipulation routines) *<br>
+* *<br>
+* this c version (c) f.w. van wensveen 1993. all rights reserved. *<br>
+* original pascal source code (c) richard faasen and in fase productions, *<br>
+* the netherlands. *<br>
+* *<br>
+* first revision: 17/08/1992 *<br>
+* *<br>
+\***************************************************************************/<br>
+<br>
+<br>
+/* first, a c++ fixup ******************************************************/<br>
+<br>
+#ifndef __mb_lib_h<br>
+#define __mb_lib_h<br>
+<br>
+#ifdef __cplusplus<br>
+extern &quot;c&quot; {<br>
+#endif<br>
+<br>
+<br>
+/* includes and defines ****************************************************/<br>
+<br>
+#include &lt;dir.h&gt;<br>
+<br>
+#define hcr 0x0d /* hard carriage return */<br>
+#define scr 0x8d /* soft carriage return */<br>
+#define lf 0x0a /* line feed */<br>
+#define kludge 0x01 /* kludge denominator */<br>
+#define bell 0x07 /* bell character / ring a ding */<br>
+<br>
+#define nokludges 0x00 /* txt_dump shouldn't dump kludges */<br>
+#define kludges 0x01 /* txt_dump should dump kludges */<br>
+<br>
+/* critical errors */<br>
+#define not_err 0x00 /* no error */<br>
+#define mem_err 0x01 /* memory error - out of memory */<br>
+#define frd_err 0x02 /* file read error */<br>
+#define fwr_err 0x03 /* file write error */<br>
+#define fcr_err 0x04 /* file create error */<br>
+#define mno_err 0x05 /* message base not open error */<br>
+#define irn_err 0x06 /* invalid record no., out of bound */<br>
+#define mbc_err 0x07 /* msg base corrupt */<br>
+<br>
+#define ma_deleted 0x01 /* message attributes */<br>
+#define ma_unsent 0x02<br>
+#define ma_netmail 0x04<br>
+#define ma_private 0x08<br>
+#define ma_received 0x10<br>
+#define ma_unmoved 0x20<br>
+#define ma_local 0x40<br>
+<br>
+#define na_kill 0x01 /* hudson netmail attributes */<br>
+#define na_sent 0x02<br>
+#define na_file 0x04<br>
+#define na_crash 0x08<br>
+#define na_receipt 0x10<br>
+#define na_audit 0x20<br>
+#define na_return 0x40<br>
+<br>
+#define nm_private 0x0001 /* opus (*.msg) netmail attributes */<br>
+#define nm_crash 0x0002<br>
+#define nm_received 0x0004<br>
+#define nm_sent 0x0008<br>
+#define nm_file 0x0010<br>
+#define nm_transit 0x0020<br>
+#define nm_orphan 0x0040<br>
+#define nm_kill 0x0080<br>
+#define nm_local 0x0100<br>
+#define nm_hold 0x0200<br>
+#define nm_unused 0x4000<br>
+#define nm_request 0x0800<br>
+#define nm_receipt 0x1000<br>
+#define nm_isreceipt 0x2000<br>
+#define nm_audit 0x4000<br>
+#define nm_updatereq 0x8000<br>
+<br>
+<br>
+/**************************** c a u t i o n ********************************/<br>
+/* the strings in the hudson message base files are all pascal convention */<br>
+/* strings - a length byte followed by the actual characters. */<br>
+/* i have attempted to maintain this format by defining the strings as a */<br>
+/* structure containing a length byte and a character array, but this */<br>
+/* lead to too much trouble from the programmers point of view. so the */<br>
+/* strings in the following structure are just defined as arrays of chars. */<br>
+/* they may only be read from and written to disk using the read and write */<br>
+/* functions in this library, which convert the string formats from pascal */<br>
+/* to c format and vice versa. they may not be read and written directly!! */<br>
+/* writing structures to the message base by any other means than the */<br>
+/* functions provided therefore will cause corruption of the message base. */<br>
+/***************************************************************************/<br>
+<br>
+typedef struct { /* msginfo.bbs structure definition */<br>
+unsigned int low_msg; /* lowest msg # in message base */<br>
+unsigned int high_msg; /* highest msg # in message base */<br>
+unsigned int total_msgs; /* total # of messages in base */<br>
+unsigned int total_on_board [200]; /* number of messages / board */<br>
+} msginfo_record;<br>
+<br>
+typedef struct { /* msgidx.bbs structure definiton */<br>
+int msg_num; /* message # */<br>
+unsigned char board; /* board # where msg is stored */<br>
+} msgidx_record;<br>
+<br>
+typedef char msgtoidx_record [36]; /* msgtoidx.bbs structure def. */<br>
+<br>
+typedef struct { /* msghdr.bbs structure definition */<br>
+int msgnum; /* message number */<br>
+unsigned int prev_reply; /* msg # of previous reply, 0 if no */<br>
+unsigned int next_reply; /* msg # of next reply, 0 if none */<br>
+unsigned int times_read; /* # of times msg was read, unused */<br>
+unsigned int start_block; /* record # of msg in msgtxt.bbs */<br>
+unsigned int num_blocks; /* # of records in msgtxt.bbs */<br>
+unsigned int dest_net; /* destination net */<br>
+unsigned int dest_node; /* destination node */<br>
+unsigned int orig_net; /* origin net */<br>
+unsigned int orig_node; /* origin node */<br>
+unsigned char dest_zone; /* destination zone */<br>
+unsigned char orig_zone; /* origin zone */<br>
+unsigned int cost; /* cost (netmail) */<br>
+unsigned char msg_attr; /* msg attributes. bits as follows: */<br>
+/* 0 : deleted */<br>
+/* 1 : unsent */<br>
+/* 2 : netmail */<br>
+/* 3 : private */<br>
+/* 4 : received */<br>
+/* 5 : unmoved outgoing echo */<br>
+/* 6 : local */<br>
+/* 7 : reserved */<br>
+unsigned char net_attr; /* netmail attributes. bits follow: */<br>
+/* 0 : kill/sent */<br>
+/* 1 : sent */<br>
+/* 2 : file attach */<br>
+/* 3 : crash */<br>
+/* 4 : receipt request */<br>
+/* 5 : audit request */<br>
+/* 6 : is a return receipt */<br>
+/* 7 : reserved */<br>
+unsigned char board; /* message board # */<br>
+char post_time [6]; /* time message was posted */<br>
+char post_date [9]; /* date message was posted */<br>
+char who_to [36]; /* recipient to whom msg is sent */<br>
+char who_from [36]; /* sender who posted message */<br>
+char subject [73]; /* subject line of message */<br>
+} msghdr_record;<br>
+<br>
+typedef struct { /* msgtxt.bbs structure definition */<br>
+unsigned char str_len; /* this string is stored in memory */<br>
+char str_txt [255]; /* in pascal format to reduce */<br>
+} msgtxt_record; /* overhead, so take care! */<br>
+<br>
+<br>
+/* the strings in the *.msg file header (opus style) aren't pascal type */<br>
+/* strings but have the 'normal' asciiz format. */<br>
+<br>
+typedef struct { /* opus-style (*.msg) msg format */<br>
+char who_from [36]; /* sender who posted message */<br>
+char who_to [36]; /* recipient to whom msg is sent */<br>
+char subject [72]; /* subject line of message */<br>
+char datetime [20]; /* date/time msg was last edited */<br>
+unsigned int times_read; /* # of times message was read */<br>
+unsigned int dest_node; /* destination node */<br>
+unsigned int orig_node; /* origin node */<br>
+unsigned int cost; /* cost to send netmail msg */<br>
+unsigned int orig_net; /* origin net */<br>
+unsigned int dest_net; /* destination net */<br>
+unsigned int dest_zone; /* destination zone (these fields) */<br>
+unsigned int orig_zone; /* origin zone (were padded ) */<br>
+unsigned int dest_point; /* destination point (with 8 0's ) */<br>
+unsigned int orig_point; /* origin point (in fsc-0001 ) */<br>
+unsigned int reply_to; /* msg # to which this one replies */<br>
+unsigned int attribute; /* msg attributes. bits as follows: */<br>
+/* 0 : private */<br>
+/* 1 : crash */<br>
+/* 2 : received */<br>
+/* 3 : sent */<br>
+/* 4 : file attached */<br>
+/* 5 : in transit */<br>
+/* 6 : orphan */<br>
+/* 7 : kill when sent */<br>
+/* 8 : locak */<br>
+/* 9 : hold for pickup */<br>
+/* 10 : unused */<br>
+/* 11 : file request */<br>
+/* 12 : return receipt request */<br>
+/* 13 : is a return receipt */<br>
+/* 14 : audit request */<br>
+/* 15 : file update request */<br>
+unsigned int next_reply; /* next msg in reply chain */<br>
+} net_record;<br>
+<br>
+/* message text is stored as follows: a linked list of records contains */<br>
+/* pointers to a msgtxt record. this record contains 255 bytes of message */<br>
+/* text. this message text block list (mtbl) can be changed at will. */<br>
+/* because the programmer won't work with the 'raw' message text in ram */<br>
+/* directly, the string format of the message text is *not* converted. the */<br>
+/* text blocks contain the strings in pascal format. */<br>
+<br>
+typedef struct __mtbl__ { /* element of msg text block list */<br>
+msgtxt_record * txt; /* pointer to text block */<br>
+struct __mtbl__ * next; /* pointer to next struct in list */<br>
+} mtbl;<br>
+<br>
+typedef mtbl * m_text; /* text handle - ptr to mtbl start */<br>
+<br>
+<br>
+/* public data *************************************************************/<br>
+<br>
+extern msginfo_record msginfo; /* global msginfo record */<br>
+extern int _cdecl errortype; /* indicate type of error occurred */<br>
+extern char _cdecl errorstring []; /* printable string with error msg. */<br>
+<br>
+<br>
+/* macro's and prototypes **************************************************/<br>
+<br>
+/* manipulating message text in memory */<br>
+m_text txt_new (char *); /* create new text */<br>
+int txt_add (m_text, char *); /* add a line of text */<br>
+void txt_dispose (m_text); /* dispose of text */<br>
+int txt_dump (m_text, int (*) (char *), unsigned char,<br>
+unsigned char); /* dump message text */<br>
+<br>
+/* message base file access */<br>
+int msg_open (char *); /* open message base */<br>
+void msg_close (void); /* close message base */<br>
+<br>
+/* message base file locking */<br>
+int msg_lock (char *); /* lock message base */<br>
+void msg_unlock (void); /* unlock message base */<br>
+<br>
+/* reading message base */<br>
+int msg_read_info (void); /* read msginfo.bbs */<br>
+int msg_read_hdr (long, msghdr_record *); /* read msghdr.bbs */<br>
+int msg_read_idx (long, msgidx_record *); /* read msgidx.bbs */<br>
+int msg_read_toidx (long, msgtoidx_record *); /* the same with */<br>
+m_text msg_read_text (msghdr_record *); /* read text 4 spec'd msg */<br>
+<br>
+/* writing message base */<br>
+int msg_write_info (void); /* write msginfo.bbs */<br>
+int msg_write_hdr (long, msghdr_record *); /* write msghdr.bbs */<br>
+int msg_write_idx (long, msgidx_record *); /* write msgidx.bbs */<br>
+int msg_write_toidx (long, msgtoidx_record *); /* msgtoidx.bbs */<br>
+int msg_write_text (msghdr_record *, m_text); /* new/change txt */<br>
+int msg_write_new (msghdr_record *, m_text); /* write new msg */<br>
+int msg_kill (long); /* kill message */<br>
+<br>
+/* message manipulation support routines */<br>
+long msg_msgnr2recnr (unsigned int); /* convert msg # to rec # */<br>
+unsigned int msg_recnr2msgnr (long); /* convert rec # to msg # */<br>
+void msg_hdr_clear (msghdr_record *); /* clear header record */<br>
+int msg_fixup4d (msghdr_record *, m_text); /* hdr -&gt; @intl */<br>
+<br>
+/* message base search routines */<br>
+long msg_firstinboard (unsigned char); /* get # of 1st msg in brd */<br>
+long msg_lastinboard (unsigned char); /* get # of last msg in b.*/<br>
+long msg_nextinboard (long); /* get # of next msg in b.*/<br>
+long msg_previnboard (long); /* get # of prev msg in b.*/<br>
+long msg_firstto (msgtoidx_record *); /* get # of 1st msg to.. */<br>
+long msg_lastto (msgtoidx_record *); /* get # of last msg to.. */<br>
+long msg_nextto (long); /* get # of next msg to.. */<br>
+long msg_prevto (long); /* get # of prev msg to.. */<br>
+<br>
+/* netmail search and manipulation support routines */<br>
+int net_first (char *); /* get # of first net msg */<br>
+int net_last (char *); /* get # of last net msg */<br>
+int net_next (char *, int); /* get # of next net msg */<br>
+int net_prev (char *, int); /* get # of prev net msg */<br>
+void net_hdr_clear (net_record *); /* clear a netmail header */<br>
+int net_fixup4d (net_record *, m_text); /* intl/fmpt/topt */<br>
+int net_getlastread (char *); /* get *.msg lastread ptr */<br>
+int net_setlastread (char *, int); /* set *.msg lastread ptr */<br>
+<br>
+/* reading and writing netmail */<br>
+int net_read_hdr (char *, int, net_record *); /* read net. hdr */<br>
+m_text net_read_text (char *, int); /* read netmail text */<br>
+int net_write (char *, int, net_record *, m_text); /* write net. */<br>
+int net_kill (char *, int); /* kill *.msg netmail msg */<br>
+<br>
+<br>
+/* wrap up the c++ fixup ***************************************************/<br>
+<br>
+#ifdef __cplusplus<br>
+}<br>
+#endif<br>
+#endif /* __mb_lib_h */<br>
+<br>
+<br>
+/* eof */<br>
+</td>
+</tr>
+</table>
+</center></div>
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

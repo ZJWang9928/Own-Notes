@@ -1,0 +1,39 @@
+<html>
+
+<head>
+<title>file:///d:/程序资料/format2/com.txt</title>
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">com format</font></p>
+<div align="center"><center>
+
+<table border="0" width="80%">
+  <tr>
+    <td width="100%"><pre>the com files are raw binary executables and are a leftover from the old cp/m
+machines with 64k ram.  a com program can only have a size of less than one
+segment (64k), including code and static data since no fixups for segment
+relocation or anything else is included. one method to check for a com file is
+to check if the first byte in the file could be a valid jump or call opcode, but
+this is a very weak test since a com file is not required to start with a jump
+or a call. in principle, a com file is just loaded at offset 100h in the segment
+and then executed.</pre>
+    <pre>offset              count type   description
+0000h                   1 byte   id=0e9h
+                                 id=0ebh
+                                 those are not safe ways to determine wether a
+                                 file is a com file or not, but most com files
+                                 start with a jump.
+further information not available.
+extension:com
+occurences:pc
+see also:exe,mz exe,ne exe</pre>
+    </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

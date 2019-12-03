@@ -1,0 +1,1750 @@
+{\rtf1\ansi\deff0\deftab720{\fonttbl{\f0\fnil MS Sans Serif;}{\f1\fnil\fcharset2 Symbol;}{\f2\fswiss\fprq2 System;}{\f3\fnil\fcharset134 \'cb\'ce\'cc\'e5;}}
+{\colortbl\red0\green0\blue0;}
+\deflang1033{\info{\horzdoc }{\*\fchars !),.:\'3b?\}]\'a1\'a2\'a1\'a3\'a1\'a4\'a1\'a5\'a1\'a6\'a1\'a7\'a1\'a8\'a1\'a9\'a1\'aa\'a1\'ab\'a1\'ac\'a1\'ad\'a1\'af\'a1\'b1\'a1\'b3\'a1\'b5\'a1\'b7\'a1\'b9\'a1\'bb\'a1\'bd\'a1\'bf\'a1\'c3\'a3\'a1\'a3\'a2\'a3\'a7\'a3\'a9\'a3\'ac\'a3\'ae\'a3\'ba\'a3\'bb\'a3\'bf\'a3\'dd\'a3\'e0}{\*\lchars ([\{\'a1\'ae\'a1\'b0\'a1\'b2\'a1\'b4\'a1\'b6\'a1\'b8\'a1\'ba\'a1\'bc\'a1\'be\'a3\'a8\'a3\'db\'a3\'fb\'a3\'ae\'a1\'a4}}
+\pard\nowwrap\nooverflow\plain\f3\fs21 MPEG-2 Technical (and sometimes political) Frequently Asked Questions
+\par (FAQ) list.
+\par Copyright 1994 by Chad Fogg (cfogg@netcom.com)
+\par Draft 3.3 (May 10, 1994)
+\par 
+\par 1. MPEG is a DCT based scheme, right?
+\par 2. What does the MPEG video syntax feature that codes video efficiently?
+\par 3. What does the syntax provide for error robustness?
+\par 4. What is the significance of each layer in MPEG video ?
+\par 5. How does the syntax facilitate parallelism?
+\par 6. I hear the encoder is not part of the standard?
+\par 7. Are some encoders better than others?
+\par 8. Can MPEG-1 encode higher sample rates than 352 x 240 x 30 Hz ?
+\par 9. What are Constrained Parameters Bitstreams (CPB) for video?
+\par 10. Why is Constrained Parameters so important?
+\par 11. Who uses constrained parameters bitstreams?
+\par 12. Are there ways of circumventing constrained parameters bitstreams for SIF 
+\par class applications and decoders ?
+\par 13. Are there any other conformance points like CPB for MPEG-1?
+\par 14. What frame rates are permitted in MPEG?
+\par 15. Special prediction switches for MPEG-2
+\par 16. What is MPEG-2 Video Main Profile and Main Level?
+\par 17. Does anybody actually use the scalability modes?
+\par 18. What's the difference between Field and Frame pictures?
+\par 19. What do B-pictures buy you?
+\par 20. Why do some people hate B-frames?
+\par 21. Why was the 16x16 area chosen?
+\par 22. Why was the 8x8 DCT size chosen?
+\par 23. What is motion compensated prediction, and why is it a pain?
+\par 24. What are the various prediction modes in MPEG-2?
+\par 24.1 Frame:
+\par 24.2 Field predictions in frame-coded pictures:
+\par 24.3 Field predictions in field-coded pictures:
+\par 24.4 16x8 predictions in field-coded pictures:
+\par 24.5 Dual Prime prediction in frame and field-coded pictures
+\par 24.6 Field and frame organized macroblocks:
+\par 25. How do you tell a MPEG-1 bitstream from a MPEG-2 bitstream?
+\par 26. What is the reasoning behind MPEG syntax symbols?
+\par 27. Why bother to research compressed video when there is a standard?
+\par 28. Where can I get a copy of the latest MPEG-2 draft?
+\par 29. What are the latest working drafts of MPEG-2 ?
+\par 30. What is the latest version of the MPEG-1 documents?
+\par 31. What is the evolution of ISO standard documents?
+\par 32. Where is a good introductory paper to MPEG?
+\par 33. What are some journals on related MPEG topics ?
+\par 34. Is there a book on MPEG video?
+\par 35. Is it MPEG-2 (Arabic numbers) or MPEG-II (roman)?
+\par 36. What happened to MPEG-3?
+\par 37. What is MPEG-4?
+\par 38. What are the scaleable modes of MPEG-2?
+\par 39. Why MPEG-2?  Wasn't MPEG-1 enough?
+\par 40. What did MPEG-2 add to MPEG-1 in terms of syntax/algorithms ?
+\par 41. How do MPEG and JPEG differ?
+\par 42. How do MPEG and H.261 differ?
+\par 43. Is H.261 the de facto teleconferencing standard?
+\par 44. What is the TM rate control and adaptive quantization technique ?
+\par 45. How does the TM work?
+\par 46. What is a good motion estimation method, then?
+\par 47. Is exhaustive search "optimal" ?
+\par 48. What are some advanced encoding methods?
+\par 49. Is so-and-so really MPEG compliant ?
+\par 50. What are the tell-tale MPEG artifacts?
+\par 51. Where are the weak points of MPEG video ?
+\par 52. What are some myths about MPEG?
+\par 53. What is the color space of MPEG?
+\par 54. Don't you mean 4:1:1 ?
+\par 55. Why did MPEG choose 4:2:0 ? Isn't 4:2:2 the standard for TV?
+\par 56. What is the precision of MPEG samples?
+\par 57. What is all the fuss with cositing of chroma components?
+\par 58. How would you explain MPEG to the data compression expert?
+\par 59. How does MPEG video really compare to TV, VHS, laserdisc ?
+\par 60. What are the typical MPEG-2 bitrates and picture quality?
+\par 61. At what bitrates is MPEG-2 video optimal?
+\par 62. Why does film perform so well with MPEG ?
+\par 63. What is the best compression ratio for MPEG ?
+\par 64. Can MPEG be used to code still frames?
+\par 65. Is there an MPEG file format?
+\par 66. What are some pre-processing enhancements ?
+\par 67. Why use these "advanced" pre-filtering techniques?
+\par 68. What about post-processing enhancements?
+\par 69. Can motion vectors be used to measure object velocity?
+\par 70. How do you code interlaced video with MPEG-1 syntax?
+\par 71. Is MPEG patented?
+\par 72. How many cable box alliances are there?
+\par 73. Will there be an MPEG video tape format?
+\par 74. Where will be see MPEG in everyday life?
+\par 75. What is the best compression ratio for MPEG ?
+\par 76. Is there a MPEG CD-ROM format?
+\par 
+\par 
+\par 1. MPEG is a DCT based scheme, right? 
+\par 
+\par The DCT and Huffman algorithms receive the most press coverage (e.g. \'13MPEG is 
+\par a DCT based scheme with Huffman coding\'14), but are in fact fairly 
+\par insignificant. The variety of coding modes signaled to the decoder as 
+\par context-dependent side information are chiefly responsible for the efficiency 
+\par of the MPEG syntax.
+\par 
+\par 2. What does the MPEG video syntax feature that codes video efficiently?
+\par  
+\par A. Here are some of the statistical conditions and their syntax counterparts.
+\par  
+\par  Occlusion:  forward, backwards, or bi-directional temporal prediction in B 
+\par  pictures.
+\par 
+\par  Smooth optical flow fields:  variable length coding of 1-D prediction errors 
+\par  for motion vectors.
+\par 
+\par  Spatial correlation beyond 8x8 sample block boundaries: 1-D prediction of  
+\par  DC coefficients in consecutive group intra-coded macroblocks.
+\par 
+\par  High temporal correlation:  variable on/off coding of prediction error  at 
+\par  the macroblock (no-coding) or individual block (coded block pattern) level.
+\par 
+\par  Temporal de-correlation: forward, backwards, or bidirectional prediction.
+\par 
+\par  Content dependent quality: locally adaptive quantization
+\par 
+\par  Temporal prediction accuracy: "half-pel" sample accuracy.
+\par 
+\par  High locally correlated signal refresh pictures (I picture) and prediction 
+\par  errors: DCT
+\par 
+\par Subjective coding: location-dependent quantization of DCT coefficients.
+\par 
+\par 
+\par 3. What does the syntax provide for error robustness?
+\par 
+\par 1. Byte-aligned start codes in the coded bitstream.
+\par 2. End of block codes in coded blocks.
+\par 3. Slices.
+\par 4. slice_vertical_position embedded as sub-field within slice start codes.
+\par 5. slices commencing at regular locations in picture (MPEG-2)
+\par 
+\par 4. What is the significance of each layer in MPEG video ?
+\par 
+\par Sequence:
+\par \tab Set of pictures sharing same sampling dimensions, bit rate, 
+\par \tab chromaticy (MPEG-1), quantization matrices (MPEG-1 only).
+\par 
+\par Group of Pictures:
+\par \tab Random access point giving SMPTE time code within sequence. 
+\par \tab Guaranteed to start with an I picture.
+\par 
+\par Picture:
+\par \tab Samples of a common plane -- "captured" from the same time instant.
+\par 
+\par Slice:  
+\par \tab Error resynchronization unit of macroblocks.  
+\par \tab At the commencement of a slice, all inter-macroblock coding 
+\par \tab dependencies are reset.  Likewise, all macroblocks within a common slice 
+\par can be dependently coded.
+\par 
+\par Macroblock:
+\par \tab Least common multiple of Y, Cb, Cr 8x8 blocks in 4:2:0 sampling 
+\par structure.
+\par \tab For MPEG-1, the smallest granularity of temporal prediction. 
+\par 
+\par Block:
+\par \tab Smallest granularity of spatial decorrelation.
+\par 
+\par 5. How does the syntax facilitate parallelism?
+\par 
+\par A. For MPEG-1, slices may consist of an arbitrary number of macroblocks.
+\par    The coded bitstream must first be mapped into fixed-length elements before 
+\par true parallelism in a decoder application can be exploited.  Further, since 
+\par macroblocks have coding dependencies on previous macroblocks within the same 
+\par slice, the data hierarchy must be pre-processed down to the layer of DC DCT 
+\par coefficients.  After this, blocks may be independently inverse transformed 
+\par and quantized, temporally predicted, and reconstructed to buffer memory.  
+\par Parallelism is usually more of a concern for encoders.  Macroblock motion 
+\par estimation and some rate control stages can be processed independently.  An 
+\par encoder also has the freedom to choose the slice structure.
+\par 
+\par 
+\par 6. I hear the encoder is not part of the standard?
+\par 
+\par A. The encoder rests just outside the normative scope of the standard, 
+\par    as long as the bitstreams it produces are compliant.  The decoder,
+\par    however, is almost deterministic: a given bitstream should
+\par    reconstruct to a unique set of pictures. Statistically speaking, an
+\par    occasional error of a Least    Significant Bit is permitted as a
+\par    result of the fact that the IDCT function is the only non-normative
+\par    stage in the decoder (the designer is free to choose among many DCT
+\par    algorithms and implementations).  The IEEE 1180 test referenced in
+\par    Annex A of the MPEG-1 and MPEG-2 specifications spells out the
+\par    statistical mismatch tolerance between the Reference IDCT, which
+\par    uses 64-bit floating point accuracy, and the Test IDCT.
+\par 
+\par 7. Are some encoders better than others?
+\par 
+\par A. Yes.  For example, the range over which a compensated prediction 
+\par    macroblock is searched for has a great influence over final picture 
+\par    quality.  At a certain point a very large range can actually become
+\par    detrimental (it may encourage large differential motion vectors).
+\par    Practical ranges are usually between +/- 15 and +/- 32.  As the
+\par    range doubles, for instance, the search area quadruples.
+\par 
+\par 8. Can MPEG-1 encode higher sample rates than 352 x 240 x 30 Hz ?
+\par 
+\par A. Yes. The MPEG-1 syntax permits sampling dimensions as high as 4095 x 
+\par    4095 x 60 frames per second.    The MPEG most people think of as "MPEG-
+\par    1" is actually a kind of subset known as Constrained Parameters 
+\par    bitstream (CPB).
+\par 
+\par 9. What are Constrained Parameters Bitstreams (CPB) for video?
+\par 
+\par A. MPEG-1 CPB are a limited set of sampling and bitrate parameters 
+\par    designed to normalize decoder computational complexity, buffer size, and 
+\par    memory bandwidth while still addressing the widest possible range of 
+\par    applications. The parameter limits were intentionally designed so that a 
+\par    decoder implementation would need only 4 Megabits of DRAM.
+\par 
+\par Parameter       Limit
+\par --------------  ---------------------------
+\par pixels/line     704 
+\par lines/picture   480 or 576
+\par pixels*lines    352*240 or 352*288
+\par picture rate    30 Hz
+\par bit rate        1.862million bits/sec
+\par buffer size     40 Kilobytes (327,680 bits)
+\par 
+\par  The sampling limits of CPB are bounded at the ever popular SIF rate:
+\par  396 macroblocks (101,376 pixels) per picture if the picture rate is
+\par  less than or equal to 25 Hz, and 330 macroblocks (84,480 pixels) per
+\par  picture if the picture rate is 30 Hz. The MPEG nomenclature loosely
+\par  defines a "pixel" or "pel" as a unit vector containing a complete
+\par  luminance sample and one fractional (0.25 in 4:2:0 format) sample from
+\par  each of the two chrominance (Cb and Cr) channels. Thus, the
+\par  corresponding bandwidth figure can be computed as:
+\par 
+\par   352 samples/line x 240 lines/picture x 30 pictures/sec x 1.5 samples/pixel 
+\par 
+\par or 3.8 Ms/s (million samples/sec) including chroma, but not including 
+\par blanking intervals.  Since most decoders are capable of sustaining 
+\par VLC decoding at a faster rate than 1.8 Mbit/sec, the coded video bitrate
+\par has become the most often waived parameter of CPB. An encoder which 
+\par intelligently employs the syntax tools should achieve SIF quality saturation 
+\par at about 2 Mbit/sec, whereas an encoder producing streams containing 
+\par only I (Intra) pictures might require as much as 4 Mbit/sec to achieve the 
+\par same video quality.
+\par 
+\par 10. Why is Constrained Parameters so important?
+\par 
+\par A. It is an optimum point that allows (just barely) cost effective VLSI 
+\par implementations in 1992 technology (0.8 microns).  It also implies a 
+\par nominal guarantee of interoperability for decoders and encoders.  Since
+\par CPB is a canonical conformance point, MPEG devices which are not capable 
+\par of meeting SIF rates are usually not considered to be true MPEG.
+\par 
+\par 11. Who uses constrained parameters bitstreams?
+\par 
+\par A. Applications which are focused on CPB are Compact Disc (White Book or CD-
+\par I) and computer video applications.  Set-top TV decoders fall into a higher 
+\par sampling rate category known as \'13CCIR 601\'14 or \'13Broadcast rate.\'14
+\par 
+\par 
+\par 12. Are there ways of circumventing constrained parameters bitstreams for SIF 
+\par class applications and decoders ?
+\par 
+\par A. Yes, some.  Remember that CPB limits pictures by macroblock count. 
+\par 416 x 240 x 24 Hz sampling rates are still within the constraints, but this 
+\par would only be of benefit in NTSC (240 lines/field) displays. Deviating from 
+\par 352 samples/line could throw off many decoder implementations which possess 
+\par limited horizontal sample rate conversion abilities. Some decoders do in fact 
+\par include a few rate conversion modes, with a filter usually implemented via 
+\par binary taps (shifts and adds).  Likewise, the target sample rates are usually 
+\par limited or ratios (e.g. 640, 540, 480 pixels/line, etc.). Future MPEG 
+\par decoders will likely include on-chip arbitrary sample rate converters, 
+\par perhaps capable of operating in the vertical direction (although there is 
+\par little need of this in applications using standard TV monitors, with the 
+\par possible exception of windowing in cable box graphical user interfaces).
+\par 
+\par 13. Are there any other conformance points like CPB for MPEG-1?
+\par A. Undocumented ones, yes.  A second generation of decoder chips emerged on 
+\par the market   about 1 year after the first wave of SIF-class decoders.  Both 
+\par LSI Logic and SGS-Thomson introduced CCIR 601 class MPEG-1 decodersto fill in 
+\par the gap between canonical MPEG-1 and the emergence of MPEG-2.  Under non-
+\par disclosure agreement, C-Cube had the CL-950.
+\par 
+\par 14. What frame rates are permitted in MPEG?
+\par A. A limited set is available for the choosing in MPEG-1, although "tricks" 
+\par could be played with Systems-layer Time Stamps to convey non-standard rates.  
+\par The set is: 23.976 Hz (3-2 pulldown NTSC), 24 Hz (Film), 25 Hz (PAL/SECAM or 
+\par 625/60 video), 29.97 (NTSC), 30 Hz (drop-frame NTSC or component 525/60), 50 
+\par Hz (double-rate PAL), 59.97 Hz (double rate NTSC), and 60 Hz (double-rate 
+\par drop-frame NTSC/component 525/60 video).  
+\par 
+\par 15. Special prediction switches for MPEG-2
+\par 
+\par 
+\par \tab        MPEG-2 sequence
+\par \tab       /         \\
+\par   progressive            interlaced sequence
+\par   sequence              /                    \\
+\par \tab \tab   Field picture            Frame picture
+\par \tab \tab \tab \tab \tab   /            \\
+\par \tab \tab \tab       Frame or field pred.     Frame MB prediction only
+\par \tab \tab \tab \tab /         \\                                
+\par \tab \tab \tab   Field dct      Frame dct 
+\par 
+\par 
+\par 16. What is MPEG-2 Video Main Profile and Main Level?
+\par 
+\par A. MPEG-2 Video Main Profile and Main Level is analogous to MPEG-1's CPB,with 
+\par sampling limits at CCIR 601 parameters (720 x 480 x 30 Hz). Profiles limit 
+\par syntax (i.e. algorithms), whereas Levels place limits on coding parameters 
+\par (sample rates, frame dimensions, coded bitrates, etc.). Together,  Video Main 
+\par Profile and  Main Level (abbreviated as MP@ML) normalize complexity within 
+\par feasible limits of 1994 VLSI technology (0.5 micron), yet still meet the 
+\par needs of the majority of application users.MP@ML is the conformance point for 
+\par most cable and satellite systems.
+\par 
+\par Profiles
+\par ======
+\par Simple: I and P pictures only. 4:2:0 sampling ratio. 8,9, or 10 bits DC 
+\par precision.
+\par Main: I, P, and B pictures.  Dual Prime with no B-pictures only.  4:2:0 
+\par sampling ratio. 8, 9, or 10 bits sample precision.
+\par SNR profile:
+\par Spatial profile:
+\par High: 8,9,10, or 11 bits sample precision.  4:2:2 and 4:4:4 sampling ratio.
+\par 
+\par 
+\par Level
+\par ====
+\par Simple:  SIF video rate (3.041280 Mhz),  4 Mbit/sec,  0.489472 Mbit VBV 
+\par buffer, 64 vertical in frame,  32Vertical in field, 1:7 fcode hor.
+\par 
+\par Main: CCIR 601 video rate (10.368 Mhz), 15 Mbit/sec,  1.835008 Mbit VBV 
+\par buffer, 128 V in frame, 64 V in field, 1:8 f_code Hor.
+\par 
+\par High 1440: 1440 x 1152 x 30 Hz (47.0016 Mhz), 60 Mbit/sec.   7.340032 Mbit 
+\par VBV buffer, 128 V in Fe,  1:9 fcode H.
+\par 
+\par High: 1920 x 1152 x 30 Hz (62.6688 Mhz), 80 Mbit/sec. 9.787392 Mbit VBV 
+\par buffer.
+\par 1:9 fcode H
+\par 
+\par 17. Does anybody actually use the scalability modes?
+\par 
+\par A. At this time, scalability has found itself a limited number of 
+\par applications, although research is definitely underway for its use in HDTV.  
+\par Experiments have been demonstrated in Europe where, for example, PAL-rate 
+\par video (720 x 576 x 25 fps) is embedded in the same stream as HDTV rate video 
+\par (1440 x 1152 x 25 fps). The Nov. 1992 VADIS experiment divided the base layer 
+\par (PAL) and enhancement into 4 and 16 Mbit/sec channels, respectively. The U.S. 
+\par Grand Alliance favors HDTV simulcasting (separate NTSC analog and digital 
+\par HDTV broadcasts).  Temporal scalability is the pet scalability mode as the 
+\par possible future solution for coding  60 Hz progressive sequences while 
+\par maintaining backwards compatibility with early-wave equipment (e.g. 1920 x 
+\par 1080 x 30 Hz displays) . To elaborate, the first wave receivers of the late 
+\par 1990's would be limited to 62at 0 Hz interlaced/30 Hz progressive HDTV 
+\par decoders.  Essentially, 60 interlaced fields would be coded in a, for 
+\par example, 16 Mbit/sec stream in 1996, and when VLSI processes shift another 
+\par thousand or so angstroms down the wavelength scale, an 8 Mbit/sec enhancement 
+\par layer containing the coded "high pass" between 60 Hz progressive and 60 Hz 
+\par interlaced would be simulcasted or multiplexed.  Several corporate mouths 
+\par have been known to water at the mention of charging the quality conscious 
+\par subscriber an  extra fee for the enhancement layer.
+\par 
+\par 18. What's the difference between Field and Frame pictures?
+\par A. A  frame-coded  picture consists of samples from both even and odd fields.  
+\par A 
+\par frame picture is coded in progressive order (an even line, then an odd line, 
+\par etc.) and in the case of MPEG-2,  may optionally switch between field and 
+\par frame order on a macroblock basis. The Display Process, which is *almost* 
+\par completely outside the scope of the MPEG specification, can chose to re-
+\par interlace the picture by displaying the odd and even lines at different times 
+\par (16 milliseconds apart for 60 Hz displays).  In fact, most pictures, 
+\par regardless of whether they were coded as a Field or Frame, end up being 
+\par displayed interlaced due to the fact that most TV sets are interlaced.
+\par 
+\par 19. What do B-pictures buy you?
+\par 
+\par A. Since bi-directional macroblock predictions are an average of two 
+\par macroblock areas, noise is reduced at low bit rates (like a 3-D filter, if 
+\par you will).  At nominal MPEG-1 video (352 x 240 x 30, 1.15 Mbit/sec) rates, it 
+\par is said that B-frames improves SNR by as much as 2 dB. (0.5 dB gain is 
+\par usually considered worth-while in MPEG). However, at higher bit rates, B-
+\par frames become less useful since they inherently do not contribute to the 
+\par progressive refinement of an image sequence (i.e. not used as prediction by 
+\par subsequent coded frames).  Regardless, B-frames are still politically 
+\par controversial.
+\par 
+\par B pictures are interpolative in two ways: 1. predictions in the bi-
+\par directional macroblocks are an average from block areas of two pictures 2. B 
+\par pictures \'13fill in\'14 or interpolate the 3-D video signal over a 33 or 25 
+\par millisecond picture period without contributing to the overall signal quality 
+\par beyond that immediate point in time.  In other words, a B pictures, 
+\par regardless of its internal make-up of macroblock types, has a life limited to 
+\par its immediate self.  As mentioned before, its energy does not propagate into 
+\par other frames.  In a sense, bits spent on B pictures are wasted.
+\par 
+\par 
+\par 20. Why do some people hate B-frames?
+\par 
+\par A. Computational complexity, bandwidth, delay, and picture buffer size are 
+\par the four B-frame Pet Peeves. Computational complexity in the decoder is 
+\par increased since a some macroblock modes require averaging between two 
+\par macroblocks.
+\par 
+\par Worst case, memory bandwidth is increased an extra 15.2 MByte/s (4:2:0 601 
+\par rates, not including any half pel or page-mode overhead) for this extra 
+\par prediction. An extra picture buffer is needed to store the future prediction 
+\par reference (bi-directionality).  Finally, extra delay is introduced in 
+\par encoding since the frame used for backwards prediction needs to be 
+\par transmitted to the decoder before the intermediate B-pictures can be decoded 
+\par and displayed.
+\par 
+\par Cable television (e.g. -- more like i.e.-- General Instruments) have been 
+\par particularly adverse to B-frames since, for CCIR 601 rate video,  the extra 
+\par picture buffer pushes the decoder DRAM memory requirements past the magic 8-
+\par Mbit (1 Mbyte) threshold into the evil realm of 16 Mbits (2 Mbyte).... 
+\par although 8-Mbits is fine for 352 x 480 B picture sequence. However, cable 
+\par often forgets that DRAM does not come in convenient high-volume (low cost) 8-
+\par Mbit packages as does the friendly  4-Mbit and 16-Mbit.  In a few years, the 
+\par cost difference between 16 Mbit and 8 Mbit will become insignificant compared 
+\par to the bandwidth savings gain through higher compression.  For the time 
+\par being, some cable boxes will start with 8-Mbit and allow future drop-in 
+\par upgrades to the full 16-Mbit.
+\par 
+\par 21. Why was the 16x16 area chosen?
+\par 
+\par A.  The 16x16 area corresponds to the Least Common Multiple (LCM) of 8x8 
+\par blocks, given the normative 4:2:0 chroma ratio. Starting with medium 
+\par size images, the 16x16 area provides a good balance between side 
+\par information overhead & complexity and motion compensated prediction 
+\par accuracy.  In gist, 16x16 seemed like a good trade-off.
+\par 
+\par 22. Why was the 8x8 DCT size chosen?
+\par A. Experiments showed little improvements with larger sizes vs. the 
+\par increased complexity. A fast DCT algorithm will require roughly double 
+\par the arithmetic operations per sample when the transform point size is 
+\par doubled. Naturally, the best compaction efficiency has been demonstrated 
+\par using 
+\par locally adaptive block sizes (e.g. 16x16, 16x8, 8x8, 8x4, and 4x4) [See 
+\par Baker and Sullivan]. Naturally, this introduces additional side information 
+\par overhead and forces the decoder to implement programmable or hardwired 
+\par recursive DCT algorithms. If the DCT size becomes too large, then more edges 
+\par (local discontinuities) and the like become absorbed into the transform 
+\par block, resulting in wider propagation of Gibbs (ringing) and other phenomena. 
+\par Finally, with larger transform sizes, the DC term is even more critically 
+\par sensitive to quantization noise.
+\par 
+\par 23. What is motion compensated prediction, and why is it a pain?
+\par 
+\par A. MCP in the decoder can be thought of as having four stages:
+\par 
+\par 1. Motion vector computation
+\par 2. Prediction retrieval
+\par \tab various predictions are 16x16, 16x8, 8x4, 8x8 plus any half-pel 
+\par overhead (e.g. 17x16, 17x17, etc).
+\par 3. Filtering
+\par \tab 3.1 Forming half-pel predictions through bi-linear interpolation.
+\par \tab 3.2 Averaging two predictions together (B macroblocks, Dual Prime)
+\par 4. Combination and ordering
+\par \tab 4.1 combining 1 or 2 predictions from stage three into upper and 
+\par \tab lower halves (16 x 8, field in frame)
+\par \tab 4.2 interleaving or grouping together odd and even lines in frame 
+\par \tab picture predictions.
+\par 
+\par The final, combined prediction is always a 16x16 block of luminance and 
+\par 8x8 block of chrominance, just like we experience in MPEG-1.
+\par 
+\par A single motion vector can be associated with each source, hence a macroblock 
+\par can have as many as 4 motion vectors.
+\par 
+\par 24. What are the various prediction modes in MPEG-2?
+\par 
+\par 24.1 Frame:
+\par Predictions are formed from a 16 x 16 pixel area in a previously 
+\par reconstructed frame. Identical to MPEG-1. There can be only one source in 
+\par forward or backward predicted macroblocks, and two sources in bi-directional 
+\par macroblocks.  The prediction frame itself may have been coded as either a 
+\par frame or two fields, however once a frame is reconstructed, it is simply a 
+\par frame as far as future predictions are concerned.
+\par 
+\par 24.2 Field predictions in frame-coded pictures:
+\par 
+\par Separate predictions are formed for the top (8 lines from field 1)and bottom 
+\par (8 lines from field 2) portions of the macroblock.  A total of two motion 
+\par vectors in forward or backward predictions, four in bi-directional.
+\par 
+\par 24.3 Field predictions in field-coded pictures:
+\par 
+\par Predictions are formed from the two most recently decoded fields.  Prediction 
+\par sizes are 16x16, however the 16 lines have a corresponding projection onto a 
+\par 16x32 pixel area of a frame. One motion vector for forward or backward 
+\par predictions, and two for bi-directional.
+\par 
+\par 24.4 16x8 predictions in field-coded pictures:
+\par 
+\par Like field macroblocks in frame-coded pictures, the upper and lower 8 lines 
+\par in this macroblock mode can have different predictions (hence two motion 
+\par vectors).  This mode compensates for the reduced temporal prediction 
+\par precision of field picture macroblocks (a result of the fact that fields 
+\par inherently possess half the number of lines that frames do).  The field 
+\par prediction area projected onto a frame is restored to 16 lines.  2 motion 
+\par vectors for backwards or forwards, 4 for bi-directional.
+\par 
+\par 24.5 Dual Prime prediction in frame and field-coded pictures
+\par 
+\par Predictions for the current macroblock are formed from the average of two 16 
+\par x 8 line areas from the two most recently decoded fields. Dual Prime was 
+\par devised as an alternative for B pictures in low delay applications, but still 
+\par offers many of the signal 
+\par quality benefits of B-pictures. Dual Prime requires one less prediction 
+\par picture buffer, but still retains the same instantaneous prediction bandwidth 
+\par of a B picture system. As an alternative to coding separate motion vectors 
+\par for each of the upper and lower 16x8 areas, a full motion vector is sent for 
+\par the first area, and a +1, 0, or -1 differential vector (variable length 
+\par coded) is specified for the second prediction area.  A macroblock will have 
+\par total of two full motion vectors and two differential vectors in frame-coded 
+\par pictures.  Due to the prediction bandwidth overhead, Main Profile restricts 
+\par the use of Dual Prime prediction to P picture sequences  only.  High Profile 
+\par permits use of Dual Prime in B pictures.
+\par 
+\par 24.6 Field and frame organized macroblocks:
+\par 
+\par Originally intended as a cheaper means of achieving field-decorrelation in 
+\par frame-coded pictures without the fussy overhead of separate field prediction 
+\par estimates, the dct coefficients (quantized prediction error for a given 
+\par macroblock) may be organized into either a field or frame pattern. 
+\par Essentially this means that the prediction error for the combined 16x16 
+\par macroblock may be grouped into field or frame blocks. A bit in the macroblock 
+\par header (dct_type) indicates whether the upper and lower portions of the 
+\par macroblock are to be interleaved (frame organized) or remain separated (field 
+\par organized).
+\par 
+\par 25. How do you tell a MPEG-1 bitstream from a MPEG-2 bitstream?
+\par 
+\par A. All MPEG-2 bitstreams must contain specific extension headers that
+\par *immediately* follow MPEG-1 headers.  At the highest layer, for example, 
+\par the MPEG-1 style sequence_header() is followed by sequence_extension() 
+\par exclusive to MPEG-2. Some extension headers are specific to MPEG-2 profiles. 
+\par For example, sequence_scalable_extension() is not allowed in Main Profile 
+\par bitstreams. 
+\par 
+\par A simple program need only scan the coded bitstream for byte-aligned start 
+\par codes to determine whether the stream is MPEG-1 or MPEG-2.
+\par 
+\par 
+\par 26. What is the reasoning behind MPEG syntax symbols?
+\par 
+\par A. Here are some of the Whys and Wherefores of MPEG symbols: 
+\par 
+\par Start codes
+\par These 32-bit byte-aligned codes provide a mechanism for cheaply 
+\par searching coded bitstreams for commencement of various layers of video 
+\par without having to actually parse variable-length codes or perform any 
+\par decoder arithmetic.  Start codes also provide a mechanism for 
+\par resynchronization in the presence of bit errors.
+\par 
+\par Coded block pattern (CBP --not to be confused with Constrained 
+\par Parameters!)  When the frame prediction is particularly good, the 
+\par displaced frame difference (DFD, or prediction error) tends to be small, 
+\par often with entire block energy being reduced to zero after quantization.  
+\par This usually happens only at low bit rates.  Coded block patterns 
+\par prevent the need for transmitting EOB symbols in those zero coded 
+\par blocks.
+\par   
+\par DCT_coefficient_first
+\par Each intra coded block has a DC coefficient.  With coded block patterns 
+\par signaling all possible combinations of all-zero valued blocks, the 
+\par dct_coef_first mechanism assigns a different meaning to the VLC codeword 
+\par that would otherwise represent EOB as the first coefficient.
+\par 
+\par 
+\par End of Block: 
+\par Saves unnecessary run-length codes.  At optimal bitrates, there tends to 
+\par be few AC coefficients concentrated in the early stages of the zig-zag 
+\par vector. In MPEG-1, the 2-bit length of EOB implies that there is an 
+\par average of only 3 or 4 non-zero AC coefficients per block.  In MPEG-2 
+\par Intra (I) pictures, with a 4-bit EOB code, this number is between 9 and 
+\par 16 coefficients. Since EOB is required for all coded blocks, its absence 
+\par can signal that a syntax error has occurred in the bitstream.
+\par 
+\par 
+\par Macroblock stuffing
+\par A genuine pain for VLSI implementations, macroblock stuffing was 
+\par introduced   to maintain smoother, constant bitrate control in MPEG-1. 
+\par However, with normalized complexity measures and buffer management 
+\par performed a priori (pre-frame, pre-slice, and pre-macroblock) in the 
+\par MPEG-2 encoder test model, the need for such localized smoothing 
+\par evaporated. Stuffing can be achieved through virtually unlimited slice 
+\par start code padding if required. A good rule of thumb: if you find 
+\par yourself often using stuffing more than once per slice, you probably 
+\par don't have a very good rate control algorithm.  Anyway, macroblock 
+\par stuffing is now illegal in MPEG-2, so don t start using it if you 
+\par already haven t.
+\par 
+\par 
+\par MPEG's modified Huffman VLC tables
+\par   The VLC tables in MPEG are not Huffman tables in the true sense of 
+\par Huffman coding, but are more like the tables used in Group 3 fax. They 
+\par are entropy constrained, that is, non-downloadable and optimized for a 
+\par limited range of bit rates (sweet spots).  With the exception of a few 
+\par codewords, the larger tables were carried over from the H.261 standard 
+\par of 1990.  MPEG-2 added an "Intra table".  Note that the dct_coefficient 
+\par tables assume positive/negative coefficient pmf   symmetry.
+\par 
+\par 
+\par 27. Why bother to research compressed video when there is a standard?
+\par A. Despite the worldwide standard, many areas remain open for research:  
+\par advanced encoding and pre-processing, motion estimation, macroblock 
+\par decision models, rate control and buffer management in editing 
+\par environments, etc. There's practically no end to it.
+\par 
+\par 28. Where can I get a copy of the latest MPEG-2 draft?
+\par 
+\par A. Contact your national standards body (e.g. ANSI Sales in NYC for the 
+\par U.S., British Standards Institute in the UK, etc.).  A number of private 
+\par organizations offer ISO documents.
+\par 
+\par 29. What are the latest working drafts of MPEG-2 ?
+\par A. MPEG-2 has reached voting document of the Draft International Standard for 
+\par :
+\par 
+\par \tab Information Technology -- Generic Coding of Moving Pictures and 
+\par Associated Audio. Recommendation H.262, ISO/IEC Draft International Standard 
+\par 13818-2.  [produced March 25, 1994, not yet approved by voting process].
+\par 
+\par Audio is Part 1, Video Part 2, and Systems is Part 3.  A committee draft for 
+\par Conformance (Part 4) is expected in Novemeber 1994, as well as the Technical 
+\par Report on Software Simulation (Part 5).
+\par 
+\par 30. What is the latest version of the MPEG-1 documents?
+\par 
+\par A. Systems (ISO/IEC IS 11172-1), Video (ISO/IEC IS 11172-2), and Audio 
+\par (ISO/IEC IS 11172-3) have reached the final document stage.  Part 4, 
+\par Conformance Testing, is currently DIS
+\par 
+\par 
+\par 31. What is the evolution of ISO standard documents?
+\par 
+\par A. In chronological order:
+\par 
+\par    ISO/Committee notation                          Author's notation
+\par    ---------------------------------------     -------------------------
+\par    Problem (unofficial first stage)            Barroom Witticism
+\par    New work Item (NI)                          Napkin Item
+\par    New Proposal (NP)                           Need Permission
+\par    Working Draft (WD)                          We're Drunk
+\par    Committee Draft (CD)                        Calendar Deadlock
+\par    Draft International Standard (DIS)          Doesn't Include Substance
+\par    International Standard (IS)                 Induced patent Statements
+\par 
+\par 32. Where is a good introductory paper to MPEG?
+\par 
+\par A. Didier Le Gall, "MPEG: A Video Compression Standard for Multimedia 
+\par Applications," Communications of the ACM, April 1991, Vol.34, No.4, pp. 47-58
+\par 
+\par 33. What are some journals on related MPEG topics ?
+\par A. 
+\par 
+\par IEEE Transactions on Consumer Electronics
+\par IEEE Transactions on Broadcasting
+\par IEEE Transactions on Circuits and Systems for Video Technology
+\par Advanced Electronic Imaging
+\par Electronic Engineering Times (EE Times -- more tabloid coverage.  Unfortunate 
+\par columns by  Richard Doherty)
+\par IEEE Int'l Conference on Acoustics, Speech, and Signal Processing 
+\par (ICASSP)
+\par International Broadcasting Convention (IBC)
+\par Society of Motion Pictures and Television Engineers (SMPTE)
+\par SPIE conference on Visual Communications and Image Processing
+\par SPIE conference on Video Compression for Personal Computers
+\par IEEE Multimedia [first edition Spring 1994]
+\par 
+\par 
+\par 34. Is there a book on MPEG video?
+\par 
+\par A. Yes, there will be a book published sometime in 1994 by the same authors 
+\par who brought you the JPEG book (Bill Pennebaker, Joan Mitchell). Didier Le 
+\par Gall will be an additional co-author, and will insure digressions into, e.g. 
+\par arithmetic coding aspects, be kept to a minimum :-)
+\par 
+\par 35. Is it MPEG-2 (Arabic numbers) or MPEG-II (roman)?
+\par 
+\par A. Committee insiders most often use the Arabic notation with the hyphen, 
+\par e.g. MPEG-2.  Only the most retentive use the official designation: Phase 2.   
+\par In fact, M.P.E.G. itself is a nickname.  The official title is: ISO/IEC JTC1 
+\par SC29 WG11.  The militaristic lingo has  so far managed to keep the enemy 
+\par (DVI) confused and out of the picture.
+\par 
+\par    ISO:  International Organization for Standardization
+\par    IEC:  International Electrotechnical Commission
+\par    JTC1: Joint Technical Committee 1
+\par    SC29: Sub-committee 29
+\par    WG11: Work Group 11  (moving pictures with... uh, audio)
+\par 
+\par 36. What happened to MPEG-3?
+\par 
+\par A. MPEG-3 was to have targeted HDTV applications with sampling dimensions up 
+\par to 1920 x 1080 x 30 Hz and coded bitrates between 20 and 40 Mbit/sec. It was 
+\par later discovered that with some (compatible) fine  tuning, MPEG-2 and MPEG-1 
+\par syntax worked very well for HDTV rate video. The key is to maintain an 
+\par optimal balance between sample rate and coded bit rate.
+\par 
+\par Also, the standardization window for HDTV was rapidly closing.  Europe and 
+\par the United States were on the brink of committing to analog-digital 
+\par subnyquist hybrid algorithms (D-MAC, MUSE, et al).   European all-digital 
+\par projects such as HD-DIVINE and VADIS demonstrated better picture quality with 
+\par respect to bandwidth using the MPEG syntax.  In the United States, the 
+\par Sarnoff/NBC/Philips/Thomson HDTV consortium had used MPEG-1 syntax from the 
+\par beginning of its all-digital proposal, and with the exception of  motion 
+\par artifacts (due to limited search range in the encoder), was deemed to have 
+\par the best picture quality of all three digital proponents. HDTV is now part of 
+\par the MPEG-2 High-1440 Level and High Level toolkit.
+\par 
+\par 37. What is MPEG-4?
+\par A. MPEG-4 targets the Very Low Bitrate applications defined loosely as 
+\par having sampling dimensions up to 176 x 144 x 10 Hz and coded bit rates 
+\par between 4800 and 64,000 bits/sec.   This new standard would be used, for 
+\par example, in low bit rate videophones over analog telephone lines.
+\par 
+\par This effort is in the very early stages.  Morphology, fractals, model 
+\par based, and anal retentive block transform coding are all in the 
+\par offering. MPEG-4 is now in the application identification phase.
+\par 
+\par Scaleable modes of MPEG-2
+\par 
+\par 38. What are the scaleable modes of MPEG-2?
+\par A. Scaleable video is permitted only in the High Profiles. 
+\par 
+\par Currently, there are four scaleable modes in the MPEG-2 toolkit. These modes 
+\par break MPEG-2 video into different layers (base, middle, and high layers) 
+\par mostly for purposes of prioritizing video data.  For example, the high 
+\par priority channel (bitstream) can be coded with a combination of extra error 
+\par correction information and/or increased signal strength (i.e. higher Carrier-
+\par to-Noise ratio or lower Bit Error Rate) than the lower priority channel. For 
+\par example, in HDTV, the high priority bitstream (720 x 480) can be decoded 
+\par under noise conditions were the lower priority (1440 x 960) cannot. This is 
+\par part of the "graceful degradation\'14 concept.  Breaking a video signal into two 
+\par streams (base and enhancements) has a penalty, however.  Usually less than 
+\par 1.5 dB.
+\par 
+\par Another purpose of salability is complexity division. A standard TV set need 
+\par only decode the 720 x 480 channel, thus requiring a less expensive decoder 
+\par processor than a TV set wishing to display 1440 x 960. This is known as 
+\par simulcasting.
+\par 
+\par A brief summary of the MPEG-2 video scalability modes:
+\par 
+\par Spatial Scalablity-- Useful in simulcasting, and for feasible software 
+\par decoding of the lower resolution, base layer.  This spatial domain 
+\par method codes a base layer at lower sampling dimensions (i.e. 
+\par "resolution") than the upper layers.  The upsampled reconstructed lower 
+\par (base) layers are then used as prediction for the higher layers.  
+\par 
+\par Data Partitioning-- Similar to JPEG's frequency progressive mode, only 
+\par the slice layer indicates the maximum number of block transform 
+\par coefficients contained in the particular bitstream (known as the 
+\par "priority break point"). Data partitioning is a frequency domain method 
+\par that breaks the block of 64 quantized transform coefficients into two 
+\par bitstreams.  The first, higher priority bitstream contains the more 
+\par critical lower frequency coefficients and side informations (such as DC 
+\par values, motion vectors). The second, lower priority bitstream carries 
+\par higher frequency AC data.
+\par 
+\par SNR Scalability-- Similar to the point transform in JPEG, SNR 
+\par scalability is a spatial domain method where channels are coded at 
+\par identical sample rates, but with differing picture quality (achieved through 
+\par quantization step sizes). The higher priority bitstream contains base 
+\par layer data that can be added to a lower priority refinement layer to 
+\par construct a higher quality picture.
+\par 
+\par Temporal Scalability--- A temporal domain method useful in, e.g., 
+\par stereoscopic video.  The first, higher priority bitstreams codes video 
+\par at a lower frame rate, and the intermediate frames can be coded in a 
+\par second bitstream using the first bitstream reconstruction as prediction. 
+\par In stereoscopic vision, for example, the left video channel can be 
+\par prediction from the right channel.
+\par 
+\par Other scalability modes were experimented with in MPEG-2 video (such as   
+\par Frequency Scalability), but were eventually dropped in favor of methods 
+\par that demonstrated comparable or better picture quality with greater 
+\par simplicity.
+\par 
+\par 
+\par 39. Why MPEG-2?  Wasn't MPEG-1 enough?
+\par 
+\par A. MPEG-1 was optimized for CD-ROM or applications at about 1.5 
+\par Mbit/sec. Video was strictly non-interlaced (i.e. progressive).  The 
+\par international cooperation executed well enough for MPEG-1, that the committee 
+\par began to  address applications at broadcast TV sample rates using the 
+\par CCIR 601 recommendation (720 samples/line by 480 lines per frame by 30 
+\par frames per second or about 15.2 million samples/sec including chroma) as 
+\par the reference.
+\par 
+\par Unfortunately, today's TV scanning pattern is interlaced.  This 
+\par introduces a duality in block coding:  do local redundancy areas (blocks) 
+\par exist exclusively in a field or a frame.(or a particle or wave) ?  The 
+\par answer of course is that some blocks are one or the other at different 
+\par times, depending on motion activity. The additional man years of 
+\par experimentation and implementation between MPEG-1 and MPEG-2 improved 
+\par the method of block-based transform coding.
+\par 
+\par 
+\par 40. What did MPEG-2 add to MPEG-1 in terms of syntax/algorithms ?
+\par A. Here is a brief summary:
+\par 
+\par Sequence layer:
+\par More aspect ratios.  A minor, yet necessary part of the syntax.
+\par 
+\par Horizontal and vertical dimensions are now required to be a multiple of 
+\par 16 in frame coded pictures, and the vertical dimension must be a 
+\par multiple of 32 in field coded pictures.
+\par 
+\par 4:2:2 and 4:4:4 macroblocks were added in the Next profiles.
+\par 
+\par Syntax can now signal frame sizes as large as 16383 x 16383.
+\par 
+\par Syntax signals source video type (NTSC, PAL, SECAM, MAC, component) to 
+\par help post-processing and display.
+\par 
+\par Source video color primaries (609, 170M, 240M, D65, etc.) and opto-
+\par electronic transfer characteristics (709, 624-4M, 170M etc.) can be 
+\par indicated.
+\par 
+\par Four scaleable modes [see scalability discussion] 
+\par 
+\par Picture layer:
+\par All MPEG-2 motion vectors are specified to a half-pel sample grid.
+\par 
+\par DC precision can be user-selected as 8, 9, 10, or 11 bits.
+\par 
+\par New scalar quantization matrices may be downloaded once per picture.  In High 
+\par profile, separate chrominance matrices now exist (Y and C no longer have to 
+\par share)
+\par 
+\par Concealment motion vectors were added to I-pictures in order to increase 
+\par robustness from bit errors. I pictures are the most critical and sensitive 
+\par picture in a group of pictures.
+\par 
+\par A non-linear macroblock quantization factor providing a wider dynamic 
+\par range, from 0.5 to  56, than the linear MPEG-1 (1 to 32) range. Both are 
+\par sent as a 5-bit FLC side information in the macroblock and slice 
+\par headers.
+\par 
+\par New Intra-VLC table for dct_coefficient_next (AC run-level events) that 
+\par is a better match for the histogram of Intra-coded pictures. EOB is 4 
+\par bits. The old table, dct_coef_next, are reserved for use in non-intra 
+\par pictures (P, B), although they new table can be used for Intra-coded 
+\par macroblocks in P and B pictures as well.
+\par 
+\par Alternate scanning pattern that (supposedly) improves entropy coding 
+\par performance over the original Zig-Zag scan used in H.261, JPEG, and MPEG-1.  
+\par The extra scanning pattern is geared towards interlaced video.
+\par 
+\par Syntax to signal an irregular 3:2 pulldown process (repeat_field_first flag)
+\par 
+\par Progressive and interlaced frame coding
+\par 
+\par Syntax to indicate source composite video characteristics useful in post-
+\par processing operations. (v-axis, field sequence, sub_carrier, phase, 
+\par burst_amplitude, etc.)
+\par 
+\par Pan & scanning syntax that tells decoder how to, for example, window a 
+\par 4:3 image within a wider 16:9 aspect ratio coded image.  Vertical pan 
+\par offset has 1/16th pixel accuracy.
+\par 
+\par Macroblock layer:
+\par Macroblock stuffing is now illegal in MPEG-2 (hurray!!). If stuffing is 
+\par really needed, the encoder can pad slice start codes.
+\par 
+\par Two organizations for macroblock coefficients (interlaced and progressive) 
+\par signaled by dct_type flag.
+\par 
+\par Now only one run-level escape code code (24-bits) instead of the single (20-
+\par bits) and double escape (28-bits) in MPEG-1.
+\par 
+\par Improved mismatch control in quantization over the original oddification  
+\par method in MPEG-1.  Now specifies adding or subtracting one to the 63rd 
+\par AC coefficient depending on parity of the summed coefficients. MPEG-2 
+\par mismatch control is performed on the transform coefficients, whereas in MPEG-
+\par 1, it is applied to the quantized transform coefficients.
+\par 
+\par Many additional prediction modes (16x8 MC, field MC, Dual Prime) and, 
+\par correspondingly, macroblock modes.
+\par 
+\par Overall, MPEG-2's greatest compression improvements over MPEG-1 are: 
+\par prediction modes, Intra VLC table, DC precision, non-linear macroblock 
+\par quantization.  Implementation improvements: macroblock stuffing was 
+\par eliminated.
+\par 
+\par 41. How do MPEG and JPEG differ?
+\par 
+\par A. The most fundamental difference is MPEG's use of block-based motion 
+\par compensated prediction (MCP)---a method falling into the general category of 
+\par temporal DPCM.
+\par 
+\par The second most fundamental difference is in the target application. 
+\par JPEG adopts a general purpose philosophy: independence from color space 
+\par (up to 255 components per frame) and quantization tables for each 
+\par component. Extended modes in JPEG include two sample precision (8 and 
+\par 12 bit sample accuracy), combinations of frequency progressive, spatial 
+\par hierarchically progressive, and amplitude (point transform) progressive 
+\par scanning modes. Further color independence is made possible thanks to 
+\par downloadable Huffman tables (up to one for each component.)
+\par 
+\par Since MPEG is targeted for a set of specific applications, there is only 
+\par one color space (4:2:0 YCbCr), one sample precision (8 bits), and one 
+\par scanning mode (sequential). Luminance and chrominance share quantization 
+\par and VLC tables. MPEG adds adaptive quantization at the macroblock (16 x 
+\par 16 pixel area) layer.  This permits both smoother bit rate control and 
+\par more perceptually uniform quantization throughout the picture and image 
+\par sequence. However, adaptive quantization is part of the Enhanced JPEG 
+\par charter (ISO/IEC 10918-3) currently in verification stage. MPEG variable 
+\par length coding tables are non-downloadable, and are therefore optimized 
+\par for a limited range of compression ratios appropriate for the target 
+\par applications.
+\par 
+\par The local spatial decorrelation methods in MPEG and JPEG are very 
+\par similar. Picture data is block transform coded with the two-dimensional 
+\par orthanormal 8x8 DCT, with asymmetric basis vectors about time (aka \'13DCT-
+\par II\'14). The resulting 63 AC transform coefficients are mapped in a zig-zag 
+\par pattern (or alternative scan pattern in MPEG-2) to statistically 
+\par increase the runs of zeros. Coefficients of the vector are then 
+\par uniformly scalar quantized, run-length coded, and finally the run-length 
+\par symbols are variable length coded using a canonical (JPEG) or modified 
+\par Huffman (MPEG) scheme.  Global frame redundancy is reduced by 1-D DPCM 
+\par of the block DC coefficients, followed by quantization and variable 
+\par length entropy coding of the quantized DC coefficient.
+\par 
+\par \tab     MCP                   DCT                    ZZ               
+\par Q
+\par   Frame -> 8x8 spatial block -> 8x8 frequency block -> Zig-zag scan -> 
+\par \tab \tab     
+\par \tab \tab     RLC                  VLC
+\par        quanitzation -> run-length coding -> variable length coding.
+\par 
+\par The similarities have made it possible for the development of hard-wired 
+\par silicon that can code both standards.  Even some highly microcoded 
+\par architectures employing hardwired instruction primitives or functional 
+\par blocks benefit from JPEG/MPEG similarities. There are many additional 
+\par yet minor differences. They include:
+\par 
+\par \tab 1. In addition to the 8-bit mode, DCT and quantization precision 
+\par in MPEG has a 9-bit and 12-bit mode, respectively, exclusively in non-
+\par intra coded macroblocks.  A 1-bit expansion takes place in the 
+\par macroblock difference operation.
+\par 
+\par \tab 2. Mismatch control in MPEG-1 forces quantized coefficients to 
+\par become odd values (oddification). JPEG does not employ any mismatch 
+\par mechanism.
+\par 
+\par \tab 3. JPEG run-length coding produces run-size tokens (run of zeros,
+\par non-zero coefficient magnitude) whereas MPEG produces fully concatenated 
+\par run-level tokens that do not require magnitude differential bits.
+\par 
+\par \tab 4. DC values in MPEG-1 are limited to 8-bit precision (a constant 
+\par stepsize of 8), whereas JPEG DC precision can occupy all possible 11-
+\par bits.  MPEG-2, however, re-introduced extra DC precision critical even 
+\par at high compression ratios.
+\par 
+\par 
+\par Difference between MPEG and H.261
+\par 
+\par 42. How do MPEG and H.261 differ?
+\par 
+\par A. H.261, also known as Px64, was targeted for teleconferencing 
+\par applications where motion is naturally more limited. Motion vectors are 
+\par restricted to a range of +/- 15 pixel unit displacements. Prediction 
+\par accuracy is reduced since H.261 motion vectors are specified to only 
+\par integer-pel accuracy.  Other quality syntactic differences include: no 
+\par B-pictures, inferior mismatch control.
+\par 
+\par 43. Is H.261 the de facto teleconferencing standard?
+\par 
+\par A. Not exactly.  To date, about seventy percent of the industrial 
+\par teleconferencing hardware market is controlled by PictureTel of Mass. 
+\par The second largest market controller is Compression Labs of Silicon 
+\par Valley.  PictureTel hardware includes compatibility with H.261 as a 
+\par lowest common denominator, but when in communication with other 
+\par PictureTel hardware, it can switch to a mode superior at low bit rates 
+\par (less than 300kbits/sec). In fact, over 2/3 of all teleconferencing is 
+\par done at two-times switched 56 channel (~P = 2) bandwidth.  ISDN is still 
+\par expensive. In each direction, video and audio are coded at an aggregate 
+\par rate of 112 kbits/sec (2*56 kbits/sec). The PictureTel proprietary 
+\par compression algorithm is acknowledged to be a combination of spatial 
+\par pyramid, lattice vector quantizer, and an unidentified entropy coding 
+\par method.  Motion compensation is considerably more refined and 
+\par sophisticated than the 16x16 integer-pel block method specified in 
+\par H.261.
+\par 
+\par The Compression Labs proprietary algorithm also offers significant 
+\par improvement over H.261 when linked to other CLI hardware. Local 
+\par decorrelation is based on a DCT-VQ hybrid.
+\par 
+\par Currently, ITU-TS (International Telecommunications Union--
+\par teleconferencing Sector), formerly CCITT, is quietly defining an 
+\par improvement to H.261 with the participation of industry vendors.
+\par 
+\par 
+\par Rate control
+\par 
+\par 44. What is the TM rate control and adaptive quantization technique ?
+\par 
+\par A. The Test model (MPEG-2) and Simulation Model (MPEG-1) were not, by 
+\par any stretch of the imagination, meant to epitomize state-of-the art 
+\par encoding quality.  They were, however, designed to exercise the syntax, 
+\par verify proposals, and test the *relative* compression performance of 
+\par proposals in a timely manner that could be duplicated by co-
+\par experimenters.  Without simplicity, there would have been no doubt 
+\par endless debates over model interpretation.  Regardless of all else, more 
+\par advanced techniques would probably trespass into proprietary territory.
+\par 
+\par The final test model for MPEG-2 is TM version 5b, aka TM version 6. The 
+\par final MPEG-1 simulation model is version 3. The MPEG-2 TM rate control 
+\par method offers a dramatic improvement over the SM method.  TM adds more 
+\par accurate estimation of macroblock complexity through use of limited  a 
+\par priori information. Macroblock quantization adjustments are computed on 
+\par a macroblock basis, instead of once-per-slice.
+\par 
+\par 45. How does the TM work?
+\par A. Rate control and adaptive quantization are divided into three steps:
+\par 
+\par Step One:Bit Allocation 
+\par 
+\par     In Complexity Estimation, the global complexity measures assign 
+\par relative weights to each picture type (I,P,B).  These weights (Xi, Xp, 
+\par Xb) are reflected by the typical coded frame size of I, P, and B 
+\par pictures (see typical frame size discussion). I pictures are usually  
+\par assigned the largest weight since they have the greatest stability 
+\par factor in an image sequence.  B pictures are assigned the smallest 
+\par weight since B energy do not propagate into other pictures and are usually 
+\par highly correlated with neighboring P and I pictures. 
+\par 
+\par The bit target for a frame is based on  the frame type, the remaining number 
+\par of bits left in the Group of Pictures (GOP) allocation, and the immediate 
+\par statistical history of previously coded pictures.
+\par 
+\par Step Two:       Rate Control
+\par 
+\par Rate control attempts to adjust bit allocation if there is significant 
+\par difference between the target bits (anticipated bits) and actual coded 
+\par bits for a block of data.  If the virtual buffer begins to overflow, the 
+\par macroblock quantization step size is increased, resulting in a smaller 
+\par yield of coded bits in subsequent macroblocks. Likewise, if underflow 
+\par begins, the step size is decreased.   The Test Model approximates that the 
+\par target 
+\par picture has spatially uniform distribution of bits.  This is a safe 
+\par approximation since spatial activity and perceived quantization noise 
+\par are almost inversely proportional.  Of course, the user is free to 
+\par design a custom distribution,  perhaps targeting more bits in areas that 
+\par contain text, for example.
+\par 
+\par 
+\par Step Three:     Adaptive Quantization
+\par 
+\par The final step modulates the macroblock quantization step size obtained in 
+\par Step 2 by a local activity measure. The activity measure itself is normalized 
+\par against the most recently coded picture of the same type (I, P, or B). The 
+\par activity for a macroblock is chosen as the minimum among the four 8x8 block 
+\par luminance variances.  Choosing the minimum block is part of the concept that 
+\par a macroblock is no better than the block of highest visible distortion 
+\par (weakest link in the chain).
+\par 
+\par 46. What is a good motion estimation method, then? 
+\par 
+\par A. When shopping for motion vectors, the three basic characteristics 
+\par are: Search range, search pattern, and matching criteria.  Search 
+\par pattern has the greatest impact on finding the best vector. Hierarchical 
+\par search patterns first find the best match between downsampled images of 
+\par the reference and target pictures and then refine the vector through 
+\par progressively higher resolutions. When compared to other fast methods, 
+\par hierarchical patterns are less likely to be confused by extremely local 
+\par distortion minimums as being a best match. Also note that \'13subsampled search\'14 
+\par and \'13hierarchical search\'14 are not synonymous.
+\par 
+\par Q.  Is there a limit to the length of motion vectors? 
+\par 
+\par The search area is unlimited, but the reconstructed motion vectors must 
+\par not:
+\par 
+\par a. point beyond the picture boundaries   (1 <= MV_x <= luminancewidth - 
+\par 16) and (1 <= MV_y <= luminanceheight - 16). The \'13- 16\'14 is due to the 
+\par fact that the motion vector origin is the upper left hand corner of a 
+\par macroblock)
+\par 
+\par b. In Constrained Parameters MPEG-1, the motion vector is limited to a 
+\par range of [-64,+63.5] luminance samples with half-pel accuracy, and [-
+\par 128,+127.5] with integer pel accuracy.  Break the constrained parameters 
+\par rules and your video sequence will not likely display on many hardware 
+\par devices.
+\par 
+\par c.  In MPEG-2 Video Main Profile at Main Level, the motion vectors are 
+\par always on a half-pel co-ordinate grid, and the vertical range is 
+\par restricted to [-64, +63.5], and the horizontal limit is [-256,+255.5].
+\par 
+\par d. in MPEG-1, the syntactic limit of the motion vector is [-1024,+1023] 
+\par integer pel, horizontal and vertical.
+\par 
+\par e. in MPEG-2, the syntactic limit of the motion vector is [-2048,+2047.5] 
+\par horizontal, [-1024,+1023.5] vertical.
+\par 
+\par 
+\par 47. Is exhaustive search "optimal" ?
+\par 
+\par A. Definitely not in the context of block-based MCP video.   Since one 
+\par motion vector represents the prediction of 256 pixels, divergent pixels 
+\par within  the macroblock are misrepresented by the "global" vector.  This 
+\par leads  back to the general philosophy of block-based coding as an 
+\par approximation technique. In their ICASSP'93 paper, Sullivan discusses ways in 
+\par which block-based prediction schemes can solve part of this problem.
+\par 
+\par Exhaustive search may find blocks with the least distortion (displaced frame 
+\par difference) but will not produce motion vectors with the lowest entropy.
+\par 
+\par 48. What are some advanced encoding methods?
+\par 
+\par Quantizer feedback: determine the dependent quantization stepsize by 
+\par modeling quantization error propagating over multiple pictures. [Uz/et 
+\par al ICASSP \'1193, Ortega/Vetterli/et al ICASSP \'1193]
+\par 
+\par Smoothness constraint placed on local activity  measures. immediate blocks 
+\par outside target macroblock are considered when selecting macroblock 
+\par quantization stepsize .[Thomson/Savitier patent]
+\par 
+\par Horizontal variance: measure variance between columns of pixels in addition 
+\par to the traditional measure of variance along rows (lines) when making 
+\par field/frame macroblock prediction decision.
+\par 
+\par DFD energy: examine DFD energy/variance when making Intra/Non-intra 
+\par macroblock decision. 
+\par 
+\par Activity measures:  use total bits from a first-pass encoding of a picture or 
+\par macroblock as a measure of the activity.  Coded bits is a more accurate 
+\par reflection of local complexity than variance. [Thomson/Savitier patent]
+\par 
+\par motion vector cost:  this is true for any syntax elements, really. Signaling 
+\par a macroblock quantization factor or a large motion vector differential can 
+\par cost more than making up the difference with extra quantized DFD (prediction 
+\par error) bits.   The optimum can be found with, some Lagrangian operator.  In 
+\par summary, any compression system with side information, there is a optimum 
+\par point between signaling overhead (e.g. prediction) and prediction error. 
+\par 
+\par Liberal Interpretations of the Forward DCT:
+\par Borrowing from the concept that the DCT is simply a filter bank, a 
+\par technique that seems to be gaining popularity is basis vector shaping.  
+\par Usually this is combined with the quantization stage since the two are 
+\par tied closely together in a rate-distortion sense. The idea is to use  
+\par the basis vector shaping as a cheap alternative to pre-filtering by 
+\par combining the more desirable data adaptive properties of pre-filtering/ 
+\par pre-processing into the transformation process... yet still reconstruct  
+\par a picture in the decoder using the standard IDCT that looks reasonably   
+\par like the source. Some more clever schemes will apply a form of windowing. 
+\par [Warning: watch out for eigenimage/basis vector orthoganality. ]
+\par 
+\par Frequency-domain enhancements:
+\par Enhancements are applied after the DCT (and possibly quantization)stage 
+\par to the transform coefficients.  This borrows from the concept: if you 
+\par don't like the (quantized) transformed results, simply reshape them into 
+\par something you do like. Suppressing isolated small amplitudes is popular.
+\par 
+\par Temporal spreading of quantization error:
+\par This method is similar to the original intent behind color subcarrier 
+\par phase alternation by field in the NTSC, PAL, and SECAM analog TV 
+\par standards: for stationary areas, noise does not hang" in one location, 
+\par but dances about the image over time to give a more uniform effect.  
+\par Distribution makes it more difficult for the eye to "catch on" to 
+\par trouble spots (due to the latent temporal response curve of human 
+\par vision). Simple encoder models tend to do this naturally but will not 
+\par solve all situations.
+\par 
+\par 
+\par Look-ahead and adaptive frame cycle structures: analyze picture activity 
+\par several pictures into the future, looking for scene changes or motion 
+\par statistics.
+\par 
+\par It is easy to spot encoders that do not employ any advanced encoding 
+\par techniques:  reconstructed video usually contains ringing around edges, 
+\par color bleeding, and lots of noise.
+\par 
+\par 49. Is so-and-so really MPEG compliant ? 
+\par 
+\par A. At the very least, there are two areas of conformance/compliance in 
+\par MPEG:  1. Compliant bitstreams  2. compliant decoders.  Technically 
+\par speaking, video bitstreams consisting entirely of I-frames (such as 
+\par those generated by Xing software) are syntactically compliant with the 
+\par MPEG specification.  The I-frame sequence is simply a subset of the full 
+\par syntax.  Compliant bitstreams must obey the range limits (e.g. motion 
+\par vectors limited to +/-128, frame sizes, frame rates, etc.)and syntax 
+\par rules (e.g. all slices must commence and terminate with a non-skipped 
+\par macroblock, no gaps between slices, etc.). 
+\par 
+\par Decoders, however, cannot escape true conformance. For example, a 
+\par decoder that cannot decode P or B frames are *not* legal MPEG.  
+\par Likewise, full arithmetic precision must be obeyed before any decoder 
+\par can be called "MPEG compliant."   The IDCT, inverse quantizer, and 
+\par motion compensated predictor must meet the specification requirements... 
+\par which are fairly rigid (e.g. no more than 1 least significant bit of 
+\par error between reference and test decoders). Real-time conformance is 
+\par more complicated to measure than arithmetic precision, but it is 
+\par reasonable to expect that decoders that skip frames on reasonable 
+\par bitstreams are not likely to be considered compliant.
+\par 
+\par Artifacts
+\par 
+\par 50. What are the tell-tale MPEG artifacts?
+\par 
+\par A. If the encoder did its job properly, and the user specified a proper 
+\par balance between sample rate and bitrate, there shouldn't be any visible 
+\par artifacts.  However, in sub-optimal systems, you can look for:
+\par 
+\par \tab Gibbs phenomenon/Ringing/Aliasing (too few AC bits, not enough 
+\par pre-processing)
+\par 
+\par Blockiness (not considering your neighbors before quantizing)
+\par 
+\par Posterization (too few DC bits)
+\par 
+\par Checkerboards (DCT eigenimages as a result of too few AC coefficients)
+\par Colorbleeding (not considering color in encoder cost model, not 
+\par subtracting color at edges of objects, etc.)
+\par 
+\par 51. Where are the weak points of MPEG video ?
+\par A. 
+\par \tab Texture patterns (rapidly alternating lines)
+\par \tab sharp edges (especially text)
+\par \tab [installment 3]
+\par 
+\par 
+\par 52. What are some myths about MPEG?
+\par A. There are a few major myths that I am aware of:
+\par 
+\par 1. Block displacements:  macroblock predictions are formed out of 
+\par arbitrary 16x16 (or 16x8/16x16 in MPEG-2) areas from previously 
+\par reconstructed pictures. Many people believe that the prediction 
+\par macroblocks have  boundaries that fall on interchange boundaries (pixel 
+\par 0, 15, 31, 53... line 0, 15, 31, 53... etc.).  In fact, motion vectors 
+\par represent relative translations with respect to the target 
+\par reconstruction macroblock coordinates. The motion vectors can point to 
+\par half pixel coordinates, requiring that the prediction macroblock to be 
+\par formed via bi-linear interpolation of pixels.
+\par 
+\par 
+\par 2. Displaced frame (macroblock) difference construction: the prediction 
+\par error formed as the difference between the prediction macroblock and 
+\par source macroblock is coded much like an Intra macroblock.  The 
+\par prediction may come from different locations (as in bi-directional 
+\par prediction--or in MPEG-2--16x8, field-in-frame, and Dual Prime), but the 
+\par DFD is always coded as a 16x16 unit.
+\par 
+\par 3. Compression ratios
+\par 
+\par You hear 200:1 and 100:1 in the media.  Utter rubbish.  The true range 
+\par is between 16:1 and 40:1.  Spreading misinformation about compression 
+\par ratios in public will catch the attention of the infamous \'13MPEG Police.\'14  
+\par They say mild-mannered Michael Barnsley will snap, without warning, into 
+\par violent rage if he doesn't get the upper bunk bed.
+\par 
+\par 4. Picture coding types all consist of the same macroblocks
+\par 
+\par Macroblocks within I pictures are strictly intra-coded.  Macroblocks 
+\par within P pictures can be either predicted or intra-coded, and B pictures 
+\par they can be bi-directional, forward, backward, or intra.  Additional 
+\par macroblock modes switches include: predicted with no motion 
+\par compensation, modified macroblock quantization, coding of prediction error or 
+\par not.  The switches are concatenated into the macroblock_type side information 
+\par and variable length coded in the macroblock header.
+\par 
+\par 53. What is the color space of MPEG?
+\par 
+\par MPEG strictly specifies the YCbCr color space, not YUV or YIQ or YPbPr 
+\par or YDrDb or any other color difference variations.  Regardless of any 
+\par bitstream parameters, MPEG-1 and MPEG-2 Video Main Profile specify 4:2:0 
+\par chroma ratio, where the color difference channels (Cb, Cr) have half the 
+\par \'13resolution\'14 or sample grid density in both the horizontal and vertical 
+\par direction 
+\par with respect to luminance.
+\par 
+\par MPEG-2 High Profile includes an option for 4:2:2 and 4:4:4 coding. 
+\par Applications 
+\par for this are likely to be broadcasting and contribution equipment.
+\par 
+\par 54. Don't you mean 4:1:1 ?
+\par 
+\par A. No, here is a table of ratios:
+\par 
+\par 
+\par \tab CCIR 601 (60 Hz) image          Chroma sub-sampling factors
+\par format  Y               Cb, Cr  Vertical        Horizontal
+\par -----           ---------       ----------      --------        ----------
+\par 4:4:4           720 x 480       720 x 480       none            none
+\par 4:2:2           720 x 480       360 x 480       none            2:1
+\par 4:2:0           720 x 480       360 x 240       2:1             2:1
+\par 4:1:1           720 x 480       720 x 120       none            4:1
+\par 4:1:0           720 x 480       180 x 120       4:1             4:1
+\par 
+\par 3:2:2, 3:1:1, and 3:1:0 are less common variations.
+\par 
+\par 55. Why did MPEG choose 4:2:0 ? Isn't 4:2:2 the standard for TV?
+\par 
+\par A. At least three reasons I can think of:
+\par 
+\par 1. 4:2:0 picture memory requirements are 33% less than the  size of 4:2:2 
+\par pictures. 
+\par MPEG-1 decoder are able to snugly fit all 3 SIF pictures (1 reconstruction & 
+\par display, 2 prediction) into 512 KBytes of buffer space.  CCIR 601 is a 
+\par tighter fit into 2 Mbytes.
+\par 
+\par 2. The subjective difference between 4:2:0 and 4:2:2 is minimal, when 
+\par considering consumer display equipment and distribution compression ratios.
+\par 
+\par 3. Vertical decimation increases compression efficiency by reducing syntax 
+\par overhead posed in an 8 block (4:2:0) macroblock structure.
+\par 
+\par 4. You re compressing the hell out of the video signal, so what possible 
+\par difference can the 0:0:2 high-pass make?
+\par 
+\par Interlacing and the 62 microsecond gap between successively scanned lines 
+\par introduces some discontinuities, but most of this can be alleviated through 
+\par pre-processing.
+\par 
+\par 56. What is the precision of MPEG samples?
+\par 
+\par A. By definition, MPEG samples have no more and no less than 8-bits uniform 
+\par sample precision (256 quantization levels).  For luminance (which is 
+\par unsigned) data, black corresponds to level 0, white is level 255. However, in 
+\par CCIR recommendation 601 chromaticy, levels 0 through 14 and 236 through 255 
+\par are reserved for blanking signal excursions. MPEG currently has no such 
+\par clipped excursion restrictions, although decoder might take care to insure 
+\par active samples do not exceed these limits.  With three color components per 
+\par pixel, the total combination is roughly 16.8 million colors (i.e. 24-bits).
+\par 
+\par 57. What is all the fuss with cositing of chroma components?
+\par 
+\par A. It is moderately important to properly co-site chroma samples, 
+\par otherwise a sort of chroma shifting effect (exhibited as a \'13halo\'14) may result 
+\par when the reconstructed video is displayed.  In MPEG-1 video, the chroma 
+\par samples are exactly centered between the 4 luminance samples (Fig 1.)   To 
+\par maintain compatibility with the CCIR 601 horizontal chroma locations and 
+\par simplify implementation (eliminate need for phase shift), MPEG-2 chroma 
+\par samples are arranged as per Fig.2.
+\par 
+\par   Y   Y   Y   Y             Y   Y   Y   Y         YC  Y   YC  Y
+\par     C       C               C       C                  
+\par   Y   Y   X   Y             Y   Y   Y   Y         YC  Y   YC  Y
+\par 
+\par   Y   Y   Y   Y             Y   Y   Y   Y         YC  Y   YC  Y
+\par     C       C               C       C    
+\par   Y   Y   Y   Y             Y   Y   Y   Y         YC  Y   YC  Y
+\par 
+\par   Fig.1 MPEG-1               Fig.2  MPEG-2           Fig.3 MPEG-2 and 
+\par  4:2:0 organization         4:2:0 organization         CCIR Rec. 601
+\par \tab \tab \tab \tab \tab \tab      4:2:2 organization
+\par 
+\par MPEG for the data compression expert
+\par 
+\par 58. How would you explain MPEG to the data compression expert?
+\par 
+\par A. MPEG video is a block-based video scheme.
+\par 
+\par 
+\par 59. How does MPEG video really compare to TV, VHS, laserdisc ?
+\par A. VHS picture quality can be achieved for source film video at about 1 
+\par million bits per second (with proprietary encoding methods).  It is very 
+\par difficult to objectively compare  MPEG to VHS.  The response curve of 
+\par VHS places -3 dB at around 2 MHz of analog luminance bandwidth 
+\par (equivalent to 200 samples/line). VHS chroma is considerably less dense 
+\par in the horizontal direction than MPEG source video (compare 80 
+\par samples/line to 176!).  From a sampling density perspective, VHS is 
+\par superior only in the vertical direction (480 luminance lines compared to 
+\par 240)... 
+\par but when taking into account (supposedly such things as) interfield magnetic 
+\par tape crosstalk and the TV monitor Kell factor, the perceptual vertical 
+\par advantage is not all that significant.  VHS is prone to such inconveniences 
+\par as timing errors (an annoyance addressed by time base correctors), whereas 
+\par digital video is fully discretized. Pre-recorded VHS is typically recorded at 
+\par very high duplication speeds (5 to 15 times real time playback speed), 
+\par opening up additional avenues for artifacts.  In gist, MPEG-1 at its nominal 
+\par parameters can match VHS's sexy low-pass-filtered look.
+\par 
+\par With careful coding schemes, broadcast NTSC quality can be approximated at 
+\par about 3 Mbit/sec, and PAL quality at about 4 Mbit/sec.  Of course, sports 
+\par sequences with complex spatial-temporal activity should be treated with bit 
+\par rates more like 5 and 6 Mbit/sec, respectively. Laserdisc is a tough one to 
+\par compare.  Laserdisc's are encoded with composite video (NTSC or PAL). 
+\par Manufacturers of laser disc players make claims of  up to 425 TVL (or 567 
+\par samples/line) response. Thus it could be said the laserdisc has a 567 x 480 x 
+\par 30 Hz "potential resolution". The carrier-to-noise ratio is typically better 
+\par than 48 dB.  Timing is excellent. Yet some of the clean characteristics of 
+\par laserdisc can be achieved with MPEG-1 at 1.15 Mbit/sec (SIF rates), 
+\par especially for those areas of medium detail (low spatial activity) in the 
+\par presence of uniform motion. This may be why some people say MPEG-1 video at 
+\par 1.15 Mbit/sec looks almost as good as Laserdisc or Super VHS at times.
+\par 
+\par 60. What are the typical MPEG-2 bitrates and picture quality?
+\par 
+\par \tab \tab \tab \tab \tab Picture type
+\par \tab \tab \tab I               P               B          Average
+\par MPEG-1 SIF
+\par @ 1.15 Mbit/sec         150,000         50,000          20,000      
+\par 38,000
+\par 
+\par MPEG-2 601              400,000         200,000         80,000     
+\par 130,000
+\par @ 4.00 Mbit/sec
+\par 
+\par Note: parameters assume Test Model for encoding, I frame distance of 15 (N = 
+\par 15), and a P frame distance of 3 (M = 3).
+\par 
+\par Of course, among differing source material, scene changes, and use of 
+\par advanced encoder models...  these numbers can be significantly different.
+\par 
+\par 61. At what bitrates is MPEG-2 video optimal? 
+\par A. The Test subgroup has defined a few examples:
+\par 
+\par "Sweet spot" sampling dimensions and bit rates for MPEG-2:
+\par 
+\par Dimensions      Coded rate      Comments
+\par -------------   ----------      ----------------------------------------
+\par ---
+\par 352x480x24 Hz   2 Mbit/sec      Half horizontal 601.  Looks almost NTSC
+\par (progressive)                   broadcast quality, and is a good 
+\par (better) 
+\par \tab \tab \tab \tab substitute for VHS.  Intended for film src.
+\par 
+\par 544x480x30 Hz   4 Mbit/sec      PAL broadcast quality (nearly full 
+\par capture 
+\par (interlaced)                    of 5.4 MHz luminance carrier).  Also 
+\par \tab \tab \tab \tab 4:3 image dimensions windowed within 720
+\par \tab \tab \tab \tab sample/line 16:9 aspect ratio via pan&scan.
+\par 
+\par 704x480x30 Hz   6 Mbit/sec      Full CCIR 601 sampling dimensions.
+\par (interlaced)
+\par 
+\par [these numbers subject to change at whim of MPEG Test subgroup]
+\par 
+\par 
+\par 
+\par 62. Why does film perform so well with MPEG ?
+\par A. Several reasons, really:
+\par 
+\par    1) The frame rate is 24 Hz (instead of 30 Hz) which is a savings of
+\par       some 20%.  
+\par    2) the film source video is inherently progressive.  Hence no fussy 
+\par       interlaced spectral frequencies.
+\par    3) the pre-digital source was severely oversampled (compare 352 x 240 
+\par       SIF to 35 millimeter film at, say, 3000 x 2000 samples).  This can 
+\par       result in a very high quality signal, whereas most video cameras 
+\par do 
+\par       not oversample, especially in the vertical direction. 
+\par    4) Finally, the spatial and temporal modulation transfer function 
+\par (MTF) 
+\par       characteristics (motion blur, etc) of film are more amenable to 
+\par       the transform and quantization methods of MPEG.
+\par 
+\par 63. What is the best compression ratio for MPEG ?
+\par 
+\par A. The MPEG sweet spot is about 1.2 bits/pel Intra and .35 bits/pel 
+\par inter. Experimentation has shown that intra frame coding with the 
+\par familiar DCT-Quantization-Huffman hybrid algorithm achieves optimal 
+\par performance at about an average of 1.2 bits/sample or about 6:1 
+\par compression ratio. Below this point, artifacts become noticeable.
+\par 
+\par 64. Can MPEG be used to code still frames?
+\par 
+\par A. Yes.  There are, of course, advantages and disadvantages to using 
+\par MPEG over JPEG:
+\par 
+\par Disadvantages:
+\par 
+\par 1. MPEG has only one color space
+\par 2. MPEG-1 and MPEG-2 Main Profile luma and chroma share  quanitzation 
+\par and VLC tables
+\par 3. MPEG-1 is syntactically limited to 4k x 4k images, and 16k x 16k for 
+\par MPEG-2.
+\par 
+\par Advantages:
+\par 
+\par 1. MPEG possesses adaptive quantization
+\par 
+\par 2. With its limited still image syntax,  MPEG averts any temptation to use 
+\par unnecessary, expensive, and  academic encoding methods that have little 
+\par impact on the overall picture quality (you know who you are).
+\par 
+\par Philips' CD-I spec. has a requirement for a MPEG still frame mode, with 
+\par double SIF image resolution.  This is technically feasible mostly thanks to 
+\par the fact that only one picture buffer is needed to decode a still image 
+\par instead of three buffers.
+\par 
+\par 65. Is there an MPEG file format?
+\par 
+\par A. Not exactly.  The necessary signal elements that indicate image size, 
+\par picture rate, aspect ratio, etc. are already contained within the sequence 
+\par layer of the MPEG video stream.  The Whitebook format for Karoke and CD-I 
+\par movies specify a range of (time-division) multiplexing strategies for audio 
+\par and video bitstreams.  A directory format listing scenes and their locations 
+\par on the disc is associated with the White Book specification.
+\par 
+\par 66. What are some pre-processing enhancements ?
+\par 
+\par Adaptive de-interlacing:
+\par 
+\par This method maps interlaced video from a higher sampling rate (e.g 720 x 480) 
+\par into a lower rate, progressive format (352 x 240).   The most basic algorithm 
+\par measures the correlation between two immediate macroblock fields, and if the 
+\par correlation is high enough, uses an average of both fields to form a frame 
+\par macroblock.  Otherwise, a field area from one field (usually of the same 
+\par parity) is selected.  More clever algorithms are much more complex than this, 
+\par and may involve median filtering, and multirate/multidimensional tools.
+\par 
+\par Pre-anti-aliasing and Pre-blockiness reduction:
+\par A common method in still image coding is to pre-smooth the image before 
+\par encoding.  For example, if pre-analysis of a frame indicates that serious 
+\par artifacts will arise if the picture were to be coded in the current condition 
+\par (i.e. below the sweet spot), a pre-anti-aliasing filter can be applied.  This 
+\par can be as simple as having a smoothing severity proportional to the image 
+\par activity.  The pre-filter can be global (same smoothing factor for whole 
+\par image or sequence) or locally adaptive. More complex methods will again use 
+\par multirate/multidimensional methods.
+\par 
+\par One straightforward concept from multidimensional/multirate e-processing is 
+\par to  apply source video whose resolution (sampling density) is greater than 
+\par the target source and reconstruction sample rates. This follows the basic 
+\par principles of oversampling, as found in A/D converters.
+\par 
+\par These filters emphasize the fact that most information content is contained 
+\par in the lower harmonics of a picture anyway.  VHS is hardly considered to be a 
+\par \'13sharp cut-off\'14 medium,  tragically implying that "320 x 480 potential" of 
+\par VHS is never truly realized.
+\par 
+\par 67. Why use these "advanced" pre-filtering techniques?
+\par 
+\par A. Think of the DCT and quantizer as an A/D converter.  Think of the DCT/Q 
+\par pre-filter as the required anti-alias prefilter found before every A/D.  The 
+\par big difference of course is that the DCT quantizer assigns a varying number 
+\par of bits per transform coefficient. Judging on the normalized activity 
+\par measured in the pre-analysis stage of video encoding (assuming you even have 
+\par a pre-analysis stage), and the target buffer size status, you have a fairly 
+\par good idea of how many bits can be spared for the target macroblock, for 
+\par example.
+\par 
+\par Other pre-filtering techniques mostly take into account: texture patterns, 
+\par masking, edges, and motion activity.  Many additional advanced techniques can 
+\par be applied at different immediate layers of video encoding (picture, slice, 
+\par macroblock, block, etc.).
+\par 
+\par 
+\par 68. What about post-processing enhancements?
+\par 
+\par Some research has been carried out in this area. Non-linear interpolation 
+\par methods have been published by Wu and Gersho (e.g. ICASSP \'1193), convex hull 
+\par projections for MAP (Severinson, ICASSP \'1193), and others.  Post-processing 
+\par unfortunately defies the spirit of MPEG conformance.  Decoders should produce 
+\par similar reconstructions. Enhancements should ideally be done during the pre-
+\par processing and encoding stages.
+\par 
+\par 69. Can motion vectors be used to measure object velocity?
+\par 
+\par A. Motion vector information cannot be reliably used as a means of  
+\par determining object velocity unless the encoder model specifically set 
+\par out to do so.  First, encoder models that optimize picture quality generate 
+\par vectors that typically minimize prediction error and, consequently, 
+\par the vectors often do not represent true object translation.  Standards 
+\par converters that resample one frame rate to another (as in NTSC to PAL) 
+\par use different  methods (motion vector field estimation, edge detection, et 
+\par al) that are 
+\par not concerned with optimizing ratios such as SNR vs bitrate. Secondly, motion 
+\par vectors 
+\par are not transmitted for all macroblocks anyway.
+\par 
+\par 70. How do you code interlaced video with MPEG-1 syntax?
+\par A. Two methods can be applied to interlaced video that maintain 
+\par syntactic compatibility with MPEG-1 (which was originally designed for 
+\par progressive frames only).  In the field concatenation method, the 
+\par encoder model can carefully construct predictions and prediction errors 
+\par that realize good compression but maintain field integrity (distinction 
+\par between adjacent fields of opposite parity). Some pre-processing 
+\par techniques can also be applied to the interlaced source video that 
+\par would, e.g., lessen sharp vertical frequencies.
+\par 
+\par This technique is not efficient of course.  On the other hand, if the 
+\par original source was progressive (e.g. film), then it is more trivial to 
+\par convert the interlaced source to a progressive format before encoding. 
+\par (MPEG-2 would then only offer superior performance through greater DC 
+\par block precision, non-linear mquant, intra VLC, etc.) Reconstructed 
+\par frames are re-interlaced in the decoder Display process.
+\par 
+\par The second syntactically compatible method codes fields as separate pictures. 
+\par This approach has been acknowledged not to work as well. 
+\par 
+\par 71. Is MPEG patented?
+\par A. Yes and no.  Many encoding methods are patented.  Approximately 11 
+\par blocking patents, that is, patents that are general enough to be unavoidable 
+\par in any implementation have been recently identified.
+\par 
+\par A patent pool is being formed within MPEG where a single royalty fee would be 
+\par split among the 31 patent-holding companies.
+\par 
+\par 72. How many cable box alliances are there?
+\par 
+\par A. Many.  To start with:
+\par 
+\par   Scientific Atlanta (SA), Kaledia, and Motorola:
+\par   SA will build the box, Motorola the chips, and Kaleida the
+\par   O/S and user interface (using ScriptX of course).
+\par     
+\par   Silicon Graphics (SGI), Scientific Atlanta, and Toshiba 
+\par   For the Time Warner's Orlando trial, SGI will provide the 
+\par   RISC (MIPS R4000) and software, SA will do the box again,
+\par   and Toshiba will provide the chips.
+\par 
+\par   General Instruments (GI) and Microsoft:
+\par   GI will make the box and Intel will supply the special low-cost
+\par   386SL processor on which a 1MB flash EPROM executable core 
+\par   of  Microsoft windows and DOS will run.  Microsoft will develop the 
+\par   user interface.
+\par 
+\par   Hewlett Packard (HP):
+\par   HP will manufacture and/or design low cost, open architecture set-top
+\par   decoder boxes (not a part of the Eon wireless deal).  The CPU will
+\par   explicitly not use a 80x68 based processor.
+\par 
+\par 
+\par   CLI and Philips:
+\par   Compression Labs will provide the encoder technology and Philips 
+\par   will provide the decoder techology for an ADSL system whose
+\par   transport structure will be put together by Broadband Technologies.
+\par 
+\par   ["These alliances subject to change at the whim of PR departments 
+\par      and market forces."]
+\par 
+\par 73. Will there be an MPEG video tape format?
+\par 
+\par A. Not exactly. A consortium of international companies are co-
+\par developing a consumer digital video 6 millimeter wide, metal particle 
+\par tape format.  Due to the initial high cost of MPEG encoders, a JPEG-like 
+\par compression method will be used for inexpensive encoding of typical 
+\par consumer source video (broadcast PAL, NTSC).  The natural consequence of 
+\par still image methods is less efficient use of bandwidth:  25 Mbit/sec for 
+\par the same subjective real-time playback quality achieved at 6 Mbit/sec 
+\par possible with MPEG-2.  A second bit rate mode, 50 Mbit/sec, is 
+\par designated for HDTV.
+\par 
+\par Pre-coded digital video from, e.g., broadcast sources will be directly 
+\par recorded to tape and "passed-through" as a coded bitstream to the video 
+\par decompression box upon tape playback. Assuming if linear tape speed is 
+\par to be proportional to bit rate, the recording time of a pre-compressed 
+\par MPEG-2 program at the upper limit of 5 Mbit/sec for broadcast quality 
+\par video, the recording time would be over 20 hours.  Channel coding 
+\par schemes (error correction, convolution coding, etc.), however, will 
+\par most likely be optimized for the tape medium and therefore may differ 
+\par from the channel methods for cable, terrestrial, and satellite. (A 
+\par Zenith-Goldstar S-VHS based experiment did, however, directly record the 
+\par 4-VSB broadcast baseband signal of the old Zenith/AT&T HDTV proposal).
+\par 
+\par More specs: (Summarized from EE Times July 5, 1993 article)
+\par 
+\par tape width:  6.35 mm
+\par Audio: two channel 48 KHz 16-bit audio, or 4 channel at 32 KHz at 12-bit
+\par Tape format: metal evaporated tape, 13.5 microns thick
+\par 
+\par Cassette dimensions: (millimeters)      Recording times:
+\par Size            Width   Height  Depth  525/625 (25Mb/sec) HDTV (50 Mb/s)
+\par --------        -----   ------  -----  ------------------ --------------
+\par Standard        125     78      14.6   4h30min            2h15min
+\par Small           66      48      12.2   1 hour             30min
+\par 
+\par Linear tape speeds: 18.812 mm/s (60Hz),  18.831 mm/s (50 Hz)
+\par Video compression: DCT based
+\par 
+\par Participants: Matsushita, Sony, Philips, Thomson, Hitachi, Mitsubishi, 
+\par Sanyo, Sharp, Toshiba, JVC.
+\par 
+\par MPEG in everyday life
+\par 
+\par 74. Where will be see MPEG in everyday life?
+\par A. Just about wherever you see video today.
+\par 
+\par DBS (Direct Broadcast Satellite)
+\par The Hughes/USSB DBS service will use MPEG-2 video and audio.  Thomson  
+\par has exclusive rights to manufacture the decoding boxes for the first 18 
+\par months of operation. Hughes/USSB DBS will begin its U.S. service in 
+\par April 1994. Two satellites at 101 degrees West will share the power 
+\par requirements of 120 Watts per 27 MHz transponder over a total of 32 
+\par transponders.  Multi source channel rate control methods will be 
+\par employed to optimally allocate bits between several programs normalized 
+\par to one 22 Mbit/sec data carrier. Bit allocation adapts to instantaneous co-
+\par channel 
+\par spatial and co-channel temporal activity. An average of 150 channels are 
+\par planned with the addition of a second set of satellites augmenting the power 
+\par level of each transponder to 240 Watts. The coded throughput of each 
+\par transponder will increase to 30 Mbit/sec.
+\par 
+\par 
+\par CATV (Cable Television)
+\par Despite conflicting options, the cable industry has more or less 
+\par settled on MPEG-2 video.  Audio is less than settled. For example, 
+\par General Instruments (the largest U.S. consumer cable set-top box 
+\par manufacturer) have announced the planned exclusive use of Dolby AC-3. 
+\par The General Instruments DigiCipher I video syntax is similar to MPEG-2 
+\par syntax,  but employs smaller macroblock predictions and no B-frames.  The 
+\par DigiCipher II specification will include modes to support both the GI 
+\par and full MPEG-2 Video Main Profile syntax.  Digicipher-I services such 
+\par as HBO will upgrade to DigiCipher II in 1994. 
+\par 
+\par HDTV
+\par The U.S. Grand Alliance, a consortium of companies that formerly competed 
+\par to win the U.S. terrestrial HDTV standard,  have already agreed to 
+\par use the MPEG-2 Video and Systems syntax---including B-pictures. Both 
+\par interlaced(1920 x 1080 x 30 Hz) and progressive (1280 x 720 x 60 Hz) 
+\par modes will be supported. The Alliance has also settled upon a modulation 
+\par method (VSB)  convolution coding (Viterbi), and error correction (Reed-
+\par Soloman) specification.
+\par 
+\par In September 1993, the consortium of 85 European companies signed an 
+\par agreement to fund a project known Digital Video Broadcasting (DVB) which 
+\par will develop a standard for cable and terrestrial transmission by the 
+\par end of 1994. The scheme will use MPEG-2.  This consortium has put the 
+\par final nail in the coffin of the D-MAC scheme for gradual migration 
+\par towards an all-digital, HDTV consumer transmission standard. The only 
+\par remaining analog or digital-analog hybrid system left in the world is 
+\par NHK's MUSE (which will probably be axed in a few years as soon as it appears 
+\par to be politically secure thing to do).
+\par 
+\par 75. What is the best compression ratio for MPEG ?
+\par A. The MPEG sweet spot is about 1.2 bits/pel Intra and .35 bits/pel 
+\par inter. Experimentation has shown that intra frame coding with the 
+\par familiar DCT-Quantization-Entropy hybrid algorithm achieves optimal 
+\par performance at about an average of 1.2 bits/sample or about 6:1 
+\par compression ratio. Below this point, artifacts become noticeable.
+\par 
+\par 
+\par 76. Is there a MPEG CD-ROM format?
+\par A. Yes, a consortium of international companies (Matsushita, Philips, 
+\par Sony, JVC, et al) have agreed upon a specification for MPEG video and 
+\par audio. 2 hour long movies are stored on two 650 MByte compact discs. The 
+\par video 
+\par rate is 1.15 Mbit/sec, the audio rate is either 128 kbit/sec or 192 kbit/sec 
+\par Layer I or Layer II.(this seems to contradict the Philips 224 kbit/s audio 
+\par spec?). Although the Video, Systems, and Audio syntax are identical, the CD-I 
+\par movie format and the White Book format are not compatible.
+\par 
+\par Researchers are busy experimenting with denser and faster rate CD 
+\par formats, perhaps using green or blue laser wavelengths.  One demonstration 
+\par stretched the pit and track density to its limits, improving areal density by 
+\par almost 2 fold.
+\par 
+\par 
+\par 
+\par }
+ 

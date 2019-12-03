@@ -1,0 +1,2191 @@
+{\rtf1\ansi\deff0\deftab720{\fonttbl{\f0\fnil MS Sans Serif;}{\f1\fnil\fcharset2 Symbol;}{\f2\fswiss\fprq2 System;}{\f3\fnil\fcharset134 \'cb\'ce\'cc\'e5;}}
+{\colortbl\red0\green0\blue0;}
+\deflang1033{\info{\horzdoc }{\*\fchars !),.:\'3b?\}]\'a1\'a2\'a1\'a3\'a1\'a4\'a1\'a5\'a1\'a6\'a1\'a7\'a1\'a8\'a1\'a9\'a1\'aa\'a1\'ab\'a1\'ac\'a1\'ad\'a1\'af\'a1\'b1\'a1\'b3\'a1\'b5\'a1\'b7\'a1\'b9\'a1\'bb\'a1\'bd\'a1\'bf\'a1\'c3\'a3\'a1\'a3\'a2\'a3\'a7\'a3\'a9\'a3\'ac\'a3\'ae\'a3\'ba\'a3\'bb\'a3\'bf\'a3\'dd\'a3\'e0}{\*\lchars ([\{\'a1\'ae\'a1\'b0\'a1\'b2\'a1\'b4\'a1\'b6\'a1\'b8\'a1\'ba\'a1\'bc\'a1\'be\'a3\'a8\'a3\'db\'a3\'fb\'a3\'ae\'a1\'a4}}
+\pard\nowwrap\nooverflow\plain\f3\fs21  
+\par The following software can be used and modified freely.  I can not
+\par however be sold in any way.  This includes both seperately and 
+\par compiled into programs.
+\par 
+\par The following is the work I have done on creating .BGI driver
+\par    files for TURBO-C 2.0 and TURBO PASCAL.  Although the majority
+\par    of the functions work and can be used as is, it is by no means a
+\par    complete .   My main reason for posting this is so that people
+\par    who want to create their own BGI drivers have a good starting point
+\par    and a good example to follow.  The routines that to block fills/reads
+\par    have been written a little trickier than need be. This was to make
+\par    them fast enough to be usable (the tricks are somewhat described
+\par    in the code where they are used).  
+\par 
+\par    The two main ingredients that went into this were:
+\par \tab 1. A skeleton of a BGI header which was posted to the net
+\par \tab \tab sometime ago.
+\par \tab 2. The book "Graphics Programming in Turbo-C 2.0" written
+\par \tab    by Ben Ezzell and published by Addison-Wesley. I found
+\par \tab    it a B-Dalton.  This book is almost a must if you hope
+\par \tab    to write a BGI driver.
+\par 
+\par    I will help answer questions (at least until I get tired of it).
+\par    Mainly I will look gather up all the commo questions and post
+\par    them to the net.
+\par 
+\par    I also want to make it clear that I am basically a High level
+\par    language programmer and had to learn Assembly as I went to 
+\par    write this.  Therefor, I DONT want to here any comments about
+\par    my poor assembly language programming style.
+\par 
+\par    REMEMBER, THIS IS MAINLY INTENDED AS A DEVELOPEMENT EXAMPLE
+\par    AND IS NOT INTENDED TO BE A RELEASED PRODUCT ( although almost
+\par    all of the functions do work for this graphics card ).
+\par 
+\par ======================= CUT APART HERE AND NAME BGITEST.C ===========
+\par /*
+\par 
+\par \tab This is a real hack of a demo program but it at least shows you
+\par \tab what your C program must do to install and use a user-written
+\par \tab device driver.  I had most of the BORLAND SUPPLIED bgidemo.c
+\par \tab program working after I took out their palette demo routine
+\par \tab and change the program to use another font other than DEFAULT
+\par \tab ( which I could not make work ).  I didn't post I because I 
+\par \tab was afraid BORLAND could bust me for posting it.
+\par \tab 
+\par */
+\par 
+\par 
+\par 
+\par #include <graphics.h>
+\par #include <stdlib.h>
+\par #include <stdio.h>
+\par 
+\par int huge detectLEEVGA(void);
+\par 
+\par 
+\par main()
+\par \{
+\par 
+\par \tab int driver, mode;
+\par \tab int ysize, xsize;
+\par \tab int i;
+\par 
+\par 
+\par driver =installuserdriver ("LEEVGA", detectLEEVGA);
+\par 
+\par 
+\par \tab \{
+\par \tab int ec;
+\par \tab if ((ec=graphresult()) < 0)  \{
+\par \tab \tab printf("unable to register\\n");
+\par \tab \tab printf("reason <%s>\\n", grapherrormsg(ec));
+\par \tab \tab exit(-1);
+\par \tab \tab return(-1);
+\par \tab \}
+\par \tab \}
+\par 
+\par 
+\par  driver = DETECT;
+\par \tab initgraph(&driver, &mode, "");
+\par 
+\par \tab \{
+\par \tab int ec;
+\par \tab if ((ec=graphresult()) < 0)  \{
+\par \tab \tab printf("unable to open this graphics mode\\n");
+\par \tab \tab printf("reason <%s>\\n", grapherrormsg(ec));
+\par \tab \tab exit(-1);
+\par \tab \tab return(-1);
+\par \tab \}
+\par \tab \}
+\par 
+\par 
+\par printf("  max x=       %d\\n",\tab xsize=getmaxx());
+\par printf("  max y=       %d\\n",\tab ysize=getmaxy());
+\par printf("  modename=    %s\\n", getmodename(0));
+\par printf("  drivername=  %s\\n", getdrivername());
+\par printf("  maxcolors=   %d\\n", getmaxcolor());
+\par printf("  palette size=%d\\n", getpalettesize());
+\par 
+\par 
+\par #define DO 1
+\par #ifdef DO
+\par \tab setfillstyle ( SOLID_FILL, 15 );
+\par \tab setcolor ( 12 );
+\par 
+\par \tab outtextxy(xsize/6,ysize/3,"A b C d E f G h I J k"); getch();
+\par \tab printf("  Outtext  ( DEFAULT FONT )  is done\\n"); getch();
+\par 
+\par \tab settextstyle(TRIPLEX_FONT,HORIZ_DIR,4);
+\par \tab outtextxy(xsize/6,ysize/4,"0 1 2 3 4 5 6 7 8 9 0");
+\par \tab printf("  Outtext  ( TRIPLEX_FONT )  is done\\n"); getch();
+\par 
+\par setlinestyle(DASHED_LINE,0,NORM_WIDTH);
+\par 
+\par  for (i=10; i < xsize/3*2 ; i++) \{
+\par \tab putpixel(i,ysize/4,12);
+\par \}
+\par printf("  pixel puts are done, press a key\\n");getch();
+\par 
+\par #endif
+\par 
+\par setfillstyle ( SLASH_FILL, 11 );
+\par setlinestyle(DASHED_LINE,0,NORM_WIDTH);
+\par 
+\par pieslice(xsize/2,ysize/2,45,45+90,ysize/3);
+\par 
+\par 
+\par circle (xsize/2, ysize/2,ysize/2);
+\par ellipse(xsize/2,ysize/2,0,0,100,100);
+\par printf("  circle done press a key\\n");getch();
+\par 
+\par setlinestyle(CENTER_LINE,0,NORM_WIDTH);
+\par line (  10,ysize/2,ysize-100,ysize/2);
+\par line ( xsize/2, 10 , xsize/2 , ysize/2 );
+\par printf("  lines done, press a key\\n");getch();
+\par 
+\par rectangle (10,20,xsize/6,ysize/2);
+\par printf("  rectangle done, press a key\\n");getch();
+\par 
+\par 
+\par setlinestyle(DOTTED_LINE,0,THICK_WIDTH);
+\par 
+\par setfillstyle ( XHATCH_FILL, 21 );
+\par setcolor(83);
+\par bar3d ( xsize/2,ysize/2,  xsize/6*5,ysize, 50, 1);
+\par printf("  bar is done, press a key\\n");getch();
+\par setlinestyle(DASHED_LINE,0,NORM_WIDTH);
+\par 
+\par 
+\par \{
+\par \tab int pp[10]=\{100,100, 100,150, 180,195, 300,150, 330,100\};
+\par 
+\par setfillstyle ( CLOSE_DOT_FILL, 11 );
+\par 
+\par fillpoly ( 5 , &pp );
+\par printf("  filled polygon is done, press a key\\n");getch();
+\par \}
+\par 
+\par 
+\par 
+\par 
+\par setrgbpalette(12,1,2,3);
+\par 
+\par \{
+\par typedef struct \{
+\par \tab char r,g,b;
+\par \} entry;
+\par 
+\par struct p \{
+\par \tab char size;
+\par \tab entry index[256];
+\par \} palette;
+\par 
+\par palette.size = 3*256;
+\par palette.index[0].r =1;
+\par palette.index[0].g =2;
+\par palette.index[0].b =3;
+\par 
+\par 
+\par setallpalette(&palette);
+\par \}
+\par 
+\par 
+\par 
+\par 
+\par  cleardevice();
+\par  printf("  clear done\\n");
+\par 
+\par 
+\par  printf("  press a key\\n");getch();
+\par  closegraph();
+\par 
+\par \}
+\par 
+\par 
+\par 
+\par 
+\par /* ______________________ */
+\par 
+\par int huge detectLEEVGA(void)
+\par \{
+\par 
+\par \tab printf("detecting\\n");
+\par \tab 
+\par \tab /*
+\par \tab \tab You must write code here to detect whether or not
+\par \tab \tab the graphics card is available and what its maximum mode
+\par \tab \tab is.  By returning the value of ONE here, I am telling 
+\par \tab \tab it I have detected my graphics card and the mode I want 
+\par \tab \tab it to use is ONE.
+\par \tab \tab 
+\par \tab */\tab 
+\par 
+\par \tab return(1);
+\par \}
+\par 
+\par ======================== CUT APART HERE and NAME IT LEEVGA.ASM ==========
+\par 
+\par ; know problems
+\par ;\tab 1. the default font has not been done.
+\par ;\tab 2. flood fill has not been done.
+\par 
+\par ; to compile (create) the .BGI file use the following
+\par 
+\par ; masm leevga.asm leevga.obj NUL.LST NUL.LST
+\par ; link leevga.obj,leevga.exe,NUL.MAP,.LIB
+\par ; exe2bin leevga.exe leevga.bgi
+\par ; del leevga.exe
+\par ; del leevga.obj
+\par 
+\par 
+\par ;------------------------------------------------------;
+\par ;               LEEBGI.BGI                             ;
+\par ;     Borland Graphic Interface for TP 5.0, TC2.0      ;
+\par ;       Paridise VGA Graphics Board                    ;
+\par ;         Copyright (c) 1989 Gene W. Lee               ;
+\par ;------------------------------------------------------;
+\par ;
+\par ACODE       segment  'BGI'
+\par ;
+\par ;
+\par astart      DB      'pk'  ; BGI magic word (Phillipe K.)
+\par             DB      8,8
+\par \tab \tab \tab DB      'BGI Device Driver V1.0 Gene W. Lee - 1989 '
+\par             db      0Dh,0Ah
+\par \tab \tab \tab DB      'Copyright (c) 1989 Gene W. Lee',0Dh,0Ah
+\par             db      0,1Ah
+\par             dw      00A0h,11
+\par             dw      endofcode  ; This is a label that precedes CODE ENDS
+\par             dw      2
+\par             db      1,1
+\par             org     80h
+\par             dw      00A0h,11
+\par             dw      endofcode  ; see above
+\par             dw      2
+\par \tab \tab \tab db      1,1
+\par 
+\par ;    The following is returned by GetDriverName.
+\par \tab \tab \tab db      6,'LEEVGA'
+\par alen        =       $-astart              ; Pad this segment out to
+\par             db      (160 - alen) dup(0)   ; 160 bytes
+\par ACODE       ends
+\par 
+\par CODE        SEGMENT 'BGI'
+\par ;
+\par ; Now for the real BGI driver code. A separate segment is required
+\par ; because although this code starts at offset 0A0h in the file
+\par ; ATTDEB.BGI, GRAPH will adjust its address up by 10 paras and then
+\par ; do a CALL FAR xxxx:[0000]. So all memrefs have to be 0 relative to
+\par ; the label BGIENTRY below.  IMPORTANT: All code from here to JMP_TABLE
+\par ; needs to be exactly as it is.  GRAPH expects the label EMULATE to be
+\par ; at the offset that it is in this code (GRAPH is going to shove code
+\par ;
+\par \tab \tab \tab ASSUME  CS:CODE,DS:CODE,ES:CODE
+\par BGIENTRY    PROC    FAR        ; "FAR" So that the RET is a RETF
+\par \tab \tab \tab PUSH    DS
+\par             PUSH    CS
+\par \tab \tab \tab POP     DS
+\par             CLD
+\par \tab \tab \tab PUSH    BP
+\par ;
+\par ; The Function number to be performed in SI.  SI is used to index into
+\par ; a jump table.  Note: all SI values are even.
+\par ;
+\par \tab \tab \tab CALL    [SI+JMP_TABLE]  ; See JMP_TABLE
+\par \tab \tab \tab POP     BP
+\par \tab \tab \tab POP     DS
+\par \tab \tab \tab RET
+\par BGIENTRY    ENDP
+\par ;
+\par \tab \tab \tab db      'CB'        ; ?
+\par \tab \tab \tab dw      0
+\par ;
+\par EMULATE      PROC NEAR          ; This is the entry point of functions
+\par \tab \tab \tab RET                 ; you want Turbo XX to emulate.  Note:
+\par \tab \tab \tab dw      0           ; only select entries may be emulated.
+\par \tab \tab \tab dw      0
+\par EMULATE      ENDP
+\par 
+\par NOP_02      PROC NEAR           ; This is the entry point for all functions
+\par \tab \tab \tab RET                 ; which are not implemented.
+\par NOP_02      ENDP
+\par 
+\par ; Now for the Jump Table; The SVC_xx labels correspond to the
+\par ; value in SI when the driver is called(ie: SVC_00 is the entry point
+\par ; when SI = 0.  IF the labels are EMULATE or NOP_02 the value of SI is
+\par ; to the right in braces.  NOP_02 means this function is a NOP and
+\par ; GRAPH should never call it (at least relative to TP5).  The label
+\par ; EMULATE is a JMP to a CALL back to GRAPH to perform the function.
+\par ; (Aren't you glad you don't have to write a Circle Drawing Algorithm!)
+\par ;
+\par ; It should also be noted that calls to the BGI code are both pre-
+\par ; processed  and post-processed by GRAPH.  Some calls never make it to
+\par ; your code. One example is the DisplayText functions.  The only time
+\par ; that calls make it here is for the bit-map text displays.  GRAPH
+\par ; handles all of the stroked CHR fonts.
+\par ;
+\par jmp_table\tab dw install  \tab \tab ; \{0\} Initialize
+\par \tab \tab \tab dw init  \tab \tab \tab ; \{2\} Set Mode
+\par \tab \tab \tab dw clear\tab \tab \tab ; \{4\} Clear Graphics Screen
+\par \tab \tab \tab dw nop_02\tab \tab \tab ; \{06\} POST
+\par \tab \tab \tab dw move\tab \tab \tab \tab ; \{8\} current pointer (CP)
+\par \tab \tab \tab dw draw\tab \tab \tab \tab ; \{A\} draw line from CP to new CP
+\par \tab \tab \tab dw vect\tab \tab \tab \tab ; \{C\} Draw Line
+\par \tab \tab \tab dw EMULATE\tab \tab \tab ; \{0E\} Draw/Fill Poly
+\par \tab \tab \tab dw emulate\tab \tab \tab ; \{10\} Bar3D
+\par \tab \tab \tab dw patbar \tab   \tab \tab ; \{12\} pattern Bar
+\par \tab \tab \tab dw EMULATE\tab \tab \tab ; \{14\} Draw Circle
+\par \tab \tab \tab dw EMULATE\tab \tab \tab ; \{16\} Draw Pie Slice
+\par \tab \tab \tab dw EMULATE\tab \tab \tab ; \{18\} Draw Ellipse
+\par \tab \tab \tab dw palette          ; \{1A\} Set Palette
+\par \tab \tab \tab dw SVC_1C  ; \{1C\} Set All Palette
+\par \tab \tab \tab dw color\tab \tab \tab ; \{1E\} Set Color
+\par \tab \tab \tab dw fillstyle\tab \tab ; \{20\} Set Fill Style/Pattern
+\par \tab \tab \tab dw linestyle\tab \tab ; \{22\} Set Line Style/Pattern
+\par \tab \tab \tab dw textstyle  \tab \tab ; \{24\} Set UserCharSize
+\par \tab \tab \tab dw text\tab \tab \tab \tab ; \{26\} Display Text
+\par \tab \tab \tab dw textsize\tab \tab \tab ; \{28\} Text Width/Height
+\par \tab \tab \tab dw EMULATE\tab \tab \tab ; \{2A\}   ; I never figured this one out !
+\par \tab \tab \tab dw flood_fill\tab \tab ; \{2C\} FloodFill
+\par \tab \tab \tab dw get_pixel\tab \tab ; \{2E\} GetPixel
+\par \tab \tab \tab dw put_pixel\tab \tab ; \{30\} SetPixel
+\par \tab \tab \tab dw bitmaputil\tab \tab ; \{32\} Set CallTable
+\par \tab \tab \tab dw get_image\tab     ; \{34\} GetImage
+\par \tab \tab \tab dw put_image        ; \{36\} PutImage
+\par \tab \tab \tab dw set_clip\tab \tab \tab ; \{38\} Set View Min/Max
+\par \tab \tab \tab dw color_query\tab \tab ; \{3A\} SetParameters
+\par \tab \tab \tab dw emulate          ; \{3C\} reserved
+\par \tab \tab \tab dw EMULATE          ; \{3E\} symbol
+\par 
+\par \tab \tab \tab dw NOP_03           ; 40
+\par \tab \tab \tab dw NOP_03           ; 42
+\par \tab \tab \tab dw NOP_03           ; 44
+\par \tab \tab \tab dw NOP_03           ; 46
+\par \tab \tab \tab dw NOP_03           ; 48
+\par \tab \tab \tab dw NOP_03           ; 4A
+\par \tab \tab \tab dw NOP_03           ; 4C
+\par \tab \tab \tab dw NOP_03           ; 4E
+\par \tab \tab \tab dw NOP_03           ; 50
+\par \tab \tab \tab dw NOP_03           ; 52
+\par \tab \tab \tab dw NOP_03           ; 54
+\par \tab \tab \tab dw NOP_03           ; 56
+\par \tab \tab \tab dw NOP_03           ; 46
+\par \tab \tab \tab dw NOP_03           ; 48
+\par \tab \tab \tab dw NOP_03           ; 4A
+\par \tab \tab \tab dw NOP_03           ; 4C
+\par \tab \tab \tab dw NOP_03           ; 4E
+\par \tab \tab \tab dw NOP_03           ; 50
+\par \tab \tab \tab dw NOP_03           ; 52
+\par \tab \tab \tab dw NOP_03           ; 54
+\par \tab \tab \tab dw NOP_03           ; 56
+\par \tab \tab \tab dw NOP_03           ; 46
+\par \tab \tab \tab dw NOP_03           ; 48
+\par \tab \tab \tab dw NOP_03           ; 4A
+\par \tab \tab \tab dw NOP_03           ; 4C
+\par \tab \tab \tab dw NOP_03           ; 4E
+\par \tab \tab \tab dw NOP_03           ; 50
+\par \tab \tab \tab dw NOP_03           ; 46
+\par \tab \tab \tab dw NOP_03           ; 48
+\par \tab \tab \tab dw NOP_03           ; 52
+\par \tab \tab \tab dw NOP_03           ; 54
+\par \tab \tab \tab dw NOP_03           ; 56
+\par ;
+\par 
+\par NOP_03      PROC FAR                 ; stub procedure for far returns
+\par \tab \tab \tab RET
+\par NOP_03      ENDP
+\par 
+\par 
+\par ;
+\par 
+\par ;                     structure for 320x200 256 color mode
+\par statustype0\tab struc
+\par \tab \tab db\tab 0     \tab ;  current device status
+\par \tab \tab db\tab 0\tab \tab ;  device type identifier ( must be zero )
+\par \tab \tab dw\tab 319\tab \tab ;  full resolution in the x direction
+\par \tab \tab dw\tab 199\tab \tab ;  full resolution in the y direction
+\par xefres0 dw\tab 319\tab \tab ;  effective resolution in x direction
+\par \tab \tab dw\tab 199\tab \tab ;  effective resolution in y direction
+\par \tab \tab dw\tab 9000\tab ;  device x size in inches * 1000
+\par \tab \tab dw\tab 7000\tab ;  device y size in inches * 1000
+\par \tab \tab dw\tab 8572\tab ;  aspect ratio = ( ysize / xsize ) * 1000
+\par \tab \tab \tab \tab \tab ;  next four bytes are for compatibilty
+\par \tab \tab db\tab 8h
+\par \tab \tab db\tab 8h
+\par \tab \tab db\tab 90h
+\par \tab \tab db\tab 90h
+\par statustype0\tab ends
+\par 
+\par status0\tab statustype0<>
+\par 
+\par ;\tab \tab \tab \tab \tab structure for 640x400 256 color mode (0x5E)
+\par statustype1\tab struc
+\par \tab \tab db\tab 0     \tab ;  current device status
+\par \tab \tab db\tab 0\tab \tab ;  device type identifier ( must be zero )
+\par \tab \tab dw\tab 639\tab \tab ;  full resolution in the x direction
+\par \tab \tab dw\tab 399\tab \tab ;  full resolution in the y direction
+\par xefres1\tab dw\tab 639\tab \tab ;  effective resolution in x direction
+\par \tab \tab dw\tab 399\tab \tab ;  effective resolution in y direction
+\par \tab \tab dw\tab 9000\tab ;  device x size in inches * 1000
+\par \tab \tab dw\tab 7000\tab ;  device y size in inches * 1000
+\par \tab \tab dw\tab 8572\tab ;  aspect ratio = ( ysize / xsize ) * 1000
+\par \tab \tab \tab \tab \tab ;  next four bytes are for compatibilty
+\par \tab \tab db\tab 8h
+\par \tab \tab db\tab 8h
+\par \tab \tab db\tab 90h
+\par \tab \tab db\tab 90h
+\par statustype1\tab ends
+\par 
+\par status1\tab statustype1<>
+\par 
+\par active_mode db\tab ?     ;  the currently active mode number
+\par 
+\par modestring0\tab db  18,'320 x 200 VGA Mode',0
+\par modestring1\tab db  18,'640 x 400 VGA Mode',0
+\par 
+\par xsize\tab dw\tab ?         ; the xsize of the currently selected mode
+\par max_x\tab dw\tab ?\tab \tab   ; the maximum value of x for the current mode
+\par 
+\par 
+\par 
+\par ;\tab \tab table for ellipse function calls
+\par ;  Let it used my put_pixel routine, there is not much I could do to speed
+\par ;  up pixel writing anyway.
+\par the_util_table\tab dw offset NOP_03\tab \tab ; enter pixel mode
+\par \tab \tab \tab \tab dw offset NOP_03\tab \tab ; Leave pixel mode
+\par \tab \tab \tab \tab dw offset NOP_03   \tab \tab ; write a pixel
+\par \tab \tab \tab \tab dw offset NOP_03    \tab ; get a pixel
+\par \tab \tab \tab \tab dw offset bitsperpixel\tab \tab ; return bits per pixel in AX
+\par \tab \tab \tab \tab dw offset NOP_03\tab \tab ; set draw page
+\par \tab \tab \tab \tab dw offset NOP_03\tab \tab ; set visual page
+\par \tab \tab \tab \tab dw offset NOP_03\tab \tab ; set xor mode
+\par 
+\par enter_pixel_mode proc far
+\par \tab call unlock_vga
+\par \tab mov doing_ellipse,1
+\par \tab ret
+\par enter_pixel_mode endp
+\par 
+\par exit_pixel_mode proc far
+\par \tab call lock_vga
+\par \tab mov doing_ellipse,0
+\par \tab ret
+\par exit_pixel_mode endp
+\par 
+\par bitsperpixel proc far
+\par \tab mov ax,8              ; eight bits per pixel in VGA mode
+\par \tab ret
+\par bitsperpixel endp
+\par 
+\par 
+\par 
+\par \tab \tab \tab \tab \tab \tab \tab \tab ; the bit patterns for default linestyles
+\par default_linestyles\tab dw\tab 0FFFFh  ; SOLID_LINE
+\par \tab \tab \tab \tab \tab dw\tab 0CCCCh\tab ; DOTTED_LINE
+\par \tab \tab \tab \tab \tab dw\tab 0FC78h\tab ; CENTER_LINE
+\par \tab \tab \tab \tab \tab dw\tab 0F8F8h\tab ; DASHED_LINE
+\par 
+\par active_linestyle\tab dw\tab 0FFFFh\tab ; the currently selected line style is written
+\par \tab \tab \tab \tab \tab \tab \tab \tab ; into this word.
+\par line_bit_ptr\tab \tab db\tab 0\tab \tab ; pointer into linestyle word (bit ptr)
+\par 
+\par 
+\par default_fillpaterns db\tab 000h,000h,000h,000h,000h,000h,000h,000h ; No Fill
+\par \tab db  0FFh,0FFh,0FFh,0FFh,0FFh,0FFh,0FFh,0FFh ; Solid fill
+\par \tab db  0FFh,0FFh,000h,000h,0FFh,0FFh,000h,000h ; Line FIll
+\par \tab db  001h,002h,004h,008h,010h,020h,040h,080h ; Lt Slash fil
+\par \tab db  0E0h,0C1h,083h,007h,00Eh,01Ch,038h,070h ; Slash fill
+\par \tab db  0F0h,078h,03Ch,01Eh,00Fh,087h,0C3h,0E1h ; Backslash
+\par \tab db  0A5h,0D2h,069h,0B4h,05Ah,02Dh,096h,04Bh ; lt Backslash
+\par \tab db  0FFh,088h,088h,088h,0FFh,088h,088h,088h ; Hatch Fill
+\par \tab db  081h,042h,024h,018h,018h,024h,042h,081h ; XHatch Fill
+\par \tab db  0CCh,033h,0CCh,033h,0CCh,033h,0CCh,033h ; interleave
+\par \tab db  080h,000h,008h,000h,080h,000h,008h,000h ; Wide Dot
+\par \tab db  088h,000h,022h,000h,088h,000h,022h,000h ; Close Dot
+\par 
+\par active_fillpattern\tab db\tab ?,?,?,?,?,?,?,? \tab ; the currently selected fill
+\par \tab \tab \tab \tab \tab \tab \tab \tab \tab \tab   ; style is written into this array.
+\par fill_byte_ptr\tab \tab dw  ?       ; pointer to fill pattern byte
+\par fill_bit_ptr\tab \tab dw  ?\tab \tab ; pointer to bit of fill pattern byte
+\par 
+\par 
+\par 
+\par 
+\par ;  I don't really understand what this is all about. I just tell it I don't
+\par ;  have a default color table
+\par color_table db\tab 0
+\par 
+\par current_background_color  db ?
+\par current_line_color\tab db\tab ?\tab ; the currently selected color for lines
+\par current_fill_color\tab db  ?   ; the currently selected fill color
+\par cp_x\tab \tab \tab \tab dw\tab ?   ; the current pointer - x
+\par cp_y\tab \tab \tab \tab dw\tab ?   ; the current pointer - y
+\par clip_x1\tab \tab \tab \tab dw\tab ?   ; clipping window
+\par clip_y1\tab \tab \tab \tab dw\tab ?   ; clipping window
+\par clip_x2\tab \tab \tab \tab dw\tab ?   ; clipping window
+\par clip_y2\tab \tab \tab \tab dw\tab ?   ; clipping window
+\par 
+\par 
+\par ; start x,y and end x,y for line draws
+\par x1\tab dw\tab ?
+\par y1\tab dw\tab ?
+\par x2\tab dw\tab ?
+\par y2\tab dw\tab ?
+\par 
+\par ; vars used by line draw routine
+\par delta_x\tab dw\tab ?
+\par delta_y\tab dw\tab ?
+\par count\tab dw\tab ?
+\par halfx\tab label word          ;   only need halfx or halfy at one time
+\par halfy\tab dw\tab ?
+\par 
+\par ; vars used to do pixel read/writes in VGA mode
+\par lasthio dw -1         ; keeps track of the last hioffset value calculated
+\par next_row    dw  ?     ; variable used by patbar, getimage and putimage
+\par 
+\par ; vars used by palette routines
+\par red   db ?
+\par green db ?
+\par blue  db ?
+\par 
+\par doing_ellipse db 0\tab \tab ; set true when unlock has been called to start
+\par \tab \tab \tab ; drawing an ellipse. Saves time on ellipse draws
+\par 
+\par 
+\par 
+\par ; 0 ----------------------------------------------------------------------
+\par 
+\par ; if al=0       ( install device )
+\par ; \tab input:  cl = mode number for device
+\par ; \tab \tab ch = autodetect maximum device number
+\par ; \tab return: es:bx = pointer to device status table
+\par ; if al=1       ( mode query )
+\par ; \tab input: nothing
+\par ; \tab return: cx = number of modes supported by this device
+\par ; if al=2       ( return mode name )
+\par ; \tab input cx: the mode number for query
+\par ; \tab return es:bx = pointer to PASCAL string containing the name
+\par 
+\par install:
+\par \tab \tab cmp al,0
+\par \tab \tab jz \tab installit
+\par \tab \tab cmp\tab al,1
+\par \tab \tab jz\tab modequery
+\par 
+\par \tab \tab ; else it must be a modename() call
+\par \tab \tab push cs
+\par \tab \tab pop es
+\par \tab \tab cmp cx,0
+\par \tab \tab je  modename0
+\par \tab \tab mov bx, offset modestring1         ; return pointer to mode name
+\par \tab \tab ret
+\par 
+\par modename0:
+\par \tab \tab mov bx, offset modestring0         ; return pointer to mode name
+\par \tab \tab ret
+\par 
+\par installit:
+\par \tab \tab mov active_mode,cl      ; remember what mode were in
+\par \tab \tab cmp cl,1
+\par \tab \tab je install_mode1
+\par \tab \tab \tab \tab \tab \tab    ; else we install mode 0
+\par                ; keep track of current x and y screen size
+\par \tab \tab mov ax,status0.xefres0 
+\par \tab \tab mov max_x,ax
+\par \tab \tab inc ax
+\par \tab \tab mov xsize,ax
+\par 
+\par \tab \tab push cs
+\par \tab \tab pop es
+\par \tab \tab mov bx,offset status0   ; return location of status table
+\par \tab \tab ret
+\par 
+\par install_mode1:
+\par \tab \tab mov ax,status1.xefres1      ; keep track of current x and y screen size
+\par \tab \tab mov max_x,ax
+\par \tab \tab inc ax
+\par \tab \tab mov xsize,ax
+\par 
+\par \tab \tab push cs
+\par \tab \tab pop es
+\par \tab \tab mov bx,offset status1   ; return location of status table
+\par \tab \tab ret
+\par 
+\par modequery:
+\par \tab \tab mov cx,2\tab \tab ; only two modes supported for now
+\par \tab \tab ret
+\par 
+\par ; 2 ----------------------------------------------------------------------
+\par 
+\par ; input:
+\par ; \tab es:bx = pointer to device table
+\par ; return: nothing
+\par 
+\par init:
+\par \tab \tab cmp active_mode,1
+\par \tab \tab je init_mode1
+\par \tab \tab \tab \tab \tab \tab ; else we init mode 0
+\par \tab \tab mov ax,13h
+\par \tab \tab int 10h
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par init_mode1:
+\par \tab \tab mov ax,5Eh
+\par \tab \tab int 10h
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par ; 4 ----------------------------------------------------------------------
+\par 
+\par ; input: nothing
+\par ; output: nothing
+\par ;            clear the device
+\par 
+\par clear:
+\par \tab \tab call init
+\par \tab \tab ret
+\par 
+\par 
+\par ; 8 ------------------------------------------------------------------------
+\par 
+\par ; input:
+\par ;\tab ax = the new CP x coord
+\par ;\tab bx = the new CP y coord
+\par ; return: nothing
+\par move:           ; set current pointer (CP)
+\par 
+\par \tab \tab \tab \tab ; load the new current pointer
+\par \tab \tab mov cp_x,ax
+\par \tab \tab mov cp_y,bx
+\par \tab \tab ret
+\par 
+\par 
+\par 
+\par ; A -----------------------------------------------------------------------
+\par 
+\par ;        draw line from CP to x,y
+\par ; input:
+\par ;\tab ax: ending x coord
+\par ;\tab bx: ending y coord
+\par ; output:
+\par ;\tab nothing
+\par 
+\par draw: \tab \tab \tab \tab \tab ; draw line from CP to new CP
+\par 
+\par \tab \tab push cx
+\par \tab \tab mov cx,cp_x         ; draw starts at current position (cp)
+\par \tab \tab mov x1,cx
+\par \tab \tab mov\tab cx,cp_y
+\par \tab \tab mov\tab y1,cx
+\par \tab \tab pop cx
+\par 
+\par \tab \tab mov x2,ax           ; load the end points
+\par \tab \tab mov y2,bx
+\par 
+\par \tab \tab mov\tab cp_x,ax\tab \tab \tab ; end points are now new current points
+\par \tab \tab mov\tab cp_y,bx
+\par 
+\par \tab \tab mov line_bit_ptr,0  ; reset the line style
+\par 
+\par \tab \tab call draw_line\tab \tab ; draw the line from x1,y1 to x2,y2
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par ; C ----------------------------------------------------------------------
+\par 
+\par ; draw line from x1,y1 to x2,y2
+\par 
+\par ; input:
+\par ;\tab ax = x1
+\par ;\tab bx = y1
+\par ;\tab cx = x2
+\par ;\tab dx = y1
+\par ; output:
+\par ;\tab nothing
+\par 
+\par vect:\tab \tab \tab \tab \tab \tab ; Draw Line
+\par 
+\par \tab \tab \tab \tab \tab \tab \tab ; setup the start and end points
+\par \tab \tab mov\tab x1,ax
+\par \tab \tab mov\tab y1,bx
+\par \tab \tab mov\tab x2,cx
+\par \tab \tab mov\tab y2,dx
+\par 
+\par \tab \tab mov line_bit_ptr,0  ; reset the line style
+\par 
+\par \tab \tab call draw_line\tab \tab ; draw a line
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par 
+\par 
+\par 
+\par ; 1A --------------------------------------------------------------------
+\par 
+\par ; set a single palette entry
+\par ; input:
+\par ;\tab ax = the index number to load
+\par ;\tab bx = the color value
+\par ; return: nothing
+\par 
+\par palette:
+\par 
+\par \tab \tab push ax
+\par \tab \tab push cx
+\par 
+\par \tab \tab mov cl,14
+\par \tab \tab shr ax,cl         ; only want upper to bits of cl
+\par 
+\par \tab \tab cmp ax,010b        ; set rgb palette
+\par 
+\par \tab \tab pop cx
+\par \tab \tab pop ax
+\par 
+\par \tab \tab jne p_done        ; the other values are meaningless in vga mode
+\par 
+\par \tab \tab mov red,bl
+\par \tab \tab mov green,cl
+\par \tab \tab mov blue,dl
+\par \tab \tab     ; get rid of upper two control bits, leave index
+\par \tab \tab and ax,03FFFh  
+\par 
+\par 
+\par \tab \tab mov dh,red
+\par \tab \tab mov ch,green
+\par \tab \tab mov cl,blue
+\par \tab \tab mov bx,ax
+\par 
+\par \tab \tab mov ax,01010h     ; set single palette entry
+\par 
+\par \tab \tab int 10h
+\par 
+\par 
+\par p_done:
+\par \tab \tab ret
+\par 
+\par 
+\par 
+\par ; 1C ---------------------------------------------------------------------
+\par 
+\par \tab  ; Set all Palette entries with one call
+\par SVC_1C: ; Set All Palette
+\par \tab ;  not compatible with 256 color VGA modes, you have to provide
+\par \tab ; the user with a library function to do this.
+\par \tab \tab ret
+\par 
+\par 
+\par ; 1E -------------------------------------------------------------------
+\par 
+\par ; input: 
+\par ;\tab al = index number of current drawing color
+\par ;\tab ah = index number of current fill color
+\par ; return: nothing
+\par 
+\par color: ; Set Color
+\par 
+\par \tab \tab mov\tab current_line_color,al
+\par \tab \tab mov current_fill_color,ah
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par ; 20 ------------------------------------------------------------------
+\par 
+\par ; input:
+\par ;\tab al = fill pattern number
+\par ;\tab es:bx = if pattern number = 0FFh, this points to user fill pattern
+\par ; return: nothing
+\par 
+\par fillstyle:\tab \tab \tab \tab ; Set Fill Style/Pattern
+\par 
+\par 
+\par \tab \tab cmp al,0FFh     ; test if user defined fill
+\par \tab \tab jz\tab user_fill
+\par 
+\par \tab \tab cbw
+\par \tab \tab mov cl,3\tab \tab ; multiply by 8 for eight bytes per fill type
+\par \tab \tab shl ax,cl
+\par \tab \tab mov si,ax
+\par \tab \tab add si,offset default_fillpaterns ; point to the selected fill patern
+\par \tab \tab jmp cont_fill   ; ds:si point to selected fill pattern
+\par 
+\par user_fill:              ; user defined fill passed by pointer ES:BX
+\par \tab \tab push bx
+\par \tab \tab pop  si
+\par \tab \tab push es
+\par \tab \tab pop  ds         ; setup so ds:si points to users fill pattern
+\par 
+\par cont_fill:
+\par 
+\par \tab \tab mov\tab di,offset active_fillpattern
+\par \tab \tab push cs
+\par \tab \tab pop\tab es\tab \tab \tab ; es:cs is the destination of the copy
+\par 
+\par \tab \tab mov\tab cx,8\tab \tab ; setup to copy eight bytes of pattern
+\par \tab \tab repz movsb      ; copy pattern into active pattern
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par ; 22 ------------------------------------------------------------------
+\par 
+\par ; input:
+\par ;\tab al = line pattern number
+\par ;\tab bx = user defined line pattern if al = 4
+\par ;\tab cx = line width
+\par ; return: nothing
+\par 
+\par linestyle:      ;          set current line style
+\par 
+\par \tab \tab cmp\tab ax,4
+\par \tab \tab jz\tab user_defined\tab \tab ; check if its a user defined line
+\par 
+\par \tab \tab and\tab ax,0FFh\tab \tab \tab \tab ; pattern number in AL
+\par \tab \tab shl\tab al,1\tab \tab \tab \tab ; used two index by 2 bytes at a time
+\par \tab \tab mov\tab si,ax
+\par \tab \tab mov\tab bx,[default_linestyles +si]  ; load a pre-defined pattern
+\par 
+\par user_defined:               \tab ; user defined are passed in BX
+\par \tab \tab mov active_linestyle,bx
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par 
+\par ; 24 -------------------------------------------------------------------
+\par 
+\par ; input:
+\par ;\tab al = hardware font number
+\par ;\tab ah = hardware font orientation
+\par ;\tab bx = desired X size
+\par ;\tab cx = desired Y size
+\par ; return:
+\par ;\tab bx = closest X size available
+\par ;\tab cx = closest Y size available
+\par 
+\par textstyle:\tab \tab \tab \tab ; Set UserCharSize
+\par \tab \tab ; this code works but thats about all
+\par \tab \tab mov bx,bx       ; let say the characters are 8 x 16
+\par \tab \tab mov cx,cx
+\par \tab \tab ret
+\par 
+\par 
+\par 
+\par ; 26 --------------------------------------------------------------------
+\par 
+\par ; input:
+\par ;\tab es:bx = pointer to ascii string to display
+\par ;\tab cx = number of chars in string
+\par ;\tab al = horizontal justification ( 0=left,1=center,2=right )
+\par ;       ah = vertical justification (0=bottom,1=center,2=top)
+\par ; return:
+\par ;\tab bx = width of string in graphics units
+\par ;\tab cx = height of string in graphics units
+\par 
+\par text:\tab \tab \tab \tab  ; Display Text  ( DEFAULT FONT )
+\par 
+\par \tab ; this is one of the things I could not figure out
+\par \tab ; if you come up with something please let me know.
+\par \tab \tab push bx
+\par \tab \tab push cx
+\par \tab \tab ; hack here
+\par 
+\par 
+\par \tab \tab ; end hack
+\par \tab \tab pop cx
+\par \tab \tab pop bx
+\par \tab \tab mov bx,bx    ;  NOTE this should be 8 * length of string (cx)
+\par \tab \tab mov cx,cx
+\par \tab \tab ret
+\par 
+\par 
+\par ; 28 --------------------------------------------------------------------
+\par 
+\par ; input:
+\par ;\tab es:bx = pointer to ascii text
+\par ;\tab cx = number of chars in test
+\par ; return:
+\par ;\tab bx = width of string in graphics units
+\par ;\tab cx = height of string in graphics units
+\par 
+\par textsize:\tab \tab \tab  ; Text Width/Height ( DEFAULT FONT )
+\par 
+\par ;\tab again I did not know how to do this
+\par \tab \tab mov bx,bx    ; NOTE this is not right
+\par \tab \tab mov cx,cx
+\par \tab \tab ret
+\par 
+\par 
+\par ; 2C --------------------------------------------------------------------
+\par 
+\par ; input:
+\par ;\tab ax = x coord to start at
+\par ;\tab bx = y coord to start at
+\par ;\tab cl = boundry color
+\par ; return: nothing
+\par 
+\par flood_fill:\tab \tab \tab  ; FloodFill
+\par \tab \tab ; flood fill needs implemented also
+\par \tab \tab ret
+\par 
+\par 
+\par ; 2E -----------------------------------------------------------------
+\par 
+\par ; input:
+\par ;\tab ax = x coord
+\par ;\tab bx = y coord
+\par ; return:
+\par ;\tab dl = color 
+\par 
+\par get_pixel:\tab  \tab \tab ; GetPixel
+\par 
+\par \tab \tab ; if you don't mind being slow, just use the bios calls
+\par ;\tab \tab mov\tab cx,ax      ; load x value
+\par ;\tab \tab mov\tab dx,bx\tab \tab ; load y value
+\par ;\tab \tab mov bh,0\tab \tab ; page zero
+\par ;\tab \tab mov ah,0Dh      ; read pixel function
+\par ;
+\par ;\tab \tab int 10h
+\par ;
+\par ;\tab \tab mov dl,al       ; return the color of pixel read
+\par ;\tab \tab ret
+\par 
+\par 
+\par \tab \tab cmp active_mode,1
+\par \tab \tab je getpixel_mode1
+\par 
+\par \tab \tab \tab \tab \tab    ; else read pixels in mode 0
+\par \tab \tab push di        ; save these registers
+\par \tab \tab push es
+\par 
+\par \tab \tab mov  cx,ax\tab    ;   save the column value (x)
+\par 
+\par 
+\par \tab \tab mov ax,bx      ;   load the row value (y)
+\par \tab \tab mul xsize      ;   offset =(xsize * y)
+\par \tab \tab add ax,cx\tab    ;     + x
+\par \tab \tab mov di,ax      ;   load screen address into di
+\par 
+\par \tab \tab mov ax,0A000h  ;   video ram segement address
+\par \tab \tab mov es,ax
+\par \tab \tab mov dl,es:[di] ;   read the pixel
+\par 
+\par 
+\par \tab \tab pop es
+\par \tab \tab pop di
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par 
+\par getpixel_mode1:        ; read pixel this way when in mode 1
+\par \tab \tab push di        ; save these registers
+\par \tab \tab push es
+\par 
+\par \tab \tab mov  cx,ax\tab    ;   save the column value (x)
+\par 
+\par \tab \tab mov ax,bx      ;   load the row value (y)
+\par 
+\par \tab \tab call calc_hilow   ; find vga offset values into screen memory
+\par 
+\par \tab \tab cmp bx,lasthio ;   see of hioffset is the same as last time
+\par \tab \tab je  no_hio_chg_r ;   if it is, save time by not resetting it
+\par 
+\par \tab \tab cmp doing_ellipse,1
+\par \tab \tab je no_unlock_get      ; its already unlocked
+\par \tab \tab call unlock_vga
+\par no_unlock_get:
+\par 
+\par \tab \tab mov ax,bx      ;
+\par \tab \tab call set_hioffset  ; sets the hioffset register for vga mem addressing
+\par 
+\par \tab \tab cmp doing_ellipse,1
+\par \tab \tab je no_lock_get
+\par \tab \tab call lock_vga
+\par no_lock_get:
+\par 
+\par no_hio_chg_r:
+\par \tab \tab mov ax,0A000h  ;   video ram segement address
+\par \tab \tab mov es,ax
+\par \tab \tab mov dl,es:[di] ;   read the pixel
+\par 
+\par 
+\par \tab \tab pop es
+\par \tab \tab pop di
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par 
+\par ; 30 -----------------------------------------------------------------
+\par 
+\par ; input:
+\par ;\tab ax = x coord
+\par ;\tab bx = y coord
+\par ;\tab dl = color 
+\par ; return: nothing
+\par 
+\par 
+\par put_pixel:\tab \tab \tab ; SetPixel
+\par 
+\par ; \tab \tab p[XSIZE*y+x] = color;           for 320 x 200 - 256 mode
+\par 
+\par \tab \tab ; if you don't mind being slow, just call the bios plot dot
+\par ;\tab \tab push dx        ; save color value
+\par ;\tab \tab mov\tab cx,ax      ; load x value
+\par ;\tab \tab mov\tab dx,bx\tab \tab ; load y value
+\par ;\tab \tab pop ax          ; color value from pushed dx
+\par ;\tab \tab mov bh,0\tab \tab ; page zero
+\par ;\tab \tab mov ah,0Ch      ; write pixel function
+\par ;
+\par ;\tab \tab int 10h
+\par ;\tab \tab ret
+\par 
+\par ; else get fancy to make it faster.
+\par 
+\par \tab \tab cmp active_mode,1
+\par \tab \tab je putpixel_mode1
+\par 
+\par \tab \tab \tab \tab \tab    ; else plot pixels in mode 0
+\par \tab \tab push di        ; save these registers
+\par \tab \tab push es
+\par \tab \tab push ax
+\par \tab \tab push bx
+\par \tab \tab push cx
+\par \tab \tab push dx
+\par 
+\par \tab \tab push dx        ;   save the color
+\par \tab \tab mov  cx,ax\tab    ;   save the column value (x)
+\par 
+\par \tab \tab mov ax,bx      ;   load the row value (y)
+\par \tab \tab mul xsize      ;   offset =(xsize * y)
+\par \tab \tab add ax,cx\tab    ;     + x
+\par \tab \tab mov di,ax      ;   load screen address into di
+\par 
+\par \tab \tab mov ax,0A000h  ;   video ram segement address
+\par \tab \tab mov es,ax
+\par 
+\par \tab \tab pop dx         ;   get the color info back
+\par 
+\par \tab \tab mov es:[di],dl ;   plot the pixel
+\par 
+\par \tab \tab pop dx
+\par \tab \tab pop cx
+\par \tab \tab pop bx
+\par \tab \tab pop ax
+\par \tab \tab pop es
+\par \tab \tab pop di
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par 
+\par 
+\par putpixel_mode1:                  ; routine to plot pixels when in mode 1
+\par \tab \tab push di        ; save these registers
+\par \tab \tab push es
+\par \tab \tab push ax
+\par \tab \tab push bx
+\par \tab \tab push cx
+\par \tab \tab push dx
+\par 
+\par \tab \tab push dx        ;   save the color
+\par \tab \tab mov  cx,ax\tab    ;   save the column value (x)
+\par 
+\par \tab \tab mov ax,bx      ;   load the row value (y)
+\par 
+\par \tab \tab call calc_hilow     ;   find vga hi and low offset value for screen mem
+\par 
+\par \tab \tab cmp bx,lasthio ;   see of hioffset is the same as last time
+\par \tab \tab je  no_hio_chg_w ;   if it is, save time by not resetting it
+\par 
+\par \tab \tab cmp doing_ellipse,1
+\par \tab \tab je no_unlock_put     ; its already done
+\par \tab \tab call unlock_vga
+\par no_unlock_put:
+\par 
+\par \tab \tab mov ax,bx      ;
+\par \tab \tab call set_hioffset  ; sets the hioffset register for vga mem addressing
+\par 
+\par \tab \tab cmp doing_ellipse,1
+\par \tab \tab je no_lock_put
+\par \tab \tab call lock_vga
+\par no_lock_put:
+\par 
+\par no_hio_chg_w:
+\par \tab \tab mov ax,0A000h  ;   video ram segement address
+\par \tab \tab mov es,ax
+\par 
+\par \tab \tab pop dx         ;   get the color info back
+\par 
+\par \tab \tab mov es:[di],dl ;   plot the pixel
+\par 
+\par \tab \tab pop dx
+\par \tab \tab pop cx
+\par \tab \tab pop bx
+\par \tab \tab pop ax
+\par \tab \tab pop es
+\par \tab \tab pop di
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par 
+\par 
+\par ; 32 -------------------------------------------------------------------
+\par 
+\par bitmaputil: ; Set CallTable
+\par 
+\par \tab \tab \tab ; see the book, basically don't worry (be happy)
+\par \tab \tab 
+\par \tab \tab push cs
+\par \tab \tab pop es
+\par \tab \tab mov bx, offset the_util_table
+\par \tab \tab ret
+\par 
+\par ; 34 -------------------------------------------------------------------
+\par 
+\par ; input:
+\par ;\tab ax = x1 corner
+\par ;\tab bx = y1 corner
+\par ;\tab cx = x2 corner
+\par ;\tab dx = y2 corner
+\par ; return: nothing
+\par 
+\par patbar:           ; fill the rectangle using current fillstyle and color
+\par 
+\par ;        this version of pattern filling uses the following trick to greatly
+\par ;        improve speed.  Instead of calling put_pixel for every pixel to plot
+\par ;        it does the write to screen memory on its own. What makes it fast is
+\par ;        that it only has to find the original offset by multipling XSIZE by
+\par ;        y1.  From then on it increments a pointer to find the next location
+\par ;        in screen memory (not multiplies required after initial one).
+\par 
+\par \tab \tab \tab \tab \tab ; first, make sure x1 < x2 and y1 < y2
+\par \tab \tab cmp ax,cx               ; if x1 < x2
+\par \tab \tab jle x_ok
+\par \tab \tab xchg ax,cx
+\par x_ok:
+\par 
+\par \tab \tab cmp bx,dx              ; if y1 < y2
+\par \tab \tab jle y_ok
+\par \tab \tab xchg bx,dx
+\par y_ok:
+\par 
+\par \tab \tab \tab \tab \tab ; then load the start and end values
+\par \tab \tab mov x1,ax
+\par \tab \tab mov x2,cx
+\par \tab \tab mov y1,bx
+\par \tab \tab mov y2,dx
+\par 
+\par 
+\par \tab \tab cmp active_mode,1
+\par \tab \tab je patbar_mode1\tab \tab \tab ; different way to calc pixel offset
+\par 
+\par \tab \tab ;         Next, setup the starting value of the VGA's hioffset reg
+\par \tab \tab push ax
+\par \tab \tab push bx
+\par \tab \tab push cx
+\par 
+\par \tab \tab mov cx,ax           ; load x value
+\par \tab \tab mov ax,bx           ; load the y value
+\par \tab \tab mul xsize        ; find the pixel offset
+\par \tab \tab add ax,cx        ; add inthe x value
+\par \tab \tab mov di,ax
+\par 
+\par \tab \tab mov ax,0a000h       ; screen memory segment
+\par \tab \tab mov es,ax
+\par 
+\par \tab \tab ;  calculate ho many screen byte are from right edge of box
+\par \tab \tab ;  to left edge of box on next row
+\par \tab \tab mov ax,max_x
+\par \tab \tab sub ax,x2
+\par \tab \tab add ax,x1
+\par \tab \tab mov next_row,ax
+\par 
+\par \tab \tab pop cx
+\par \tab \tab pop bx
+\par \tab \tab pop ax
+\par 
+\par again0:
+\par 
+\par \tab \tab ;   First, lets figure out the fill pattern parameters
+\par 
+\par 
+\par \tab \tab push ax
+\par \tab \tab push cx
+\par \tab \tab push si
+\par 
+\par 
+\par 
+\par \tab \tab ; the bit/byte pointer are relative to the absolute
+\par \tab \tab ; screen position mod 8
+\par \tab \tab mov fill_byte_ptr,bx    ; load the current y value
+\par \tab \tab mov fill_bit_ptr,ax     ; load the current x value
+\par \tab \tab and fill_byte_ptr,07h
+\par \tab \tab and fill_bit_ptr,07h
+\par 
+\par 
+\par \tab \tab mov si,fill_byte_ptr;
+\par \tab \tab mov al,[offset active_fillpattern + si]
+\par \tab \tab mov cx,fill_bit_ptr
+\par \tab \tab shl al,cl
+\par \tab \tab and al,80h
+\par \tab \tab cmp al,80h
+\par 
+\par 
+\par \tab \tab jne use_background0              ; if not plotting this dot
+\par \tab \tab mov dl,current_fill_color      ; else load fill color
+\par \tab \tab jmp selected0
+\par 
+\par use_background0:
+\par \tab \tab mov dl,current_background_color  ; assume background
+\par 
+\par selected0:
+\par 
+\par \tab \tab pop si
+\par \tab \tab pop cx
+\par \tab \tab pop ax
+\par 
+\par 
+\par 
+\par 
+\par ; \tab \tab this is the slow way, it has to recalute the offset into
+\par ;               display memory every time it puts a pixel
+\par 
+\par ;\tab \tab push ax
+\par ;\tab \tab push bx
+\par ;\tab \tab call put_pixel
+\par ;\tab \tab pop bx
+\par ;\tab \tab pop ax
+\par 
+\par \tab \tab mov es:[di],dl
+\par 
+\par 
+\par \tab \tab inc di              ; advvance screen mapped memory pointer
+\par \tab \tab inc ax              ; advance in x dir till at right edge
+\par \tab \tab cmp ax,x2
+\par \tab \tab jle again0
+\par 
+\par \tab \tab mov ax,x1                ; reset to left size of rectangle
+\par \tab \tab inc bx                   ; go to down to next row
+\par \tab \tab cmp bx,y2
+\par \tab \tab jg  fill_done0
+\par 
+\par 
+\par \tab \tab ;\tab \tab \tab Since were changing rows we'll find a new hi and low
+\par \tab \tab ; the trick is to add the number of bytes from the right side of the
+\par \tab \tab ; box to the left side of the box  ( note: no multiplies needed )
+\par 
+\par \tab \tab add di,next_row
+\par 
+\par \tab \tab jmp again0
+\par 
+\par 
+\par 
+\par fill_done0:
+\par \tab \tab ret              ; end of patbar in mode 0
+\par 
+\par 
+\par 
+\par 
+\par patbar_mode1:
+\par \tab \tab \tab ; first, make sure x1 < x2 and y1 < y2
+\par 
+\par \tab \tab call unlock_vga  ;  keep vga ready to plot pixels
+\par 
+\par 
+\par \tab \tab ;   Next, setup the starting value of the VGA's hioffset reg
+\par \tab \tab push ax
+\par \tab \tab push bx
+\par \tab \tab push cx
+\par 
+\par \tab \tab mov cx,ax           ; load x value
+\par \tab \tab mov ax,bx           ; load the y value
+\par \tab \tab call calc_hilow     ; find the values of hio and lowo
+\par \tab \tab mov ax,bx           ; load hio
+\par \tab \tab call set_hioffset   ; set the vga register for the hioffset
+\par 
+\par \tab \tab mov ax,0a000h       ; screen memory segment
+\par \tab \tab mov es,ax
+\par 
+\par \tab \tab ;  calculate ho many screen byte are from right edge of box
+\par \tab \tab ;  to left edge of box on next row
+\par \tab \tab mov ax,max_x
+\par \tab \tab sub ax,x2
+\par \tab \tab add ax,x1
+\par \tab \tab mov next_row,ax
+\par 
+\par \tab \tab pop cx
+\par \tab \tab pop bx
+\par \tab \tab pop ax
+\par 
+\par again1:
+\par 
+\par \tab \tab ;   First, lets figure out the fill pattern parameters
+\par 
+\par 
+\par \tab \tab push ax
+\par \tab \tab push cx
+\par \tab \tab push si
+\par 
+\par 
+\par 
+\par \tab \tab ; the bit/byte pointer are relative to the absolute
+\par \tab \tab ; screen position mod 8
+\par \tab \tab mov fill_byte_ptr,bx    ; load the current y value
+\par \tab \tab mov fill_bit_ptr,ax     ; load the current x value
+\par \tab \tab and fill_byte_ptr,07h
+\par \tab \tab and fill_bit_ptr,07h
+\par 
+\par 
+\par \tab \tab mov si,fill_byte_ptr;
+\par \tab \tab mov al,[offset active_fillpattern + si]
+\par \tab \tab mov cx,fill_bit_ptr
+\par \tab \tab shl al,cl
+\par \tab \tab and al,80h
+\par \tab \tab cmp al,80h
+\par 
+\par 
+\par \tab \tab jne use_background1              ; if not plotting this dot
+\par \tab \tab mov dl,current_fill_color      ; else load fill color
+\par \tab \tab jmp selected1
+\par 
+\par use_background1:
+\par \tab \tab mov dl,current_background_color  ; assume background
+\par 
+\par selected1:
+\par 
+\par 
+\par \tab \tab pop si
+\par \tab \tab pop cx
+\par \tab \tab pop ax
+\par 
+\par 
+\par 
+\par 
+\par ;     \tab this is the slow way, it has to recalute the offset into
+\par ;          display memory every time it puts a pixel
+\par ;        but it shows the easy way to do it.
+\par 
+\par ;\tab \tab push ax
+\par ;\tab \tab push bx
+\par ;\tab \tab call put_pixel
+\par ;\tab \tab pop bx
+\par ;\tab \tab pop ax
+\par 
+\par \tab \tab mov es:[di],dl
+\par 
+\par 
+\par \tab \tab inc di
+\par \tab \tab cmp di,0FFFh
+\par \tab \tab jle leave_hio1
+\par \tab \tab sub di,1000h
+\par \tab \tab inc lasthio
+\par 
+\par \tab \tab push ax            ; let vga card know we incremented hi offset
+\par \tab \tab mov ax,lasthio
+\par \tab \tab call set_hioffset
+\par \tab \tab pop ax
+\par 
+\par leave_hio1:
+\par \tab \tab inc ax              ; advance in x dir till at right edge
+\par \tab \tab cmp ax,x2
+\par \tab \tab jle again1
+\par 
+\par \tab \tab mov ax,x1                ; reset to left size of rectangle
+\par \tab \tab inc bx                   ; go to down to next row
+\par \tab \tab cmp bx,y2
+\par \tab \tab jg  fill_done1
+\par 
+\par 
+\par \tab ;Since were changing rows we'll find a new hi and low
+\par \tab ; the trick is to add the number of bytes from the right side of the
+\par \tab ; box to the left side of the box  ( note: no multiplies needed )
+\par 
+\par \tab \tab add di,next_row
+\par \tab \tab cmp di,0FFFh
+\par \tab \tab jle no_bump1
+\par \tab \tab sub di,1000h
+\par \tab \tab inc lasthio
+\par \tab \tab push ax
+\par \tab \tab mov ax,lasthio
+\par \tab \tab call set_hioffset
+\par \tab \tab pop ax
+\par no_bump1:
+\par 
+\par 
+\par \tab \tab jmp again1
+\par 
+\par 
+\par 
+\par fill_done1:
+\par \tab \tab call lock_vga           ; protect the vgas register again
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par 
+\par ; 36 ------------------------------------------------------------------
+\par 
+\par buf_ptr   dw    ?        ; pointer to the buffer for getimage/putimage
+\par put_mode  db    ?\tab  ; pixel writing mode for putting images (and,xor,etc)
+\par 
+\par ;         NOTE: the book has mistakes in input/output parameters
+\par ; input:
+\par ; \tab es:bx = pointer to memory buffer
+\par ;       buffer[0] = window width in x direction
+\par ;       buffer[2] = window height in y direction
+\par ;\tab cx = x1 corner of window
+\par ;\tab dx = y1 corner of window
+\par ; return: nothing
+\par 
+\par get_image: ; GetImage
+\par 
+\par 
+\par ;       this version of pattern filling uses the following trick to greatly
+\par ;       improve speed.  Instead of calling put_pixel for every pixel to plot
+\par ;       it does the write to screen memory on its own. What makes it fast is
+\par ;       that it only has to find the original offset by multipling XSIZE by
+\par ;       y1.  From then on it increments a pointer to find the next location
+\par ;       in screen memory.
+\par 
+\par 
+\par \tab \tab mov buf_ptr,bx   ; pointer to the buffer where we'll store image
+\par 
+\par \tab \tab mov ax,es:[bx]
+\par \tab \tab add ax,cx   ; add x1 plus xsize of image window
+\par 
+\par \tab \tab mov bx,es:[bx +2]
+\par \tab \tab add bx,dx   ; add y1 plus ysize of image window
+\par 
+\par 
+\par \tab \tab mov x1,cx
+\par \tab \tab mov y1,dx
+\par \tab \tab mov x2,ax
+\par \tab \tab mov y2,bx
+\par 
+\par \tab \tab mov bx,buf_ptr
+\par \tab \tab add bx,4           ; first word was used for xsize dimension
+\par \tab \tab mov buf_ptr,bx
+\par 
+\par \tab \tab mov ax,x1
+\par \tab \tab mov bx,y1
+\par 
+\par 
+\par 
+\par \tab \tab cmp active_mode,1
+\par \tab \tab je getimage_mode1\tab ; different way to calc pixel offset
+\par 
+\par \tab \tab ; Next, setup the starting value of the VGA's hioffset reg
+\par \tab \tab push ax
+\par \tab \tab push bx
+\par \tab \tab push cx
+\par 
+\par \tab \tab mov cx,ax           ; load x value
+\par \tab \tab mov ax,bx           ; load the y value
+\par \tab \tab mul xsize        ; find the pixel offset
+\par \tab \tab add ax,cx        ; add inthe x value
+\par \tab \tab mov di,ax
+\par 
+\par 
+\par \tab \tab ;  calculate ho many screen byte are from right edge of box
+\par \tab \tab ;  to left edge of box on next row
+\par \tab \tab mov ax,max_x
+\par \tab \tab sub ax,x2
+\par \tab \tab add ax,x1
+\par \tab \tab mov next_row,ax
+\par 
+\par \tab \tab pop cx
+\par \tab \tab pop bx
+\par \tab \tab pop ax
+\par 
+\par g_again0:
+\par \tab \tab ; move a byte from the screen to the image buffer
+\par \tab \tab push ax
+\par \tab \tab push es
+\par \tab \tab mov ax,0A000h
+\par \tab \tab mov es,ax
+\par \tab \tab mov al,byte ptr es:[di]
+\par \tab \tab pop es
+\par \tab \tab push bx
+\par \tab \tab mov bx,buf_ptr
+\par \tab \tab mov byte ptr es:[bx],al
+\par \tab \tab pop bx
+\par \tab \tab pop ax
+\par \tab \tab inc buf_ptr  ; point to next byte in the users buffer
+\par 
+\par 
+\par \tab \tab inc di              ; advvance screen mapped memory pointer
+\par \tab \tab inc ax              ; advance in x dir till at right edge
+\par \tab \tab cmp ax,x2
+\par \tab \tab jle g_again0
+\par 
+\par \tab \tab mov ax,x1                ; reset to left size of rectangle
+\par \tab \tab inc bx                   ; go to down to next row
+\par \tab \tab cmp bx,y2
+\par \tab \tab jg  geti_done0
+\par 
+\par 
+\par \tab ;Since were changing rows we'll find a new hi and low
+\par \tab ;the trick is to add the number of bytes from the right side of the
+\par \tab ; box to the left side of the box  ( note: no multiplies needed )
+\par 
+\par \tab \tab add di,next_row
+\par 
+\par \tab \tab jmp g_again0
+\par 
+\par 
+\par 
+\par geti_done0:
+\par \tab \tab ret              ; end of patbar in mode 0
+\par 
+\par 
+\par 
+\par 
+\par getimage_mode1:
+\par \tab \tab \tab \tab \tab ; first, make sure x1 < x2 and y1 < y2
+\par 
+\par \tab \tab call unlock_vga  ;  keep vga ready to plot pixels
+\par 
+\par 
+\par \tab \tab ;  Next, setup the starting value of the VGA's hioffset reg
+\par \tab \tab push ax
+\par \tab \tab push bx
+\par \tab \tab push cx
+\par 
+\par \tab \tab mov cx,ax           ; load x value
+\par \tab \tab mov ax,bx           ; load the y value
+\par \tab \tab call calc_hilow     ; find the values of hio and lowo
+\par \tab \tab mov ax,bx           ; load hio
+\par \tab \tab call set_hioffset   ; set the vga register for the hioffset
+\par 
+\par \tab \tab ;  calculate ho many screen byte are from right edge of box
+\par \tab \tab ;  to left edge of box on next row
+\par \tab \tab mov ax,max_x
+\par \tab \tab sub ax,x2
+\par \tab \tab add ax,x1
+\par \tab \tab mov next_row,ax
+\par 
+\par \tab \tab pop cx
+\par \tab \tab pop bx
+\par \tab \tab pop ax
+\par 
+\par g_again1:
+\par 
+\par \tab \tab \tab ; move a byte from the screen to the image buffer
+\par \tab \tab push ax
+\par \tab \tab push es
+\par \tab \tab mov ax,0A000h
+\par \tab \tab mov es,ax
+\par \tab \tab mov al,byte ptr es:[di]
+\par \tab \tab pop es
+\par \tab \tab push bx
+\par \tab \tab mov bx,buf_ptr
+\par \tab \tab mov byte ptr es:[bx],al
+\par \tab \tab pop bx
+\par \tab \tab pop ax
+\par \tab \tab inc buf_ptr  ; point to next byte in the users buffer
+\par 
+\par 
+\par \tab \tab inc di
+\par \tab \tab cmp di,0FFFh
+\par \tab \tab jle g_leave_hio1
+\par \tab \tab sub di,1000h
+\par \tab \tab inc lasthio
+\par 
+\par \tab \tab push ax          ; let vga card know we incremented hi offset
+\par \tab \tab mov ax,lasthio
+\par \tab \tab call set_hioffset
+\par \tab \tab pop ax
+\par 
+\par g_leave_hio1:
+\par \tab \tab inc ax              ; advance in x dir till at right edge
+\par \tab \tab cmp ax,x2
+\par \tab \tab jle g_again1
+\par 
+\par \tab \tab mov ax,x1                ; reset to left size of rectangle
+\par \tab \tab inc bx                   ; go to down to next row
+\par \tab \tab cmp bx,y2
+\par \tab \tab jg  geti_done1
+\par 
+\par 
+\par \tab ;Since were changing rows we'll find a new hi and low
+\par \tab ;the trick is to add the number of bytes from the right side of the
+\par \tab ; box to the left side of the box  ( note: no multiplies needed )
+\par 
+\par \tab \tab add di,next_row
+\par \tab \tab cmp di,0FFFh
+\par \tab \tab jle g_no_bump1
+\par \tab \tab sub di,1000h
+\par \tab \tab inc lasthio
+\par \tab \tab push ax
+\par \tab \tab mov ax,lasthio
+\par \tab \tab call set_hioffset
+\par \tab \tab pop ax
+\par g_no_bump1:
+\par 
+\par \tab \tab jmp g_again1
+\par 
+\par geti_done1:
+\par \tab \tab call lock_vga           ; protect the vgas register again
+\par 
+\par \tab \tab ret
+\par 
+\par ; 38 -------------------------------------------------------------------------
+\par 
+\par ;         NOTE: the book has mistakes in input/output parameters
+\par ; input:
+\par ; \tab es:bx = pointer to memory buffer
+\par ;       buffer[0] = window width in x direction
+\par ;       buffer[2] = window height in y direction
+\par ;\tab cx = x1 corner of window
+\par ;\tab dx = y1 corner of window
+\par ; return: nothing
+\par 
+\par 
+\par put_image: ; putImage
+\par 
+\par ;        this version of pattern filling uses the following trick to greatly
+\par ;        improve speed.  Instead of calling put_pixel for every pixel to plot
+\par ;        it does the write to screen memory on its own. What makes it fast is
+\par ;        that it only has to find the original offset by multipling XSIZE by
+\par ;        y1.  From then on it increments a pointer to find the next location
+\par ;        in screen memory.
+\par 
+\par \tab \tab mov put_mode,al  ; save the put image pixel writing mode
+\par \tab \tab mov buf_ptr,bx   ; pointer to the buffer where we'll store image
+\par 
+\par \tab \tab mov ax,es:[bx]
+\par \tab \tab add ax,cx   ; add x1 plut xsize of image window
+\par 
+\par \tab \tab mov bx,es:[bx +2]
+\par ;\tab \tab mov bx,di
+\par \tab \tab add bx,dx   ; add y1 plus ysize of image window
+\par 
+\par 
+\par \tab \tab mov x1,cx
+\par \tab \tab mov y1,dx
+\par \tab \tab mov x2,ax
+\par \tab \tab mov y2,bx
+\par 
+\par \tab \tab mov bx,buf_ptr
+\par \tab \tab add bx,4           ; first word was used for xsize dimension
+\par \tab \tab mov buf_ptr,bx
+\par 
+\par \tab \tab mov ax,x1
+\par \tab \tab mov bx,y1
+\par 
+\par 
+\par \tab \tab cmp active_mode,1
+\par \tab \tab je putimage_mode1\tab ; different way to calc pixel offset
+\par 
+\par \tab \tab ;   Next, setup the starting value of the VGA's hioffset reg
+\par \tab \tab push ax
+\par \tab \tab push bx
+\par \tab \tab push cx
+\par 
+\par \tab \tab mov cx,ax           ; load x value
+\par \tab \tab mov ax,bx           ; load the y value
+\par \tab \tab mul xsize        ; find the pixel offset
+\par \tab \tab add ax,cx        ; add inthe x value
+\par \tab \tab mov di,ax
+\par 
+\par 
+\par \tab \tab ;  calculate ho many screen byte are from right edge of box
+\par \tab \tab ;  to left edge of box on next row
+\par \tab \tab mov ax,max_x
+\par \tab \tab sub ax,x2
+\par \tab \tab add ax,x1
+\par \tab \tab mov next_row,ax
+\par 
+\par \tab \tab pop cx
+\par \tab \tab pop bx
+\par \tab \tab pop ax
+\par 
+\par 
+\par \tab \tab mov cl,put_mode    ; keep the put_mode in cl for access speed
+\par p_again0:
+\par \tab \tab call buf_to_screen
+\par 
+\par \tab \tab inc di              ; advvance screen mapped memory pointer
+\par \tab \tab inc ax              ; advance in x dir till at right edge
+\par \tab \tab cmp ax,x2
+\par \tab \tab jle p_again0
+\par 
+\par \tab \tab mov ax,x1                ; reset to left size of rectangle
+\par \tab \tab inc bx                   ; go to down to next row
+\par \tab \tab cmp bx,y2
+\par \tab \tab jg  puti_done0
+\par 
+\par 
+\par \tab ;Since were changing rows we'll find a new hi and low
+\par \tab ; the trick is to add the number of bytes from the right side of the
+\par \tab ; box to the left side of the box  ( note: no multiplies needed )
+\par 
+\par \tab \tab add di,next_row
+\par 
+\par \tab \tab jmp p_again0
+\par 
+\par 
+\par 
+\par puti_done0:
+\par \tab \tab ret              ; end of patbar in mode 0
+\par 
+\par 
+\par                 ; ----------------- putimage for mode 1 ------------------
+\par 
+\par putimage_mode1:
+\par \tab \tab \tab \tab \tab ; first, make sure x1 < x2 and y1 < y2
+\par 
+\par \tab \tab call unlock_vga  ;  keep vga ready to plot pixels
+\par 
+\par 
+\par \tab ;        Next, setup the starting value of the VGA's hioffset reg
+\par \tab \tab push ax
+\par \tab \tab push bx
+\par \tab \tab push cx
+\par 
+\par \tab \tab mov cx,ax           ; load x value
+\par \tab \tab mov ax,bx           ; load the y value
+\par \tab \tab call calc_hilow     ; find the values of hio and lowo
+\par \tab \tab mov ax,bx           ; load hio
+\par \tab \tab call set_hioffset   ; set the vga register for the hioffset
+\par 
+\par 
+\par \tab \tab ;  calculate ho many screen byte are from right edge of box
+\par \tab \tab ;  to left edge of box on next row
+\par \tab \tab mov ax,max_x
+\par \tab \tab sub ax,x2
+\par \tab \tab add ax,x1
+\par \tab \tab mov next_row,ax
+\par 
+\par \tab \tab pop cx
+\par \tab \tab pop bx
+\par \tab \tab pop ax
+\par 
+\par \tab \tab mov cl,put_mode     ; keep the put_mode in cl for access speed
+\par p_again1:
+\par \tab \tab call buf_to_screen
+\par 
+\par \tab \tab inc di
+\par \tab \tab cmp di,0FFFh
+\par \tab \tab jle p_leave_hio1
+\par \tab \tab sub di,1000h
+\par \tab \tab inc lasthio
+\par 
+\par \tab \tab push ax            ; let vga card know we incremented hi offset
+\par \tab \tab mov ax,lasthio
+\par \tab \tab call set_hioffset
+\par \tab \tab pop ax
+\par 
+\par p_leave_hio1:
+\par \tab \tab inc ax              ; advance in x dir till at right edge
+\par \tab \tab cmp ax,x2
+\par \tab \tab jle p_again1
+\par 
+\par \tab \tab mov ax,x1                ; reset to left size of rectangle
+\par \tab \tab inc bx                   ; go to down to next row
+\par \tab \tab cmp bx,y2
+\par \tab \tab jg  puti_done1
+\par 
+\par 
+\par \tab ;Since were changing rows we'll find a new hi and low
+\par \tab ; the trick is to add the number of bytes from the right side of the
+\par \tab ; box to the left side of the box  ( note: no multiplies needed )
+\par 
+\par \tab \tab add di,next_row
+\par \tab \tab cmp di,0FFFh
+\par \tab \tab jle p_no_bump1
+\par \tab \tab sub di,1000h
+\par \tab \tab inc lasthio
+\par \tab \tab push ax
+\par \tab \tab mov ax,lasthio
+\par \tab \tab call set_hioffset
+\par \tab \tab pop ax
+\par p_no_bump1:
+\par 
+\par \tab \tab jmp p_again1
+\par 
+\par puti_done1:
+\par \tab \tab call lock_vga           ; protect the vgas register again
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par           ; ----------------------------------------------
+\par           ;    this code write the next byte from the put image buffer
+\par           ;    to the display screen
+\par 
+\par buf_to_screen proc near
+\par \tab \tab \tab ; move a byte from the image buffer to the screen
+\par \tab \tab push ax
+\par \tab \tab push bx
+\par 
+\par \tab \tab \tab \tab ; get the byte out of the users buffer
+\par \tab \tab mov bx,buf_ptr
+\par \tab \tab mov al,byte ptr es:[bx]
+\par 
+\par \tab \tab pop bx
+\par \tab \tab push es
+\par \tab \tab push ax
+\par 
+\par \tab \tab mov ax,0A000h
+\par \tab \tab mov es,ax        ; es reg is pointer to VGA screen
+\par 
+\par \tab \tab pop ax
+\par 
+\par \tab \tab \tab ; write the byte to screen mem according to users mode
+\par ;\tab \tab mov cl,put_mode
+\par \tab \tab cmp cl,0
+\par \tab \tab jne try_xor0
+\par \tab \tab mov byte ptr es:[di],al
+\par \tab \tab jmp mode_found0
+\par try_xor0:
+\par \tab \tab cmp cl,1
+\par \tab \tab jne try_or0
+\par \tab \tab xor byte ptr es:[di],al
+\par \tab \tab jmp mode_found0
+\par try_or0:
+\par \tab \tab cmp cl,2
+\par \tab \tab jne try_and0
+\par \tab \tab or byte ptr es:[di],al
+\par \tab \tab jmp mode_found0
+\par try_and0:
+\par \tab \tab cmp cl,3
+\par \tab \tab jne then_comp0
+\par \tab \tab and byte ptr es:[di],al
+\par \tab \tab jmp mode_found0
+\par then_comp0:
+\par \tab \tab xor al,0FFh               ; complement the byte
+\par \tab \tab and byte ptr es:[di],al
+\par mode_found0:
+\par 
+\par \tab \tab pop es
+\par \tab \tab pop ax
+\par 
+\par \tab \tab inc buf_ptr  ; point to next byte in the users buffer
+\par 
+\par \tab \tab ret
+\par 
+\par buf_to_screen endp
+\par 
+\par 
+\par ; 40 -------------------------------------------------------------------
+\par 
+\par ; input:
+\par ;\tab ax = x1
+\par ;\tab bx = y1
+\par ;\tab cx = x2
+\par ;\tab dx = y2
+\par ; return: nothing
+\par 
+\par set_clip: ; Set clipping
+\par \tab \tab \tab \tab ; load the limits of the clipping window
+\par \tab \tab mov clip_x1,ax
+\par \tab \tab mov clip_y1,bx
+\par \tab \tab mov clip_x2,cx
+\par \tab \tab mov clip_y2,dx
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par 
+\par ; 3A -------------------------------------------------------------------
+\par 
+\par ; if al = 0
+\par ;\tab input:  nothing
+\par ;\tab return:
+\par ;\tab \tab bx = size of color table
+\par ;\tab \tab cx = maximum color number
+\par ; if al = 1
+\par ;\tab input:  nothing
+\par ;\tab return:
+\par ;\tab \tab es:bx = pointer to default color table (first byte is size)
+\par 
+\par color_query:\tab \tab ; SetParameters
+\par 
+\par \tab \tab \tab cmp al,0
+\par \tab \tab \tab jnz\tab color_table_q
+\par 
+\par \tab \tab \tab mov\tab bx,256
+\par \tab \tab \tab mov cx,255
+\par \tab \tab \tab ret
+\par 
+\par color_table_q:
+\par \tab \tab \tab push cs
+\par \tab \tab \tab pop es
+\par \tab \tab \tab mov bx,offset color_table
+\par \tab \tab \tab ret
+\par 
+\par 
+\par 
+\par 
+\par ; =========================================================================
+\par 
+\par \tab ; line drawing routine from Assembly language
+\par \tab ; primer - The Waite Group - page 339-340
+\par 
+\par draw_line\tab proc\tab near
+\par \tab \tab mov ax,y2
+\par \tab \tab sub ax,y1
+\par 
+\par \tab \tab mov si,1
+\par \tab \tab jge\tab store_y
+\par \tab \tab mov si,-1
+\par \tab \tab neg ax
+\par 
+\par store_y:
+\par \tab \tab mov delta_y,ax
+\par 
+\par \tab \tab mov\tab ax,x2
+\par \tab \tab sub ax,x1
+\par 
+\par \tab \tab mov\tab di,1
+\par \tab \tab jge\tab store_x
+\par \tab \tab mov\tab di,-1
+\par \tab \tab neg\tab ax
+\par 
+\par store_x:
+\par \tab \tab mov\tab delta_x,ax
+\par 
+\par \tab \tab mov\tab ax,delta_x
+\par \tab \tab cmp\tab ax,delta_y
+\par \tab \tab jl\tab csteep
+\par \tab \tab call easy
+\par \tab \tab jmp finish_line
+\par 
+\par csteep:
+\par \tab \tab call steep
+\par 
+\par finish_line:
+\par \tab \tab ret
+\par 
+\par draw_line\tab endp
+\par 
+\par 
+\par \tab ; ---------------------------------
+\par 
+\par easy\tab proc\tab near
+\par 
+\par \tab \tab mov\tab ax,delta_x
+\par \tab \tab shr\tab ax,1
+\par \tab \tab mov\tab halfx,ax
+\par 
+\par \tab \tab mov\tab cx,x1
+\par \tab \tab mov\tab dx,y1
+\par \tab \tab mov bx,0
+\par \tab \tab mov ax,delta_x
+\par \tab \tab mov\tab count,ax
+\par 
+\par newdot:
+\par \tab \tab call dotplot
+\par \tab \tab add\tab cx,di
+\par \tab \tab add bx,delta_y
+\par \tab \tab cmp\tab bx,halfx
+\par \tab \tab jle\tab dcount
+\par \tab \tab sub\tab bx,delta_x
+\par 
+\par \tab \tab add\tab dx,si
+\par 
+\par dcount:
+\par \tab \tab dec count
+\par \tab \tab jge\tab newdot
+\par 
+\par \tab \tab ret
+\par 
+\par easy\tab endp
+\par 
+\par 
+\par \tab ; --------------------------------
+\par 
+\par 
+\par steep\tab proc\tab near
+\par 
+\par \tab \tab mov ax,delta_y
+\par \tab \tab shr\tab ax,1
+\par \tab \tab mov\tab halfy,ax
+\par 
+\par \tab \tab mov\tab cx,x1
+\par \tab \tab mov\tab dx,y1
+\par 
+\par \tab \tab mov\tab bx,0
+\par \tab \tab mov\tab ax,delta_y
+\par \tab \tab mov count,ax
+\par 
+\par newdot2:
+\par \tab \tab call dotplot
+\par \tab \tab add\tab dx,si
+\par \tab \tab add bx,delta_x
+\par \tab \tab cmp\tab bx,halfy
+\par \tab \tab jle\tab dcount2
+\par \tab \tab sub\tab bx,delta_y
+\par 
+\par \tab \tab add\tab cx,di
+\par 
+\par dcount2:
+\par \tab \tab dec\tab count
+\par \tab \tab jge\tab newdot2
+\par 
+\par \tab \tab ret
+\par 
+\par steep\tab endp
+\par 
+\par 
+\par \tab ;\tab ------------------------------
+\par 
+\par 
+\par dotplot\tab proc\tab near
+\par 
+\par \tab \tab push\tab ax    ; save old values
+\par \tab \tab push\tab bx
+\par \tab \tab push\tab cx
+\par \tab \tab push\tab dx
+\par 
+\par \tab \tab ; check to see if line style pattern dictates a plot or not
+\par \tab \tab ; if active_bit_pattern[line_bit_ptr] = 0 then dont plot a dot
+\par 
+\par \tab \tab push ax
+\par \tab \tab push cx
+\par 
+\par \tab \tab mov\tab ax,active_linestyle
+\par \tab \tab mov\tab cl,line_bit_ptr
+\par \tab \tab shl ax,cl
+\par \tab \tab and ax,8000h
+\par \tab \tab cmp ax,8000h
+\par 
+\par \tab \tab pop cx
+\par \tab \tab pop ax
+\par 
+\par \tab \tab mov\tab ax,cx
+\par \tab \tab mov\tab bx,dx
+\par 
+\par \tab \tab jne no_dot_plot
+\par 
+\par \tab \tab mov dl,current_line_color    ; do plot dot, so load line color
+\par 
+\par \tab \tab call put_pixel \tab \tab ; call the pixel writing routine
+\par no_dot_plot:
+\par 
+\par 
+\par \tab \tab inc line_bit_ptr\tab \tab ; move to next bit in pattern
+\par \tab \tab cmp line_bit_ptr,16     ; are we at the end of the pattern
+\par \tab \tab jne\tab no_reset_linestyle  ; if not do nothing
+\par \tab \tab mov line_bit_ptr,0  ; else start over at the pattern beginning
+\par no_reset_linestyle:
+\par 
+\par \tab \tab pop\tab \tab dx    ; save old values
+\par \tab \tab pop \tab cx
+\par \tab \tab pop \tab bx
+\par \tab \tab pop \tab ax
+\par 
+\par 
+\par 
+\par \tab \tab ret
+\par 
+\par dotplot\tab endp
+\par 
+\par 
+\par ; --------------------------------------------------------------------------
+\par 
+\par calc_hilow:        ; find hi and low vga offsets for x,y location
+\par \tab \tab \tab    ; cx is column (x) , ax is row (y)
+\par \tab \tab \tab    ; uses value in varible 'xsize'
+\par \tab \tab \tab    ; results are  lowoffset in di and hioffset in bx
+\par 
+\par \tab \tab push dx
+\par 
+\par \tab \tab mul xsize      ;   offset =(xsize * y)
+\par \tab \tab add ax,cx\tab    ;     + x
+\par \tab \tab jnc nocarry_o
+\par \tab \tab inc dx         ;   (DxAx + Cx)
+\par nocarry_o:
+\par 
+\par \tab \tab mov di,ax
+\par \tab \tab and di,0FFFh   ;   low offset is lowest 12 bits of offset
+\par 
+\par \tab \tab mov cl,12      ;   (hioffset = offset >> 12
+\par \tab \tab shr ax,cl
+\par \tab \tab mov cl,4
+\par \tab \tab shl dx,cl
+\par \tab \tab or  dx,ax
+\par \tab \tab mov bx,dx      ;   hioffset saved in bx
+\par 
+\par \tab \tab pop dx
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par ; ---------------------------------------------------------------------------
+\par 
+\par unlock_vga:            ; unlock vga registers
+\par 
+\par \tab \tab push ax
+\par \tab \tab push dx
+\par 
+\par \tab \tab mov dx,03CEh   ;   vga I/O port
+\par \tab \tab mov ax,050Fh
+\par \tab \tab out dx,ax      ;   unlock vga registers
+\par 
+\par \tab \tab pop dx
+\par \tab \tab pop ax
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par ; ---------------------------------------------------------------------------
+\par 
+\par lock_vga:            ; lock vga registers
+\par 
+\par \tab \tab push ax
+\par \tab \tab push dx
+\par 
+\par \tab \tab mov dx,03CEh   ;   vga I/O port
+\par \tab \tab mov ax,000Fh
+\par \tab \tab out dx,ax      ;   unlock vga registers
+\par 
+\par \tab \tab pop dx
+\par \tab \tab pop ax
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par ; ---------------------------------------------------------------------------
+\par 
+\par set_hioffset:          ;  sets the vga hi offset register
+\par \tab \tab \tab ; ax contains the value for HIoffset
+\par 
+\par \tab \tab push dx
+\par 
+\par \tab \tab mov lasthio,ax
+\par 
+\par \tab \tab mov ah,al      ; hioffset goes in ah
+\par \tab \tab mov al,9       ; function code to set PR0A register
+\par 
+\par \tab \tab mov dx,03CEh   ;   vga I/O address
+\par \tab \tab out dx,ax      ;   set the hioffset value
+\par 
+\par \tab \tab pop dx
+\par 
+\par \tab \tab ret
+\par 
+\par 
+\par 
+\par ; ---------------------------------------------------------------------------
+\par 
+\par ;   .
+\par endofcode label byte  ; This is the label ref'd in ACODE segment
+\par CODE      ENDS
+\par           END
+\par -- 
+\par Gene Lee               UUCP: ...!amdahl!ems!minnow!lee
+\par Unisys Corporation             
+\par Phone: +1 612 635 3993    CSNET: lee@minnow.SP.Unisys.Com
+\par If not for the courage of the fearless manager, the paycheck would be lost.
+\par 
+\par 
+\par 
+\par \'1a
+\par }
+ 

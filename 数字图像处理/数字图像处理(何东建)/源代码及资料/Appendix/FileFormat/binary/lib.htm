@@ -1,0 +1,117 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>microsoft library </title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">microsoft library (.lib) format</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%"><br>
+    product: microsoft basic compiler<br>
+    title: microsoft library (.lib) format, created by lib.exe<br>
+    <br>
+    updated: 27-dec-1991<br>
+    operating system versions: 6.00 6.00b 7.00 7.10<br>
+    operating systems: ms-dos<br>
+    <br>
+    summary:<br>
+    <br>
+    this article describes the components of the microsoft library format<br>
+    (for .lib files created by the lib.exe library manager). the microsoft<br>
+    library format is consistent between compatible microsoft languages.<br>
+    while future library utilities will remain backward- compatible with<br>
+    the older library formats, the actual library format itself is subject<br>
+    to change. this information is taken from chapter 5 of the &quot;microsoft<br>
+    c developer's toolkit reference,&quot; which contains more in-depth<br>
+    information on the microsoft library format.<br>
+    <br>
+    this information applies to microsoft quickbasic versions 4.0, 4.0b,<br>
+    and 4.5 for ms-dos, to microsoft basic compiler versions 6.0 and 6.0b<br>
+    for ms-dos, and to microsoft basic professional development system<br>
+    (pds) versions 7.0 and 7.1 for ms-dos.<br>
+    <br>
+    more information:<br>
+    <br>
+    library header record<br>
+    ---------------------<br>
+    <br>
+    object code library .lib files under ms-dos always contain blocks of<br>
+    data in multiples of 512 bytes. the first record in the library is a<br>
+    library header. this record is structured the same as a microsoft<br>
+    object-module-format (ms omf) record. that is, the first byte of the<br>
+    record identifies the record's type, and the next two bytes specify<br>
+    the number of bytes remaining in the record. note that the length<br>
+    field is byte-swapped (in other words, the low-order byte precedes the<br>
+    high-order byte). the record type for this library header is f0 hex<br>
+    (240 decimal).<br>
+    <br>
+    modules in a library always start at the beginning of a page. page<br>
+    size is determined by adding three (one for the record type byte and<br>
+    two for the record length field itself) to the value in the record<br>
+    length field; thus the library header record always occupies exactly<br>
+    one page. legal values for page size are given by the range of 2<br>
+    through the n, where n is a value from 4 through 15.<br>
+    <br>
+    the four bytes immediately following the length field are a byte-<br>
+    swapped long integer specifying the byte offset within the library of<br>
+    the first block of the dictionary. the next two bytes are a byte-<br>
+    swapped word field that specifies the number of blocks in the<br>
+    dictionary. (note: the library manager, lib.exe for ms-dos, cannot<br>
+    create a library whose dictionary requires more than 251 512-byte<br>
+    pages.)<br>
+    <br>
+    the next byte contains flags describing the library. one current flag<br>
+    definition is &quot;0x01 = case sensitive&quot;. this applies to both regular<br>
+    and extended dictionaries. all other values are reserved for future<br>
+    use and should be 0. the remaining bytes in the library header record<br>
+    are not significant. this record deviates from the typical microsoft<br>
+    omf record in that the last byte is not used as a checksum on the rest<br>
+    of the record.<br>
+    <br>
+    object modules<br>
+    --------------<br>
+    <br>
+    the first object module in the library immediately follows the header.<br>
+    the first object module is followed in turn by all other object<br>
+    modules in the library. each module is in microsoft omf. individual<br>
+    modules are aligned so that they start at the beginning of a new page.<br>
+    if, as is commonly the case, a module does not occupy a number of<br>
+    bytes that is exactly a multiple of the page size, then its last block<br>
+    is padded with as many null bytes as are required to fill it. this<br>
+    special format is covered in detail in the &quot;c developer's toolkit<br>
+    reference.&quot;<br>
+    <br>
+    dictionary blocks<br>
+    -----------------<br>
+    <br>
+    the remaining blocks in the library compose the dictionary. the number<br>
+    of blocks in the dictionary is given in the library header. dictionary<br>
+    length is in 512-byte blocks. detailed information on the exact<br>
+    content and format of the dictionary are contained in the &quot;c<br>
+    developer's toolkit reference.&quot;<br>
+    <br>
+    extended dictionary<br>
+    -------------------<br>
+    <br>
+    the extended dictionary is optional and indicates dependencies between<br>
+    modules in the library. versions of lib.exe earlier than version 3.09<br>
+    do not create an extended dictionary. the extended dictionary is<br>
+    placed at the end of the library. again, see the &quot;c developer's<br>
+    toolkit reference&quot; for details on the structure of the extended<br>
+    dictionary.<br>
+    <br>
+    additional reference words: 6.00 6.00b 7.00 7.10 4.00 4.00b 4.50</td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

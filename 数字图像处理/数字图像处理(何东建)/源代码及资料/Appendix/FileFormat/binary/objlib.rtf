@@ -1,0 +1,1436 @@
+{\rtf1\ansi\deff0\deftab720{\fonttbl{\f0\fnil MS Sans Serif;}{\f1\fnil\fcharset2 Symbol;}{\f2\fswiss\fprq2 System;}{\f3\fnil\fcharset134 \'cb\'ce\'cc\'e5;}}
+{\colortbl\red0\green0\blue0;}
+\deflang1033{\info{\horzdoc }{\*\fchars !),.:\'3b?\}]\'a1\'a2\'a1\'a3\'a1\'a4\'a1\'a5\'a1\'a6\'a1\'a7\'a1\'a8\'a1\'a9\'a1\'aa\'a1\'ab\'a1\'ac\'a1\'ad\'a1\'af\'a1\'b1\'a1\'b3\'a1\'b5\'a1\'b7\'a1\'b9\'a1\'bb\'a1\'bd\'a1\'bf\'a1\'c3\'a3\'a1\'a3\'a2\'a3\'a7\'a3\'a9\'a3\'ac\'a3\'ae\'a3\'ba\'a3\'bb\'a3\'bf\'a3\'dd\'a3\'e0}{\*\lchars ([\{\'a1\'ae\'a1\'b0\'a1\'b2\'a1\'b4\'a1\'b6\'a1\'b8\'a1\'ba\'a1\'bc\'a1\'be\'a3\'a8\'a3\'db\'a3\'fb\'a3\'ae\'a1\'a4}}
+\pard\nowwrap\nooverflow\plain\f3\fs21 Linker Overview
+\par                               Linker Overview
+\par 
+\par -  The primary purpose of a linker is to produce an file which can be
+\par    executed by an operating system.
+\par 
+\par -  In DOS, executable files come in three flavors:
+\par 
+\par                           "EXE" files
+\par                           "COM" files
+\par                           "SYS" files
+\par 
+\par -  The input to the linker comes from module(s) called translator
+\par    modules.
+\par 
+\par -  Individual translator modules can be stored in "OBJ" files.  "OBJ"
+\par    files are produce by language translators such as assemblers and
+\par    compilers.
+\par 
+\par -  Libraries of translator modules can be stored in "LIB" files which
+\par    are produced by a librarian from either "OBJ" files or other "LIB"
+\par    files.
+\par 
+\par -  A linker can process translator modules from either "OBJ" or "LIB"
+\par    files, but at least one module must have come from an "OBJ" file.
+\par 
+\par -  All translator modules from "OBJ" files will be included in the
+\par    executable file, but only modules which resolve externals come from
+\par    "LIB" files.
+\par \'0c
+\par 
+\par                     Comparison of Executable Files
+\par 
+\par -  "EXE" files have a header which contains relocation and other
+\par    information which permit "EXE" files to have multiple segments.
+\par    This header sets "EXE" files apart from the other executable file
+\par    types.  Programs are written starting at address 0 (relative to
+\par    where the program is loaded in memory).
+\par 
+\par -  "COM" files have no header.  "COM" files are written starting a
+\par    address 100H because the "COM" file is loaded immediately after the
+\par    program segment prefix (PSP) which is 100H bytes long.  At the start
+\par    of the program, the CS and DS segment registers point to the PSP.
+\par    "EXE" files which have an empty relocation table can be converted to
+\par    "COM" files by the "EXE2BIN" program.
+\par 
+\par -  "SYS" files are more closely related to "COM" files than "EXE"
+\par    files.  "SYS" files are loaded once at DOS initialization time.
+\par    Since there is no PSP, the programs are written starting at address
+\par    0.  However, like "COM" files, "SYS" files must have an empty
+\par    relocation table.
+\par 
+\par 
+\par 
+\par                          Contents of Executable Files
+\par 
+\par 
+\par     "EXE" files                                      "SYS" files
+\par \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf                                \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+\'b3\'20  "EXE" header   \'b3\'20                               \'b3\'6coad module\'c3\'c4\'c4\'bf
+\par \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4                                \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'20 \'b3\'0d\
+\'b3\'20relocation table \'b3\'20                                              \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4                    \'da\'c4\'c4\'c4\'c4\'c4\'bf\'20                   \'b3\'0d\
+\'b3\'20  load module    \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4org 0\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9                    \'c0\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par 
+\par 
+\par                         "COM" files
+\par                        \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf\'20                \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par                        \'b3\'6coad module\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'6frg 100H\'b3\'0d\
+                       \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'20                \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par 
+\par -  Each of the above contents are described in detail in the following
+\par    slides.
+\par \'0c
+\par 
+\par                               "EXE" File Header
+\par \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par \'b3\'4fffset\'b3\'20                      Description                             \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'300-01 \'b3\'20The "EXE" file signature 4D5AH.                               \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'302-03 \'b3\'20Length of the "EXE" file modulo 512.                          \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'304-05 \'b3\'20Number of 512-byte pages.  If the last page is not full it is \'b3\'0d\
+\'b3\'20     \'b3\'20still included in the count.                                  \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'306-07 \'b3\'20Number of relocation items.                                   \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'308-09 \'b3\'20Num of 16-byte paras occupied by "EXE" header and relo table. \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'30A-0B \'b3\'20Number of paragraphs required immediately after load module.  \'b3\'0d\
+\'b3\'20     \'b3\'20The linker computes the number of uninitialized bytes at the  \'b3\'0d\
+\'b3\'20     \'b3\'20end of the load module.  Instead of writing these bytes to    \'b3\'0d\
+\'b3\'20     \'b3\'20the "EXE" file, the linker sets this value to provide space   \'b3\'0d\
+\'b3\'20     \'b3\'20for this data.                                                \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'30C-0D \'b3\'20Max number of paras which may be required immediately after   \'b3\'0d\
+\'b3\'20     \'b3\'20the "EXE" file. This value comes from the CPARMAXALLOC switch.\'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'30E-11 \'b3\'20Offset/Segment displacement into the load module of initial   \'b3\'0d\
+\'b3\'20     \'b3\'20SP/SS/. The displacement is converted to an actual address by \'b3\'0d\
+\'b3\'20     \'b3\'20adding the base address of the load module.  Since there may  \'b3\'0d\
+\'b3\'20     \'b3\'20be several stack segments in the translator modules, the      \'b3\'0d\
+\'b3\'20     \'b3\'20linker uses the highest address of the largest segment with   \'b3\'0d\
+\'b3\'20     \'b3\'20the stack attribute.                                          \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'312-13 \'b3\'20Word checksum computed as minus the sum of all the words in   \'b3\'0d\
+\'b3\'20     \'b3\'20the file.  Overflows are ignored.  DOS will not validate the  \'b3\'0d\
+\'b3\'20     \'b3\'20checksum if this value is set to zero                         \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'314-17 \'b3\'20Offset/Segment displacement into the load module of the       \'b3\'0d\
+\'b3\'20     \'b3\'20initial IP/CS.  The displacement is converted to an actual    \'b3\'0d\
+\'b3\'20     \'b3\'20address by adding the base address of the load module.        \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'318-19 \'b3\'20Lgh of "EXE" file header. (Used to find start of relo table.) \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'31A-1B \'b3\'20Overlay number.  This is zero for the main program.           \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'31C-1D \'b3\'20Always 0001H.                                                 \'b3\'0d\
+\'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par Note:  "EXE" file header routines are in "EXECFILE.C" (handout page 9)
+\par \'0c
+\par 
+\par                                Relocation Table
+\par 
+\par The number of relocation items is specified at offset 06-07 in the
+\par "EXE" file header.  The offset of the relocation table is located at
+\par offset 18-19 in the "EXE" file header.  Usually this value is 001EH,
+\par but can be larger if the "EXE" file header has been extended.
+\par 
+\par The relocation table can be viewed as an array of Offset/Segment
+\par displacements into the load module.  For each address, the segment
+\par portion of the base address of the load module is added to the word at
+\par that displacement.  The only time a relocation item is needed is when a
+\par fixup involves a segment.  As we will see later, this can only be
+\par caused by base and pointer type fixups.
+\par 
+\par As an example of a how a relocation item is generated, consider the
+\par following:
+\par 
+\par                            foo      db      'a'
+\par                            bar      dd      foo
+\par 
+\par Note that the contents of "bar" is the address of "foo", but the actual
+\par address of "foo" is not known until the program is loaded in memory.
+\par All that is known at link time is how far (i.e., the displacement) into
+\par the load module "foo" and "bar" are located.  Only the displacement of
+\par "foo" is stored at link time.  But, the linker makes a relocation entry
+\par showing that "bar"+2 must be relocated.
+\par 
+\par 
+\par 
+\par                              Load Module
+\par 
+\par By far, the generation of the load module is the trickest part of
+\par producing an executable file.  The contents of the load module is
+\par generated from the contents of translator modules stored in "OBJ" and
+\par "LIB" files.  Much of the structure of translator modules comes from
+\par the assembler directives.  In turn, those directives are related to the
+\par architecture of the 80x86 family of micros.
+\par 
+\par Here are some of the important directives:
+\par 
+\par SEGMENT/ENDS is used to give a logical name along with grouping and
+\par      combining information for the segments.  The linker is responsible
+\par      for arranging and combining these logical segments into the
+\par      physical segments which comprise a load module.
+\par 
+\par EXTRN/PUBLIC is used access data across translator modules.
+\par 
+\par A detailed description of the format of translator modules follows.
+\par \'0c
+\par 
+\par                       Terminology and Abbreviations
+\par 
+\par MAS - Memory Address Space:  The memory capable of being addressed by
+\par     the hardware architecture.
+\par 
+\par T-MODULE - Translator Module:  This is a unit of object code produced
+\par     by a language translator.  They may be stored individually in "OBJ"
+\par     files or collections may be stored in "LIB" files.
+\par 
+\par FRAME:  A contiguous 64K chunk of MAS.
+\par 
+\par FRAME NUMBER:  Paragraph number where a FRAME begins.
+\par 
+\par CANONIC FRAME:  For the 8086, each byte of memory is encompassed by up
+\par     to 4096 FRAMEs.  The CANONIC FRAME frame is lowest FRAME NUMBER
+\par     which encompasses that byte.
+\par 
+\par LSEG - Logical Segment:  Data and code between SEGMENT - ENDS
+\par     directives.
+\par 
+\par PSEG - Physical Segment:  A collection of one or more LSEGs placed into
+\par     a load module.
+\par 
+\par 
+\par 
+\par                             Fixup Overview
+\par 
+\par Not all references to MAS can be resolved at translation time.  This
+\par can happen when one T-MODULE must access data located in another
+\par T-MODULE.  When this happens, the language translator places an entry
+\par in the T-MODULE so that the linker can complete the address reference.
+\par Such entries in a T-MODULE are called "Fixups".
+\par 
+\par In order for the linker to complete the address reference, it needs
+\par five pieces of information:
+\par 
+\par           The LOCATION in memory where the reference occurs.  This is
+\par         the address which must be fixed up.
+\par 
+\par           The type of LOCATION in memory where the reference occurs.
+\par 
+\par           Whether the fixup is relative to the IP or not.  This is
+\par         refered to as the fixup MODE.
+\par 
+\par           The TARGET address which LOCATION is referencing.
+\par 
+\par           The FRAME number in the segment register used to reference
+\par         the TARGET address.
+\par \'0c
+\par 
+\par                             LOCATION Types
+\par 
+\par There are five types of LOCATIONs.  They are POINTER, BASE, OFFSET,
+\par HIBYTE, and LOBYTE.  The relative position and length of each LOCATION
+\par type from a LOCATION, X is given below:
+\par 
+\par              \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+             \'b3\'20  X+0    \'b3\'20  X+1    \'b3\'20  X+2    \'b3\'20  X+3    \'b3\'0d\
+             \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par              \'c3\'c4\'c4\'4cOBYTE\'c4\'c4\'b4\'0d\
+
+\par                         \'c3\'c4\'c4\'48IBYTE\'c4\'c4\'b4\'0d\
+
+\par              \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4OFFSET\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+
+\par                                    \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'42ASE\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par 
+\par              \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'50OINTER\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+
+\par 
+\par                              Fixup Modes
+\par 
+\par There are two fixup modes.  Both modes stem from the architecture of
+\par the 80x86 microprocessor family.  The TARGET may be addressed directly
+\par via the offset/segment mechanism.  This fixup mode is called
+\par "segment-relative".
+\par 
+\par The other manner a TARGET may be addressed is relative to the IP.  For
+\par example, the TARGET of the 80x86 jump instructions (e.g., JE, JC, JA,
+\par etc) are all relative to the IP.  This fixup mode is called
+\par "self-relative".  Note that the self-relative mode is relative to the
+\par value of the IP when the instruction executes.  In all cases, the IP
+\par points to the first byte of the instruction following the one being
+\par executed.
+\par \'0c
+\par 
+\par                                 TARGET
+\par 
+\par The TARGET is the location in MAS being referenced by LOCATION.  There
+\par are four basic ways of specifying the TARGET.  The four methods of
+\par specifying a TARGET are:
+\par 
+\par                   TARGET is specified relative to an LSEG.
+\par                   TARGET is specified relative to a group.
+\par                   TARGET is specified relative to an external symbol.
+\par                   TARGET is specified relative to an absolute FRAME.
+\par 
+\par The four primary methods specify a displacement while the four
+\par secondary methods do not specify a displacement (because the
+\par displacement is 0).
+\par 
+\par                             Primary TARGET Methods
+\par \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par \'b3\'4dethod\'b3\'20      Notation          \'b3\'20          Description               \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 T0  \'b3\'53I(segment),displacement \'b3\'54he TARGET is at the specified       \'b3\'0d\
+\'b3\'20     \'b3\'20                        \'b3\'64isplacement in the LSEG segment.    \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 T1  \'b3\'47I(group),displacement   \'b3\'54he TARGET is at the specified       \'b3\'0d\
+\'b3\'20     \'b3\'20                        \'b3\'64isplacement in the group.           \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 T2  \'b3\'45I(external),displacement\'b3\'54he TARGET is at the specified       \'b3\'0d\
+\'b3\'20     \'b3\'20                        \'b3\'64isplacement past the external.      \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 T3  \'b3\'46R(frame),displacement   \'b3\'54he TARGET is at the specified       \'b3\'0d\
+\'b3\'20     \'b3\'20                        \'b3\'64isplacement past FRAME NUMBER frame.\'b3\'0d\
+\'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par Example:
+\par 
+\par SI(foo),4 means the TARGET is 4 bytes into the LSEG foo.  Several
+\par T-MODULES could have an LSEG named foo which may be combined into a
+\par PSEG foo.  So, the final displacement in the PSEG foo may not be 4.
+\par The linker must take this into consideration.
+\par 
+\par                            Secondary TARGET Methods
+\par 
+\par      \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+     \'b3\'4dethod\'b3\'20Notation   \'b3\'20              Description                   \'b3\'0d\
+     \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+     \'b3\'20 T4  \'b3\'53I(segment) \'b3\'54he TARGET is the base of the LSEG segment.  \'b3\'0d\
+     \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+     \'b3\'20 T5  \'b3\'47I(group)   \'b3\'54he TARGET is the base of the group.         \'b3\'0d\
+     \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+     \'b3\'20 T6  \'b3\'45I(external)\'b3\'54he TARGET is the specified external.        \'b3\'0d\
+     \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+     \'b3\'20 T7  \'b3\'46R(frame)   \'b3\'54he TARGET is the specified frame.           \'b3\'0d\
+     \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+\'0c
+\par 
+\par                                   FRAME
+\par  
+\par The FRAME portion of a fixup specifies the FRAME NUMBER that will be
+\par used as the frame of reference for LOCATION's reference to TARGET.
+\par Typically, this frame of reference is one of the segment registers.
+\par The FRAME NUMBER in the segment register is specified via the assembler
+\par "ASSUME" directive.
+\par 
+\par Even if the fixup is self-relative, the TARGET must still be in the
+\par FRAME given by the FRAME NUMBER in the segment register.  So, a FRAME
+\par is required for both segment-relative fixups and self-relative fixups.
+\par 
+\par There are seven methods of specifying a FRAME:
+\par 
+\par                              A segment
+\par                              A group
+\par                              An external
+\par                              An absolute FRAME NUMBER
+\par                              LOCATION's FRAME
+\par                              TARGET's FRAME
+\par                              No FRAME specified
+\par 
+\par 
+\par                               FRAME Methods
+\par \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par \'b3\'4dethod\'b3\'20                     Description                              \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 F0  \'b3\'54he FRAME for the fixup is the CANONIC FRAME of the PSEG       \'b3\'0d\
+\'b3\'20     \'b3\'63ontaining the LSEG.  (Since the fixup is generated at         \'b3\'0d\
+\'b3\'20     \'b3\'74ranslation time, an LSEG is specified.)                       \'b3\'0d\
+\'b3\'20     \'b3\'4eotation:  EI(segment)                                         \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 F1  \'b3\'54he FRAME for the fixup is the CANONIC FRAME of the PSEG       \'b3\'0d\
+\'b3\'20     \'b3\'6cocated lowes in MAS.  A group is specified.                   \'b3\'0d\
+\'b3\'20     \'b3\'4eotation:  GI(group)                                           \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 F2  \'b3\'54he FRAME for the fixup is specified by an external.           \'b3\'0d\
+\'b3\'20     \'b3\'54ypically, the external is located in a T-MODULE different     \'b3\'0d\
+\'b3\'20     \'b3\'66rom the T-MODULE generating the fixup.                        \'b3\'0d\
+\'b3\'20     \'b3\'4eotation:  EI(external)                                        \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 F3  \'b3\'54he absolute FRAME number is specified.                        \'b3\'0d\
+\'b3\'20     \'b3\'4eotation:  FR(FRAME)                                           \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 F4  \'b3\'54he FRAME is the CANONIC FRAME of the PSEG containing LOCATION.\'b3\'0d\
+\'b3\'20     \'b3\'4eotation:  LOCATION                                            \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 F5  \'b3\'54he FRAME is determined by the TARGET.  Notation:  TARGET      \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 F6  \'b3\'4eo frame of reference specified.  Notation:  NONE              \'b3\'0d\
+\'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par \'0c
+\par 
+\par                           FRAME Method F2 cases
+\par 
+\par When FRAME method F2 is specified (FRAME is specified by an external),
+\par there are three cases depending on how the external is defined:
+\par 
+\par \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par \'b3\'4dethod\'b3\'20                      Description                             \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 F2a \'b3\'49f the external is defined relative to an LSEG which is not in \'b3\'0d\
+\'b3\'20     \'b3\'61 group then the FRAME is the CANONIC FRAME of the PSEG        \'b3\'0d\
+\'b3\'20     \'b3\'63ontaining the LSEG.                                           \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 F2b \'b3\'49f the external is defined absolutely and not in a group, then \'b3\'0d\
+\'b3\'20     \'b3\'74he FRAME is the CANONIC FRAME of the external.                \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b3
+\par \'b3\'20 F2c \'b3\'49f the external is associated with a group, the FRAME is the   \'b3\'0d\
+\'b3\'20     \'b3\'43ANONIC FRAME of the PSEG in the group with the lowest MAS.    \'b3\'0d\
+\'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par 
+\par                           FRAME Method F5 cases
+\par 
+\par When FRAME method F2 is specified (FRAME is specified by the TARGET),
+\par there are four cases depending on how the TARGET was specified:
+\par 
+\par \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par \'b3\'4dethod\'b3\'20                         Description                          \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 F5a \'b3\'49f the TARGET method is T0 or T4, then FRAME is the CANONIC    \'b3\'0d\
+\'b3\'20     \'b3\'46RAME of PSEG containing TARGET.                               \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 F5b \'b3\'49f the TARGET method is T1 or T5, then FRAME is the CANONIC    \'b3\'0d\
+\'b3\'20     \'b3\'46RAME of PSEG in the same group as TARGET and with the lowest  \'b3\'0d\
+\'b3\'20     \'b3\'4dAS.                                                           \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 F5c \'b3\'49f the TARGET method is T2 or T6, then the FRAME is determined \'b3\'0d\
+\'b3\'20     \'b3\'62y the rules given in FRAME method F2.                         \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20 F5d \'b3\'49f the TARGET method is T3 or T7, then the FRAME is the FRAME  \'b3\'0d\
+\'b3\'20     \'b3\'4eUMBER specified by the TARGET.                                \'b3\'0d\
+\'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par \'0c
+\par                            Performing a Fixup
+\par 
+\par Regardless of the fixup mode (segment-relative or self-relative), the
+\par first step in performing a fixup is to insure that the TARGET is
+\par addressable given the FRAME of reference.  That is, the TARGET must lie
+\par between FRAME and FRAME+65535 inclusive.
+\par 
+\par                       FRAME \'f3\'20TARGET \'f3\'20FRAME+65535
+\par 
+\par If this is not the case, a warning is given.
+\par 
+\par After verifying that TARGET can be addressed by FRAME, how a fixup is
+\par performed depends of the FIXUP mode.
+\par 
+\par 
+\par                           Self-Relative Fixups
+\par 
+\par Self-relative fixups are permitted for LOBYTE and OFFSET type LOCATIONs
+\par only.  If the LOCATION type is HIBYTE, BASE, or POINTER, no fixup is
+\par performed and an error message is given.
+\par 
+\par For self-relative fixups, the value of the PC (CS:IP) when the
+\par instruction is executed must be determined.  Then, the DISTANCE to the
+\par TARGET from the PC is computed.  The formulae for DISTANCE and PC are
+\par given below:
+\par 
+\par                  PC = LOCATION + 1 (If LOCATION type is LOBYTE)
+\par                  PC = LOCATION + 2 (If LOCATION type is OFFSET)
+\par                  DISTANCE = TARGET - PC
+\par 
+\par For LOBYTE locations, an error is issued when DISTANCE falls outside of
+\par -128 \'f3\'20DISTANCE \'f3\'20127.
+\par 
+\par The fixup is performed by adding DISTANCE to LOCATION.  For LOBYTE
+\par LOCATIONs, DISTANCE is added modulo 256.  For OFFSET LOCATIONs,
+\par DISTANCE is added modulo 65536.
+\par 
+\par                          Segment-Relative Fixups
+\par 
+\par For segment-relative fixups, DISTANCE = TARGET - FRAME.  If DISTANCE
+\par falls outside of 0 \'f3\'20DISTANCE \'f3\'2065535, a warning is issued.  The
+\par following table gives how to perform the fixup depending on LOCATION
+\par type:
+\par \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par \'b3\'4cOCATION\'b3\'20                           Action                           \'b3\'0d\
+\'b3\'20 type  \'b3\'20                                                            \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'4cOBYTE  \'b3\'44ISTANCE is added (modulo 256) to low order byte at LOCATION.\'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'48IBYTE  \'b3\'44ISTANCE is added (modulo 256) to high order byte at LOCATION\'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'4fFFSET  \'b3\'44ISTANCE is added (modulo 65536) to the word at LOCATION.    \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'42ASE    \'b3\'46RAME is added (modulo 65536) to the word at LOCATION.       \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b3
+\par \'b3\'50OINTER \'b3\'44ISTANCE is added (modulo 65536) low order word at LOCATION. \'b3\'0d\
+\'b3\'20       \'b3\'41 relocation item for the word at LOCATION is created.       \'b3\'0d\
+\'b3\'20       \'b3\'46RAME is added (modulo 65536) to the high order word of the  \'b3\'0d\
+\'b3\'20       \'b3\'44WORD at LOCATION.  A relocation item for the high order word\'b3\'0d\
+\'b3\'20       \'b3\'6ff the DWORD at LOCATION is created.                         \'b3\'0d\
+\'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par \'0c
+\par 
+\par                       T-MODULE Record Format Basics
+\par 
+\par All T-MODULE records have the following basic format:
+\par 
+\par                        \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                       \'b3\'52ecord\'b3\'20Record\'b3\'49nformation Specific\'b3\'43heck\'b3\'0d\
+  Field Names\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'3e\'b3\'20Type \'b3\'20Length\'b3\'20  to Record Type   \'b3\'20Sum \'b3\'0d\
+                       \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+  Field Lengths\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'3e\'b3\'20 1   \'b3\'20  2   \'b3\'20 Record Length - 1 \'b3\'20 1  \'b3\'0d\
+     (bytes)           \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par Record Type --
+\par   This one byte field identifies the type of T-MODULE record.
+\par 
+\par Record Length -- 
+\par   This word contains the number of bytes in all following fields
+\par   (including the checksum).
+\par 
+\par Information Specific to Record Type --
+\par   This field contains the data for the specified Record Type.
+\par  
+\par Check Sum --
+\par   This byte contains the negative of the sum of all the preceding bytes
+\par   in the record.  Therefore, the sum of all the bytes in the record
+\par   will be 0.
+\par 
+\par 
+\par                   T-MODULE Record Format -- Bit Fields
+\par 
+\par Bit fields are denoted as follows:
+\par 
+\par                                \'da\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                               \'b3\'20Bit \'b3\'20Bit \'b3\'20Bit \'b3\'0d\
+        Field Name\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4>\'b3\'46ield\'b3\'46ield\'b3\'46ield\'b3\'0d\
+                               \'b3\'20 1  \'b3\'20 2  \'b3\'20 n  \'b3\'0d\
+                               \'c3\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+        Field Length\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4>\'b3\'20 4  \'b3\'20 1  \'b3\'20 3  \'b3\'0d\
+           (bits)              \'c3\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                               \'b3\'20     byte       \'b3\'0d\
+                               \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par 
+\par                      T-MODULE Record Format -- INDEX Fields
+\par 
+\par There are three special kinds of fields in a T-MODULE record:
+\par 
+\par "INDEX" fields:        \'da\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                       \'b3\'49NDEX\'b3\'0d\
+                       \'c3\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                       \'b3\'201-2 \'b3\'0d\
+                       \'c0\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par An INDEX field is one or two bytes long.  If the high order bit of the
+\par first byte of the INDEX is 0, then the INDEX is one byte long and the
+\par value is the remaining 7 bits (0 - 127).  Otherwise, the INDEX is two
+\par bytes long and the value of the INDEX is the low order 7 bits of the
+\par first byte * 256 plus the second byte.
+\par \'0c
+\par 
+\par                   T-MODULE Record Format -- NAME Fields
+\par 
+\par The format of a "NAME" field is:
+\par                               \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par                               \'b3\'20NAME \'b3\'20  NAME    \'b3\'0d\
+                              \'b3\'4cength\'b3\'20          \'b3\'0d\
+                              \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par                               \'b3\'20 1   \'b3\'4eAME Length\'b3\'0d\
+                              \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par Note:  NAMEs of 0 bytes are permitted.  The NAME is not NULL
+\par terminated.
+\par 
+\par 
+\par                  T-MODULE Record Format -- VALUE Fields
+\par 
+\par The format of "VALUE" fields is:
+\par                                \'da\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                               \'b3\'43ode\'b3\'4eumber\'b3\'0d\
+                               \'c3\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                               \'b3\'201  \'b3\'200-4  \'b3\'0d\
+                               \'c0\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par When 0 \'f3\'20Code \'f3\'20128, the Number field is omitted and the VALUE is Code.
+\par 
+\par When Code = 129, the Number field is 2 bytes long, and the VALUE is
+\par Number.
+\par 
+\par When Code = 132, the Number field is 3 bytes long, and the VALUE is
+\par Number.
+\par 
+\par When Code = 136, the Number field is 4 bytes long, and the VALUE is
+\par Number.
+\par 
+\par 
+\par                 T-MODULE Record Format -- T-MODULE Header
+\par 
+\par                         \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf
+\par                         \'b3\'20  \'b3\'52ecord\'b3\'54-MODULE NAME\'b3\'43heck\'b3\'0d\
+                        \'b3\'380H\'b3\'4cength\'b3\'20            \'b3\'20Sum \'b3\'0d\
+                        \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4
+\par                         \'b3\'201 \'b3\'20 2   \'b3\'20   NAME     \'b3\'20 1  \'b3\'0d\
+                        \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par This record type must be the first record in the T-MODULE, and it names
+\par the T-MODULE.  Frequently, the T-MODULE NAME is the name of the source
+\par file to the language translator.
+\par \'0c
+\par 
+\par             T-MODULE Record Format -- List of NAMEs (LNAMEs)
+\par                   
+\par                         \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                        \'b3\'20  \'b3\'52ecord\'b3\'20           \'b3\'43heck\'b3\'0d\
+                        \'b3\'396H\'b3\'4cength\'b3\'4cogical NAME\'b3\'20Sum \'b3\'0d\
+                        \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                        \'b3\'201 \'b3\'20 2   \'b3\'20   NAME    \'b3\'20 1  \'b3\'0d\
+                        \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+                                   \'c0\'c4\'c4\'72epeated\'c4\'c4\'d9\'0d\
+
+\par Each Logical NAME is entered into a "List of NAMES" (LNAME) in the
+\par order they are encountered in type 96H records.  The list index starts
+\par at 1 (0 means not specified).  There may be more than one type 96H
+\par record in a T-MODULE.  When this occurs, append the Logical NAMEs to
+\par the list.  The Logical NAME field is repeated.  The number of
+\par repetitions is determined by the Record Length.
+\par 
+\par 
+\par            T-MODULE Record Format -- LSEG Definition (SEGDEF)
+\par 
+\par            \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf
+\par            \'b3\'20  \'b3\'52ecord\'b3\'20Segment \'b3\'53egment\'b3\'53egment\'b3\'43lass\'b3\'4fverlay\'b3\'43heck\'b3\'0d\
+           \'b3\'390H\'b3\'4cength\'b3\'41ttribute\'b3\'4cength \'b3\'20INDEX \'b3\'49NDEX\'b3\'20INDEX \'b3\'20Sum \'b3\'0d\
+           \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4
+\par            \'b3\'201 \'b3\'20 2   \'b3\'20 1-4    \'b3\'20 2    \'b3\'20INDEX \'b3\'49NDEX\'b3\'20INDEX \'b3\'20 1  \'b3\'0d\
+           \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par Segment Attribute:  \'da\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'bf  ACBP:  \'da\'c4\'c2\'c4\'c2\'c4\'c2\'c4\'bf\'0d\
+                    \'b3\'41CBP\'b3\'46RAME NUMBER\'b3\'4fffset\'b3\'20        \'b3\'41\'b3\'43\'b3\'42\'b3\'50\'b3\'0d\
+                    \'c3\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'b4         \'c3\'c4\'c5\'c4\'c5\'c4\'c5\'c4\'b4\'0d\
+                    \'b3\'201  \'b3\'20    2      \'b3\'20 1   \'b3\'20        \'b3\'33\'b3\'33\'b3\'31\'b3\'31\'b3\'0d\
+                    \'c0\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'b4         \'c3\'c4\'c1\'c4\'c1\'c4\'c1\'c4\'b4\'0d\
+                         \'c0\'c4\'c4\'c4\'c4\'63onditional\'c4\'c4\'c4\'c4\'d9\'20        \'b3\'20 Byte \'b3\'0d\
+                                                       \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+                                                Note:  ACBP.P must be 0.
+\par 
+\par There is one SEGDEF record for each LSEG in a T-MODULE.  Like the LNAME
+\par list, this forms a list of LSEGs (indexed from 1).
+\par 
+\par 
+\par                  T-MODULE Record Format -- SEGDEF.ACBP.A
+\par 
+\par The following table gives the meaning of the A field of the ACBP field:
+\par 
+\par \'da\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par \'b3\'41\'b3\'20                            Description                            \'b3\'0d\
+\'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'30\'b3\'54his is an absolute segment.  The FRAME NUMBER and Offset fields of \'b3\'0d\
+\'b3\'20\'b3\'74he Segment Attribute field will be present.                        \'b3\'0d\
+\'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'31\'b3\'54his is a relocatable, byte-aligned LSEG.                           \'b3\'0d\
+\'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'32\'b3\'54his is a relocatable, word-aligned LSEG.                           \'b3\'0d\
+\'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'32\'b3\'54his is a relocatable, paragraph-aligned LSEG.                      \'b3\'0d\
+\'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'34\'b3\'54his is a relocatable, page-aligned LSEG.                           \'b3\'0d\
+\'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'35\'b3\'54his is a relocatable, DWORD-aligned LSEG.                          \'b3\'0d\
+\'c0\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par \'0c
+\par 
+\par                      T-MODULE Record Format -- SEGDEF.ACBP.C
+\par 
+\par The following table gives the meaning of the C field of the ACBP field:
+\par \'da\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par \'b3\'43\'b3\'20                            Description                            \'b3\'0d\
+\'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'30\'b3\'54he LSEG is private and may not be combined.                        \'b3\'0d\
+\'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'31\'b3\'55ndefined.                                                          \'b3\'0d\
+\'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'32\'b3\'54he LSEG is public and may be combined with other LSEGs of the same \'b3\'0d\
+\'b3\'20\'b3\'6eame.                                                               \'b3\'0d\
+\'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'33\'b3\'55ndefined.                                                          \'b3\'0d\
+\'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'34\'b3\'54he LSEG is public and may be combined with other LSEGs of the same \'b3\'0d\
+\'b3\'20\'b3\'6eame.                                                               \'b3\'0d\
+\'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'35\'b3\'54he LSEG is a stack segment and may be combined with other LSEGs of \'b3\'0d\
+\'b3\'20\'b3\'74he same name.                                                      \'b3\'0d\
+\'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'36\'b3\'54he LSEG is a common segment and must be combined with other LSEGs  \'b3\'0d\
+\'b3\'20\'b3\'6ff the same name.                                                   \'b3\'0d\
+\'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'37\'b3\'54he LSEG is public and may be combined with other LSEGs of the same \'b3\'0d\
+\'b3\'20\'b3\'6eame.                                                               \'b3\'0d\
+\'c0\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par 
+\par                T-MODULE Record Format -- Notes on Combining
+\par 
+\par LSEGs which can be combined and are not common are combined as follows:
+\par 
+\par                       \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                      \'b3\'4cSEG data for first T-MODULE     \'b3\'0d\
+                      \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                      \'b3\'41lignment Gap for second T-MODULE\'b3\'0d\
+                      \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                      \'b3\'4cSEG data for second T-MODULE    \'b3\'0d\
+                      \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                      \'b3\'20           ///                  \'b3\'0d\
+                      \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                      \'b3\'41lignment Gap for last T-MODULE  \'b3\'0d\
+                      \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                      \'b3\'4cSEG data for last T-MODULE      \'b3\'0d\
+                      \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par The resultant PSEG is the combined length of the above.
+\par 
+\par For common LSEGs, the length of the PSEG is the length of the largest
+\par LSEG.  Therefore, the length of the PSEG cannot be determined until all
+\par the T-MODULEs are processed.  For this reason, data cannot be loaded
+\par into common segments until fixup time.
+\par \'0c
+\par 
+\par                T-MODULE Record Format -- LSEG Definition (SEGDEF)
+\par 
+\par            \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf
+\par            \'b3\'20  \'b3\'52ecord\'b3\'20Segment \'b3\'53egment\'b3\'53egment\'b3\'43lass\'b3\'4fverlay\'b3\'43heck\'b3\'0d\
+           \'b3\'390H\'b3\'4cength\'b3\'41ttribute\'b3\'4cength \'b3\'20INDEX \'b3\'49NDEX\'b3\'20INDEX \'b3\'20Sum \'b3\'0d\
+           \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4
+\par            \'b3\'201 \'b3\'20 2   \'b3\'20 1-4    \'b3\'20 2    \'b3\'20INDEX \'b3\'49NDEX\'b3\'20INDEX \'b3\'20 1  \'b3\'0d\
+           \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par Segment Length --
+\par   If ACBP.B is 0, then this is the length of the LSEG.  If ACBP.B is 1,
+\par   then the Segment Length must be 0 and the length of the LSEG is
+\par   65536 bytes.
+\par 
+\par Segment INDEX --
+\par   This is an INDEX into the LNAME list.  LNAME[Segment INDEX] is the
+\par   name of the LSEG.
+\par 
+\par Class INDEX --
+\par   This is an INDEX into the LNAME list.  LNAME[Class INDEX] is the name
+\par   of the LSEG.
+\par 
+\par Overlay INDEX --
+\par   This is an INDEX into the LNAME list.  LNAME[Class INDEX] is the name
+\par   of the LSEG.
+\par 
+\par 
+\par                T-MODULE Record Format -- Group Definition (GRPDEF)
+\par 
+\par                     \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf
+\par                     \'b3\'20  \'b3\'52ecord\'b3\'47roup NAME \'b3\'20  \'b3\'4cSEG \'b3\'43heck\'b3\'0d\
+                    \'b3\'39AH\'b3\'4cength\'b3\'20 INDEX    \'b3\'46FH\'b3\'49NDEX\'b3\'20Sum \'b3\'0d\
+                    \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4
+\par                     \'b3\'201 \'b3\'20 2   \'b3\'20 INDEX    \'b3\'201 \'b3\'49NDEX\'b3\'20 1  \'b3\'0d\
+                    \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'d9
+\par                                            \'c0\'c4repeated\'d9\'0d\
+
+\par Like the LNAME list and SEGDEF list, the GRPDEFs form a list (indexed
+\par relative to 1) of groups.  The is one GRPDEF record for each group in
+\par the T-MODULE.
+\par 
+\par Group NAME INDEX --
+\par   LNAME[Group NAME INDEX] is the name of the group.
+\par 
+\par LSEG INDEX --
+\par   This field is repeated once for each LSEG in the group.  The LSEG
+\par   INDEX is the INDEX into the LSEG list which corresponds to the LSEG
+\par   in the group.
+\par \'0c
+\par 
+\par               T-MODULE Record Format -- Public Definition (PUBDEF)
+\par 
+\par            \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+           \'b3\'20  \'b3\'52ecord\'b3\'47roup\'b3\'53egment\'b3\'46RAME \'b3\'50ublic\'b3\'50ublic\'b3\'54ype \'b3\'43heck\'b3\'0d\
+           \'b3\'390H\'b3\'4cength\'b3\'49NDEX\'b3\'20INDEX \'b3\'4eUMBER\'b3\'20NAME \'b3\'4fffset\'b3\'49NDEX\'b3\'20Sum \'b3\'0d\
+           \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+           \'b3\'201 \'b3\'20 2   \'b3\'49NDEX\'b3\'20INDEX \'b3\'200-2  \'b3\'20NAME \'b3\'20 2   \'b3\'49NDEX\'b3\'20 1  \'b3\'0d\
+           \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+                                           \'c0\'c4\'c4\'c4\'c4\'c4repeated\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+Group INDEX --
+\par   If the public(s) are defined is an LSEG which is part of a group,
+\par   then this is the index into the group list.
+\par 
+\par Segment INDEX --
+\par   If the public(s) are defined in an LSEG, this is the index into the
+\par   LSEG list.
+\par 
+\par FRAME NUMBER --
+\par   This field is only present if the public(s) are absolute (indicated
+\par   by both Group INDEX and Segment INDEX being zero).  When present,
+\par   this is the FRAME NUMBER used to reference the public(s).
+\par 
+\par 
+\par               T-MODULE Record Format -- Public Definition (PUBDEF)
+\par 
+\par            \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+           \'b3\'20  \'b3\'52ecord\'b3\'47roup\'b3\'53egment\'b3\'46RAME \'b3\'50ublic\'b3\'50ublic\'b3\'54ype \'b3\'43heck\'b3\'0d\
+           \'b3\'390H\'b3\'4cength\'b3\'49NDEX\'b3\'20INDEX \'b3\'4eUMBER\'b3\'20NAME \'b3\'4fffset\'b3\'49NDEX\'b3\'20Sum \'b3\'0d\
+           \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+           \'b3\'201 \'b3\'20 2   \'b3\'49NDEX\'b3\'20INDEX \'b3\'200-2  \'b3\'20NAME \'b3\'20 2   \'b3\'49NDEX\'b3\'20 1  \'b3\'0d\
+           \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+                                           \'c0\'c4\'c4\'c4\'c4\'c4repeated\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+Public NAME --
+\par   This is the name of the public.
+\par 
+\par Public Offset --
+\par   This is the distance of the start of the public from the group, LSEG
+\par   or FRAME.
+\par 
+\par Type INDEX --
+\par   This is ignored.
+\par 
+\par 
+\par               T-MODULE Record Format -- Public Definition (EXTDEF)
+\par 
+\par                         \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                        \'b3\'20  \'b3\'52ecord\'b3\'45xternal\'b3\'54ype \'b3\'43heck\'b3\'0d\
+                        \'b3\'42CH\'b3\'4cength\'b3\'20 NAME  \'b3\'49NDEX\'b3\'20Sum \'b3\'0d\
+                        \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                        \'b3\'201 \'b3\'20 2   \'b3\'20 NAME  \'b3\'49NDEX\'b3\'20 1  \'b3\'0d\
+                        \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+                                   \'c0\'c4\'c4\'c4repeated\'c4\'c4\'c4\'d9
+\par 
+\par Like the LNAMEs, SEGDEFs, and GRPDEFs, the EXTDEFs form a list (indexed
+\par relative to 1) of the external names used in this T-MODULE.
+\par 
+\par External NAME --
+\par   This is the name of the external public symbol.
+\par 
+\par Type INDEX --
+\par   This is ignored.
+\par \'0c
+\par 
+\par            T-MODULE Record Format -- Logical Enumerated Data (LEDATA)
+\par  
+\par                    \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf
+\par                    \'b3\'20  \'b3\'52ecord\'b3\'53egment\'b3\'20     \'b3\'20       \'b3\'43heck\'b3\'0d\
+                   \'b3\'410H\'b3\'4cength\'b3\'20INDEX \'b3\'4fffset\'b3\'20 Data  \'b3\'20Sum \'b3\'0d\
+                   \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4
+\par                    \'b3\'201 \'b3\'20 2   \'b3\'20INDEX \'b3\'20 2   \'b3\'20  1    \'b3\'20 1  \'b3\'0d\
+                   \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'d9
+\par                                              \'c0\'72epeated\'d9\'0d\
+
+\par Segment INDEX --
+\par   This data is to be loaded into the LSEG corresponding to SEGDEF list
+\par   entry SEGDEF[Segment INDEX].
+\par 
+\par Offset --
+\par   This data is to be loaded starting at this offset in the LSEG.
+\par 
+\par Data --
+\par   The byte(s) to be loaded.  No more than 1024 can be loaded by an
+\par   LEDATA record.
+\par 
+\par 
+\par             T-MODULE Record Format -- Logical Iterated Data (LIDATA)
+\par  
+\par                   \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf
+\par                   \'b3\'20  \'b3\'52ecord\'b3\'53egment\'b3\'20     \'b3\'20Iterated \'b3\'43heck\'b3\'0d\
+                  \'b3\'412H\'b3\'4cength\'b3\'20INDEX \'b3\'4fffset\'b3\'44ata Block\'b3\'20Sum \'b3\'0d\
+                  \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4
+\par                   \'b3\'201 \'b3\'20 2   \'b3\'20INDEX \'b3\'20 2   \'b3\'20variable \'b3\'20 1  \'b3\'0d\
+                  \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'d9
+\par                                             \'c0\'c4repeated\'c4\'d9
+\par 
+\par Segment INDEX --
+\par   This data is to be loaded into the LSEG corresponding to SEGDEF list
+\par   entry SEGDEF[Segment INDEX].
+\par 
+\par Offset --
+\par   This data is to be loaded starting at this offset in the LSEG.
+\par 
+\par Iterated Data Block --
+\par   This is (recursively) defined later, but the total size cannot exceed
+\par   1024 bytes.
+\par \'0c
+\par 
+\par             T-MODULE Record Format -- Logical Iterated Data (LIDATA)
+\par 
+\par 
+\par Iterated Data Block:  \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                      \'b3\'52epeat\'b3\'42lock\'b3\'20       \'b3\'0d\
+                      \'b3\'43ount \'b3\'43ount\'b3\'20Content\'b3\'0d\
+                      \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                      \'b3\'20 2   \'b3\'20 2  \'b3\'76ariable\'b3\'0d\
+                      \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par Repeat Count --
+\par   If Block Count is zero then Content is interpreted as a string of
+\par   bytes of length Repeat Count.  If Block Count is zero, then this is
+\par   the number of times the Content field is repeated.
+\par 
+\par Block Count --
+\par   If this is zero, then the Content field is interpreted as a string of
+\par   bytes of length Repeat Count.  If this is non-zero, then the Content
+\par   field contains a string of Block Count Iterated Data Blocks.
+\par 
+\par Content --
+\par   This is either a string of bytes as described above or it is a string
+\par   of Iterated Data Blocks.
+\par 
+\par 
+\par                  T-MODULE Record Format -- Fixup Record (FIXUPP)
+\par 
+\par                            \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                           \'b3\'20  \'b3\'52ecord\'b3\'20Thread \'b3\'43heck\'b3\'0d\
+                           \'b3\'39CH\'b3\'4cength\'b3\'6fr Fixup\'b3\'20Sum \'b3\'0d\
+                           \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                           \'b3\'201 \'b3\'20 2   \'b3\'76ariable\'b3\'20 1  \'b3\'0d\
+                           \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+                                      \'c0\'72epeated\'d9\'0d\
+
+\par Thread or Fixup --
+\par   This field can be either a Thread (high order bit is 0) or Fixup
+\par   (high order bit is 1).  A Thread is a default TARGET or FRAME method.
+\par   There are four TARGET threads and four FRAME threads.  Thread fields
+\par   are used to store the default TARGET or FRAME method.  A Fixup type
+\par   field specifies the five pieces of information (discussed earlier)
+\par   necessary to perform a fixup.
+\par \'0c
+\par 
+\par 
+\par                         T-MODULE Record Format -- Thread
+\par 
+\par Thread:  \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf  Thread Data:  \'da\'c4\'c2\'c4\'c2\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf
+\par          \'b3\'54hread\'b3\'54hread \'b3\'20               \'b3\'30\'b3\'44\'b3\'30\'b3\'4dethod\'b3\'54hred\'b3\'0d\
+         \'b3\'20Data \'b3\'20INDEX \'b3\'20               \'c3\'c4\'c5\'c4\'c5\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4
+\par          \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4                \'b3\'31\'b3\'31\'b3\'31\'b3\'20 3   \'b3\'20 2  \'b3\'0d\
+         \'b3\'20 1   \'b3\'30-INDEX\'b3\'20               \'c3\'c4\'c1\'c4\'c1\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'b4
+\par          \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9                \'b3\'20      byte       \'b3\'0d\
+                                         \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par D --
+\par   If D is zero then a TARGET thread is being specified, otherwise a
+\par   FRAME thread is being specified.
+\par 
+\par Method --
+\par   This is the TARGET or FRAME method.  For TARGET threads, only the
+\par   four primary methods are specified.  All seven FRAME methods can be
+\par   specified.
+\par 
+\par Thred --
+\par   This is the TARGET or FRAME thread number being specified.
+\par 
+\par Thread INDEX --
+\par   This is not present when F4, F5 or F6 is being specified.  In all
+\par   other cases, this is either a Segment, Group or External index
+\par   depending on the Method.
+\par 
+\par 
+\par                          T-MODULE Record Format -- Fixup
+\par 
+\par                     \'da\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par                     \'b3\'4cOCAT\'b3\'20Fixup \'b3\'20FRAME \'b3\'54ARGET \'b3\'54ARGET\'b3\'0d\
+                    \'b3\'20    \'b3\'4dethods\'b3\'20INDEX \'b3\'49NDEX  \'b3\'4fffset\'b3\'0d\
+                    \'c3\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par                     \'b3\'20 2  \'b3\'20 1    \'b3\'30-INDEX\'b3\'30-INDEX\'b3\'200-2  \'b3\'0d\
+                    \'c0\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par LOCAT:  \'da\'c4\'c2\'c4\'c4\'c4\'c4\'c2\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+        \'b3\'20\'b3\'20   \'b3\'20\'b3\'4cOCATION\'b3\'4cE/LIDATA\'b3\'0d\
+        \'b3\'31\'b3\'4dode\'b3\'30\'b3\'20 Type  \'b3\'20 Offset \'b3\'0d\
+        \'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c5\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+        \'b3\'31\'b3\'201  \'b3\'31\'b3\'20  3    \'b3\'20   10   \'b3\'0d\
+        \'c3\'c4\'c1\'c4\'c4\'c4\'c4\'c1\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+        \'b3\'6cow byte          high byte\'b3\'20Note:  Low and high bytes
+\par         \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'20       are swapped.
+\par          
+\par Mode --
+\par   If Mode is 0 then this is a self-relative fixup, otherwise it is a
+\par   segment-relative fixup.  Self-relative fixups on LIDATA are not
+\par   permitted.
+\par \'0c
+\par 
+\par                          T-MODULE Record Format -- Fixup
+\par 
+\par LOCAT:  \'da\'c4\'c2\'c4\'c4\'c4\'c4\'c2\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+        \'b3\'20\'b3\'20   \'b3\'20\'b3\'4cOCATION\'b3\'4cE/LIDATA\'b3\'0d\
+        \'b3\'31\'b3\'4dode\'b3\'30\'b3\'20 Type  \'b3\'20 Offset \'b3\'0d\
+        \'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c5\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+        \'b3\'31\'b3\'201  \'b3\'31\'b3\'20  3    \'b3\'20   10   \'b3\'0d\
+        \'c3\'c4\'c1\'c4\'c4\'c4\'c4\'c1\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+        \'b3\'6cow byte          high byte\'b3\'0d\
+        \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par LOCATION Type:  \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                \'b3\'4cOCATION\'b3\'54ype Description\'b3\'0d\
+                \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                \'b3\'20     0 \'b3\'20    LOBYTE     \'b3\'0d\
+                \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                \'b3\'20     1 \'b3\'20    OFFSET     \'b3\'0d\
+                \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                \'b3\'20     2 \'b3\'20    BASE       \'b3\'0d\
+                \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                \'b3\'20     3 \'b3\'20    POINTER    \'b3\'0d\
+                \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                \'b3\'20     4 \'b3\'20    HIBYTE     \'b3\'0d\
+                \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par 
+\par                          T-MODULE Record Format -- Fixup
+\par 
+\par LOCAT:  \'da\'c4\'c2\'c4\'c4\'c4\'c4\'c2\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+        \'b3\'20\'b3\'20   \'b3\'20\'b3\'4cOCATION\'b3\'4cE/LIDATA\'b3\'0d\
+        \'b3\'31\'b3\'4dode\'b3\'30\'b3\'20 Type  \'b3\'20 Offset \'b3\'0d\
+        \'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c5\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+        \'b3\'31\'b3\'201  \'b3\'31\'b3\'20  3    \'b3\'20   10   \'b3\'0d\
+        \'c3\'c4\'c1\'c4\'c4\'c4\'c4\'c1\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+        \'b3\'6cow byte          high byte\'b3\'0d\
+        \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par LE/LIDATA Offset --
+\par   This field is used to determine the LOCATION information for the
+\par   fixup.  This offset is actually an offset into the last LEDATA or
+\par   LIDATA record.  The LEDATA or LIDATA contains the base LSEG and
+\par   offset information.  Note that for LIDATA records, each time the data
+\par   at LE/LIDATA Offset is repeated, the fixup must occur.
+\par \'0c
+\par 
+\par                          T-MODULE Record Format -- Fixup
+\par 
+\par                     \'da\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par                     \'b3\'4cOCAT\'b3\'20Fixup \'b3\'20FRAME \'b3\'54ARGET \'b3\'54ARGET\'b3\'0d\
+                    \'b3\'20    \'b3\'4dethods\'b3\'20INDEX \'b3\'49NDEX  \'b3\'4fffset\'b3\'0d\
+                    \'c3\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par                     \'b3\'20 2  \'b3\'20 1    \'b3\'30-INDEX\'b3\'30-INDEX\'b3\'200-2  \'b3\'0d\
+                    \'c0\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par Fixup Methods:  \'da\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c2\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par                 \'b3\'46\'b3\'46RAME\'b3\'54\'b3\'50\'b3\'54ARGET\'b3\'20F --
+\par                 \'c3\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c5\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'b4  If F is 1 then FRAME is a thread,
+\par                 \'b3\'31\'b3\'20 3  \'b3\'31\'b3\'31\'b3\'20 2   \'b3\'20 else FRAME is the FRAME method.
+\par                 \'c3\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c1\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par                 \'b3\'20     byte        \'b3\'20T --
+\par                 \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9  If T is 1 then TARGET is a thread,
+\par                                       else TARGET is the TARGET method.
+\par FRAME --
+\par   This is either the FRAME method (F=0) or a FRAME thread (F=1).
+\par TARGET --
+\par   This is either the TARGET method (T=0) or a TARGET thread (T=1).
+\par P --
+\par   If P=0 then the primary TARGET methods are used and the TARGET Offset
+\par   field will be present.
+\par 
+\par 
+\par                          T-MODULE Record Format -- Fixup
+\par 
+\par                     \'da\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par                     \'b3\'4cOCAT\'b3\'20Fixup \'b3\'20FRAME \'b3\'54ARGET \'b3\'54ARGET\'b3\'0d\
+                    \'b3\'20    \'b3\'4dethods\'b3\'20INDEX \'b3\'49NDEX  \'b3\'4fffset\'b3\'0d\
+                    \'c3\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par                     \'b3\'20 2  \'b3\'20 1    \'b3\'30-INDEX\'b3\'30-INDEX\'b3\'200-2  \'b3\'0d\
+                    \'c0\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par FRAME INDEX --
+\par   Depending on the FRAME method, this is either a Segment, Group, or
+\par   External INDEX.  This will be present only when a FRAME thread is not
+\par   used (F=0).
+\par 
+\par TARGET INDEX --
+\par   Depending on the TARGET method, this is either a Segment, Group, or
+\par   External INDEX.  This will be present only when a TARGET thread is
+\par   not used (T=0).
+\par 
+\par TARGET Offset --
+\par   The TARGET is TARGET Offset bytes from the Segment, Group, or
+\par   External given by TARGET INDEX.
+\par \'0c
+\par 
+\par                  T-MODULE Record Format -- T-MODULE End (MODEND)
+\par 
+\par                         \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf
+\par                         \'b3\'20  \'b3\'52ecord\'b3\'45nd \'b3\'20Start  \'b3\'43heck\'b3\'0d\
+                        \'b3\'38AH\'b3\'4cength\'b3\'54ype\'b3\'41ddress \'b3\'20Sum \'b3\'0d\
+                        \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4
+\par                         \'b3\'201 \'b3\'20 2   \'b3\'201  \'b3\'76ariable\'b3\'20 1  \'b3\'0d\
+                        \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par End Type:                   Attribute:
+\par        \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c2\'c4\'bf\'20           \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par        \'b3\'41ttribute\'b3\'30\'b3\'31\'b3\'20           \'b3\'41ttribute\'b3\'44escription               \'b3\'0d\
+       \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c5\'c4\'b4\'20           \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par        \'b3\'20   2    \'b3\'35\'b3\'31\'b3\'20           \'b3\'20   0    \'b3\'4eon-main, no Start Address\'b3\'0d\
+       \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c1\'c4\'b4\'20           \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par        \'b3\'20   byte     \'b3\'20           \'b3\'20   1    \'b3\'4eon-main, Start Address   \'b3\'0d\
+       \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'20           \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par                                   \'b3\'20   2    \'b3\'4dain, no Start Address    \'b3\'0d\
+                                  \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par                                   \'b3\'20   3    \'b3\'4dain, Start Address       \'b3\'0d\
+                                  \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par 
+\par                  T-MODULE Record Format -- T-MODULE End (MODEND)
+\par 
+\par 
+\par     Start Address:  \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par                     \'b3\'20Fixup \'b3\'20FRAME \'b3\'54ARGET \'b3\'54ARGET\'b3\'0d\
+                    \'b3\'4dethods\'b3\'20INDEX \'b3\'49NDEX  \'b3\'4fffset\'b3\'0d\
+                    \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par                     \'b3\'20 1    \'b3\'30-INDEX\'b3\'30-INDEX\'b3\'200-2  \'b3\'0d\
+                    \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par The above fields work exactly the same as they do in a FIXUPP record.
+\par The start address is computed from the FRAME and TARGET specified
+\par above.  The initial CS is the FRAME NUMBER of the FRAME, and the
+\par initial IP is TARGET - FRAME.
+\par \'0c
+\par 
+\par                 T-MODULE Record Format -- Comment Record (COMENT)
+\par 
+\par                       \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                      \'b3\'20  \'b3\'52ecord\'b3\'43omment\'b3\'20       \'b3\'43heck\'b3\'0d\
+                      \'b3\'388H\'b3\'4cength\'b3\'20Type  \'b3\'43omment \'b3\'20Sum \'b3\'0d\
+                      \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                      \'b3\'201 \'b3\'20 2   \'b3\'20 2    \'b3\'76ariable\'b3\'20 1  \'b3\'0d\
+                      \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par Comment Type:  \'da\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c2\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf
+\par                \'b3\'50urge\'b3\'4cist\'b3\'30\'b3\'43lass\'b3\'0d\
+               \'c3\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c5\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4
+\par                \'b3\'20 1  \'b3\'201  \'b3\'36\'b3\'20 8  \'b3\'0d\
+               \'c3\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c1\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'b4
+\par                \'b3\'20      word       \'b3\'0d\
+               \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par Purge --
+\par   COMENT record should not be deleted by utilities which can delete
+\par   comments (Purge=1).
+\par 
+\par List --
+\par   COMENT record should not be listed by utilities which can list
+\par   comments (LIST=1).
+\par 
+\par 
+\par                 T-MODULE Record Format -- Comment Record (COMENT)
+\par 
+\par \'da\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par \'b3\'43lass\'b3\'20                         Description                           \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20129 \'b3\'44o not do a default library search.                             \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20157 \'b3\'4demory model information is in the Comment field.               \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20158 \'b3\'55se the "DOSSEG" ordering.                                      \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20159 \'b3\'4cibrary name is in the Comment field.                           \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20161 \'b3\'43odeview (registered trademark of Microsoft) information is     \'b3\'0d\
+\'b3\'20    \'b3\'70resent.                                                        \'b3\'0d\
+\'c3\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par \'b3\'20162 \'b3\'50ass 1 of linker can stop processing T-MODULE here.             \'b3\'0d\
+\'c0\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par \'0c
+\par 
+\par              T-MODULE Record Format -- Communal Definition (COMDEF)
+\par 
+\par             \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf
+\par             \'b3\'20  \'b3\'20     \'b3\'53ymbol\'b3\'54ype \'b3\'46ar or Near\'b3\'20Communal \'b3\'43heck\'b3\'0d\
+            \'b3\'420H\'b3\'4cength\'b3\'20NAME \'b3\'49NDEX\'b3\'20Communal  \'b3\'20  Size   \'b3\'20Sum \'b3\'0d\
+            \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4
+\par             \'b3\'201 \'b3\'20 2   \'b3\'20NAME \'b3\'49NDEX\'b3\'20    1     \'b3\'20variable \'b3\'20 1  \'b3\'0d\
+            \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par Symbol NAME --
+\par   This is the name of the communal symbol.  It is placed in the list of
+\par   external symbols just as if it were an EXTDEF record.  If a PUBDEF
+\par   record with the same Symbol NAME is encountered, it overrides the
+\par   COMDEF.
+\par 
+\par Type INDEX --
+\par   This is ignored.
+\par 
+\par Far or Near Communal --
+\par   Far communals have a 61H coded here.  Near communals have a 62H coded
+\par   here.
+\par 
+\par The ultimate size of the communal is the largest communal.
+\par 
+\par 
+\par              T-MODULE Record Format -- Communal Definition (COMDEF)
+\par 
+\par For near communals, Communal Size is:  \'da\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                                       \'b3\'53IZE \'b3\'0d\
+                                       \'b3\'56ALUE\'b3\'0d\
+                                       \'c3\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                                       \'b3\'56ALUE\'b3\'0d\
+                                       \'c0\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par For far communals, Communal Size is:   \'da\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                                       \'b3\'43OUNT\'b3\'53IZE \'b3\'0d\
+    The size of the communal is:       \'b3\'56ALUE\'b3\'56ALUE\'b3\'0d\
+                                       \'c3\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+      COUNT VALUE * SIZE VALUE         \'b3\'56ALUE\'b3\'56ALUE\'b3\'0d\
+                                       \'c0\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par Near communals go in DGROUP.  Far communals go in HUGE_BSS and are
+\par packed as compactly as possible into PSEGs of no more than 64K.
+\par \'0c
+\par 
+\par            T-MODULE Record Format -- Forward Reference Fixups (FORREF)
+\par 
+\par                  \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                 \'b3\'20  \'b3\'20     \'b3\'53egment\'b3\'20   \'b3\'20     \'b3\'20Fixup  \'b3\'43heck\'b3\'0d\
+                 \'b3\'422H\'b3\'4cength\'b3\'20INDEX \'b3\'53ize\'b3\'4fffset\'b3\'20Data   \'b3\'20Sum \'b3\'0d\
+                 \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                 \'b3\'201 \'b3\'20 2   \'b3\'20INDEX \'b3\'201  \'b3\'20 2   \'b3\'76ariable\'b3\'20 1  \'b3\'0d\
+                 \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+                                         \'c0\'c4\'c4\'c4repeated\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par Segment INDEX --
+\par   The Forward Reference Fixup is to be applied to the LSEG element
+\par   whose index into the SEGDEF list is Segment INDEX.
+\par Size --
+\par   This specifies the size of the Fixup Data fields.  The Fixup Data
+\par   fields are a byte when Size = 0, a word when Size = 1, or a DWORD
+\par   when Size = 2.
+\par Offset --
+\par   This is the Offset into the LSEG specified by Segment Index where the
+\par   fixup is applied.
+\par Fixup Data --
+\par   This value is added at the specified Offset.
+\par 
+\par Note:  The FORREF record may occur before the LE/LIDATA records which
+\par        load data into the LSEG.  Therefore, FORREFs must be applied at
+\par        fixup time.
+\par 
+\par 
+\par           T-MODULE Record Format -- Local External Definition (MODEXT)
+\par 
+\par                         \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                        \'b3\'20  \'b3\'52ecord\'b3\'45xternal\'b3\'54ype \'b3\'43heck\'b3\'0d\
+                        \'b3\'424H\'b3\'4cength\'b3\'20 NAME  \'b3\'49NDEX\'b3\'20Sum \'b3\'0d\
+                        \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                        \'b3\'201 \'b3\'20 2   \'b3\'20 NAME  \'b3\'49NDEX\'b3\'20 1  \'b3\'0d\
+                        \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+                                   \'c0\'c4\'c4\'c4repeated\'c4\'c4\'c4\'d9
+\par 
+\par 
+\par The fields of the MODEXT record function just like the EXTDEF record
+\par except that the external is local to this T-MODULE only.  The External
+\par NAME is included in the list of externals.
+\par 
+\par 
+\par            T-MODULE Record Format -- Local Public Definition (MODPUB)
+\par 
+\par            \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+           \'b3\'20  \'b3\'52ecord\'b3\'47roup\'b3\'53egment\'b3\'46RAME \'b3\'50ublic\'b3\'50ublic\'b3\'54ype \'b3\'43heck\'b3\'0d\
+           \'b3\'426H\'b3\'4cength\'b3\'49NDEX\'b3\'20INDEX \'b3\'4eUMBER\'b3\'20NAME \'b3\'4fffset\'b3\'49NDEX\'b3\'20Sum \'b3\'0d\
+           \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+           \'b3\'201 \'b3\'20 2   \'b3\'49NDEX\'b3\'20INDEX \'b3\'200-2  \'b3\'20NAME \'b3\'20 2   \'b3\'49NDEX\'b3\'20 1  \'b3\'0d\
+           \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+                                           \'c0\'c4\'c4\'c4\'c4\'c4repeated\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par The fields of the MODPUB record function just like the PUBDEF record
+\par except that the public symbol is local to this T-MODULE only.
+\par \'0c
+\par 
+\par                  T-MODULE Record Format -- Line Number (LINNUM)
+\par 
+\par                         \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                        \'b3\'20  \'b3\'52ecord\'b3\'20         \'b3\'43heck\'b3\'0d\
+                        \'b3\'394H\'b3\'4cength\'b3\'20  Data   \'b3\'20Sum \'b3\'0d\
+                        \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                        \'b3\'201 \'b3\'20 2   \'b3\'20   1     \'b3\'20 1  \'b3\'0d\
+                        \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+                                   \'c0\'c4repeated\'c4\'d9
+\par 
+\par The LINNUM record is ignored by the linker.
+\par 
+\par 
+\par                T-MODULE Record Format -- Type Definition (TYPDEF)
+\par 
+\par                         \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+                        \'b3\'20  \'b3\'52ecord\'b3\'20         \'b3\'43heck\'b3\'0d\
+                        \'b3\'38EH\'b3\'4cength\'b3\'20  Data   \'b3\'20Sum \'b3\'0d\
+                        \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                        \'b3\'201 \'b3\'20 2   \'b3\'20   1     \'b3\'20 1  \'b3\'0d\
+                        \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+                                   \'c0\'c4repeated\'c4\'d9
+\par 
+\par The TYPDEF record is ignored by the linker.
+\par 
+\par 
+\par                      T-MODULE Record Format -- Record Order
+\par 
+\par Object modules are parsed via recursive descent as defined below:
+\par 
+\par    t_module::     THEADR seg_grp \{component\} modtail
+\par 
+\par    seg_grp::      \{LNAMES | SEGDEF | EXTDEF\} \{TYPDEF | EXTDEF | GRPDEF\}
+\par 
+\par    component::    data | debug_record
+\par 
+\par    data::         content_def | thread_def | COMDEF | TYPDEF | PUBDEF |
+\par                   EXTDEF | FORREF | MODPUB | MODEXT
+\par 
+\par    debug_record:: LINNUM
+\par 
+\par    content_def::  data_record \{FIXUPP\}
+\par 
+\par    thread_def::   FIXUPP  (containing only thread fields)
+\par 
+\par    data_record::  LIDATA | LEDATA
+\par 
+\par    modtail::      MODEND
+\par \'0c
+\par 
+\par                          Primary Internal Data Structure
+\par 
+\par \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf             \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf\'20             \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par \'b3\'20Segment #1 \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'3e\'b3\'20LSEG #1 \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4>\'b3\'20LSEG #1 Contents \'b3\'0d\
+\'c0\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'d9             \'c0\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'d9\'20             \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par       \'b3\'20                        \'b3\'0d\
+      \'b3\'20                        ^
+\par       \'b3\'20                   \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf\'20             \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par       \'b3\'20                   \'b3\'20LSEG #2 \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4>\'b3\'20LSEG #2 Contents \'b3\'0d\
+      \'b3\'20                   \'c0\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'d9\'20             \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par       \'b3\'20                        ^
+\par       \'b3\'20                       ///
+\par       ^
+\par \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf             \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf\'20             \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par \'b3\'20Segment #2 \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'3e\'b3\'20LSEG #1 \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4>\'b3\'20LSEG #1 Contents \'b3\'0d\
+\'c0\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'d9             \'c0\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'d9\'20             \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par       \'b3\'20                        \'b3\'0d\
+      \'b3\'20                        ^
+\par       \'b3\'20                   \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf\'20             \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par       ^                    \'b3\'20LSEG #2 \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4>\'b3\'20LSEG #2 Contents \'b3\'0d\
+     ///                   \'c0\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'d9\'20             \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par                                 ^
+\par                                ///
+\par 
+\par 
+\par 
+\par                               Temp File
+\par 
+\par The linker employs a temp file to save information which can only be
+\par processed after all the T-MODULEs have been processed.  The information
+\par which must be saved is:
+\par 
+\par                               Fixups
+\par                               LE/LIDATA for common LSEGS
+\par                               FORREF records
+\par 
+\par The temp file is deleted when processing is complete.
+\par \'0c
+\par 
+\par                                Library File Format
+\par 
+\par  library_file::  header_page \{t_modules\} trailer_page \{directory_pages\}
+\par 
+\par  header_page ::    \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'bf\'0d\
+                   \'b3\'20  \'b3\'52ecord\'b3\'44irectory\'b3\'44irectory\'b3\'20         \'b3\'20\'b3\'0d\
+                   \'b3\'460H\'b3\'4cength\'b3\'20Offset  \'b3\'20Pages   \'b3\'20  Pad    \'b3\'30\'b3\'0d\
+                   \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'b4\'0d\
+                   \'b3\'201 \'b3\'20 2   \'b3\'20  4     \'b3\'20  2     \'b3\'20   1     \'b3\'31\'b3\'0d\
+                   \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'d9\'0d\
+                                         (prime)  \'c0\'c4repeated\'c4\'d9
+\par 
+\par  t_modules ::    The t_modules are as described above except a pad is
+\par                  added after the MODEND record to make the t_module
+\par                  occupy a full page.  The page size is the header_page
+\par                  Record Length + 3.
+\par 
+\par  trailer_page ::   \'da\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'bf\'0d\
+                   \'b3\'20  \'b3\'52ecord\'b3\'20         \'b3\'20\'b3\'0d\
+                   \'b3\'461H\'b3\'4cength\'b3\'20  Pad    \'b3\'30\'b3\'0d\
+                   \'c3\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'b4\'0d\
+                   \'b3\'201 \'b3\'20 2   \'b3\'20   1     \'b3\'31\'b3\'0d\
+                   \'c0\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'d9\'0d\
+                              \'c0\'c4repeated\'c4\'d9
+\par 
+\par 
+\par                      Library File Format -- Directory
+\par 
+\par   directory_pages ::  public_pointer_array \{public_entry\} pad
+\par 
+\par Notes:  A directory page is always 512 bytes.  A directory page can
+\par         contain up to 37 public entries.
+\par 
+\par public_pointer_array --
+\par   This is a 38 byte array which is used to point into the public_entry
+\par   field.  To determine where public i is located in the directory page,
+\par   take the ith byte of the public_pointer_array (relative 0) and
+\par   multiple it by 2.  That byte will be the beginning of the
+\par   public_entry for ith public in the directory.  The 38th entry is used
+\par   to point to the beginning of the free space in directory page.
+\par 
+\par public_entry ::  \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par                  \'b3\'20Public\'b3\'53tarting\'b3\'0d\
+                 \'b3\'20NAME  \'b3\'20 Page  \'b3\'0d\
+                 \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'b4
+\par                  \'b3\'20NAME  \'b3\'20  2    \'b3\'0d\
+                 \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par \'0c
+\par 
+\par                      Library File Format -- Finding a Public
+\par 
+\par The library directory employs a two-tiered hashing scheme to store
+\par public names in its directory.  A detailed description of the algorithm
+\par is given later, but for now the following general aspects of the
+\par algoritm are useful.  To start the search, you need to know which
+\par directory page to start searching, and if you don't find it in that
+\par page, which directory page to search next.  Once in a directory page,
+\par you have to know which entry to use to begin the search and which entry
+\par to search next if it was not found.
+\par 
+\par We will call the four required values STARTING_PAGE, DELTA_PAGE,
+\par STARTING_ENTRY, and DELTA_ENTRY.  The detail on how to compute these
+\par values is give later.
+\par 
+\par Start with directory page STARTING_PAGE.  On that page, examine
+\par public_entry STARTING_ENTRY.  There are three cases.  This could be the
+\par public symbol you desire, in which case you are done.  The
+\par public_pointer_array for this entry could be zero, in which case the
+\par symbol is not in the library.  Or, this the public symbol at
+\par STARTING_ENTRY could be some other public symbol.  In this case, add
+\par DELTA_ENTRY (modulo 37) to the STARTING_ENTRY and examine that public
+\par entry.  Since there are at most 37 entries in any directory page,
+\par examine no more than 37 entries in any given page.  If you have tried
+\par all entries on a page, proceed to the next page by adding DELTA_PAGE
+\par (modulo Directory_Pages) to STARTING_PAGE and continue the process.
+\par When you move to a new page, continue processing the public entries
+\par where you left off.
+\par 
+\par 
+\par To compute the STARTING_PAGE, DELTA_PAGE, STARTING_ENTRY, and
+\par DELTA_ENTRY, view a NAME field as if it were an array of bytes
+\par containing the public name:
+\par 
+\par                         \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c2\'c4\'c4\'c4\'c4\'c2\'c4//\'c4\'c2\'c4\'c4\'c4\'c4\'c4\'c4\'bf\'0d\
+            NAME\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'3e\'b3\'4cength\'b3\'62yte\'b3\'62yte\'b3\'62yte\'b3\'20   \'b3\'20byte \'b3\'0d\
+                        \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c5\'c4//\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+                        \'b3\'20 1   \'b3\'201  \'b3\'201  \'b3\'201  \'b3\'20   \'b3\'20 1   \'b3\'0d\
+                        \'c3\'c4\'c4\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c5\'c4\'c4\'c4\'c4\'c5\'c4//\'c4\'c5\'c4\'c4\'c4\'c4\'c4\'c4\'b4\'0d\
+            index\'c4\'c4\'c4\'c4\'c4\'c4>\'b3\'20 0   \'b3\'201  \'b3\'202  \'b3\'203  \'b3\'20   \'b3\'4cength\'b3\'0d\
+                        \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c1\'c4\'c4\'c4\'c4\'c1\'c4//\'c4\'c1\'c4\'c4\'c4\'c4\'c4\'c4\'d9\'0d\
+
+\par Then, the following code define the values:
+\par STARTING_PAGE, DELTA_PAGE, STARTING_ENTRY, DELTA_ENTRY := 0;
+\par for i := 0 .. Length-1
+\par  STARTING_PAGE := STARTING_PAGE+(NAME[i] or 20H) xor (<<STARTING_PAGE);
+\par  DELTA_PAGE := DELTA_PAGE+(NAME[Length-i+1] or 20H) xor (<<DELTA_PAGE);
+\par  STARTING_ENTRY:= STARTING_ENTRY+(NAME[Length-i+1] or 20H)
+\par                                      xor (>>STARTING_ENTRY);
+\par  DELTA_ENTRY := DELTA_ENTRY+(NAME[i] or 20H) xor (>>DELTA_ENTRY);
+\par end for;
+\par if DELTA_ENTRY = 0 then DELTA_ENTRY := 1;
+\par if DELTA_PAGE = 0 then DELTA_PAGE := 1;
+\par Note:  << is circular shift left twice and
+\par        >> is circular shift right twice.
+\par \'1a\'ab\'0f
+\par }
+ 

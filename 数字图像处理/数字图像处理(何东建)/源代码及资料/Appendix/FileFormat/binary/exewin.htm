@@ -1,0 +1,533 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>executable</title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">executable-file format</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%">.exe executable-file header format (3.1)<br>
+    <br>
+    an executable (.exe) file for the microsoft windows operating system contains a 
+    combination of code and data or a combination <br>
+    of code, data, and resources. the executable file also contains two headers: an ms-dos 
+    header and a windows header. the <br>
+    next two sections describe these headers; the third section describes the code and data 
+    contained in a windows executable file. <br>
+    <br>
+    ms-dos header<br>
+    <br>
+    the ms-dos (old-style) executable-file header contains four distinct parts: a collection 
+    of header information (such as the <br>
+    signature word, the file size, and so on), a reserved section, a pointer to a windows 
+    header (if one exists), and a stub program. <br>
+    the following illustration shows the ms-dos executable-file header: <br>
+    if the word value at offset 18h is 40h or greater, the word value at 3ch is typically an 
+    offset to a windows header. applications <br>
+    must verify this for each executable-file header being tested, because a few applications 
+    have a different header style. <br>
+    ms-dos uses the stub program to display a message if windows has not been loaded when the 
+    user attempts to run a <br>
+    program. <br>
+    for more information about the ms-dos executable-file header, see the microsoft ms-dos 
+    programmer's reference <br>
+    (redmond, washington: microsoft press, 1991). <br>
+    <br>
+    windows header<br>
+    <br>
+    the windows (new-style) executable-file header contains information that the loader 
+    requires for segmented executable files. <br>
+    this information includes the linker version number, data specified by the linker, data 
+    specified by the resource compiler, tables <br>
+    of segment data, tables of resource data, and so on. the following illustration shows the 
+    windows executable-file header: <br>
+    the following sections describe the entries in the windows executable-file header. <br>
+    <br>
+    information block<br>
+    <br>
+    the information block in the windows header contains the linker version number, the 
+    lengths of various tables that further <br>
+    describe the executable file, the offsets from the beginning of the header to the 
+    beginning of these tables, the heap and stack <br>
+    sizes, and so on. the following list summarizes the contents of the header information 
+    block (the locations are relative to the <br>
+    beginning of the block): <br>
+    <br>
+    location&nbsp;&nbsp;&nbsp; description<br>
+    <br>
+    00h&nbsp;&nbsp;&nbsp; specifies the signature word. the low byte contains &quot;n&quot; 
+    (4eh) and the high byte contains &quot;e&quot; (45h). <br>
+    02h&nbsp;&nbsp;&nbsp; specifies the linker version number. <br>
+    03h&nbsp;&nbsp;&nbsp; specifies the linker revision number. <br>
+    04h&nbsp;&nbsp;&nbsp; specifies the offset to the entry table (relative to the beginning 
+    of the header). <br>
+    06h&nbsp;&nbsp;&nbsp; specifies the length of the entry table, in bytes. <br>
+    08h&nbsp;&nbsp;&nbsp; reserved. <br>
+    0ch&nbsp;&nbsp;&nbsp; specifies flags that describe the contents of the executable file. 
+    this value can be one or more of the following bits: <br>
+    <br>
+    bit&nbsp;&nbsp;&nbsp; meaning<br>
+    <br>
+    0&nbsp;&nbsp;&nbsp; the linker sets this bit if the executable-file format is singledata. 
+    an executable file with this format <br>
+    contains one data segment. this bit is set if the file is a dynamic-link library (dll). <br>
+    1&nbsp;&nbsp;&nbsp; the linker sets this bit if the executable-file format is 
+    multipledata. an executable file with this format <br>
+    contains multiple data segments. this bit is set if the file is a windows application. <br>
+    <br>
+    if neither bit 0 nor bit 1 is set, the executable-file format is noautodata. an executable 
+    file with this format <br>
+    does not contain an automatic data segment. <br>
+    <br>
+    2&nbsp;&nbsp;&nbsp; reserved. <br>
+    3&nbsp;&nbsp;&nbsp; reserved. <br>
+    8&nbsp;&nbsp;&nbsp; reserved. <br>
+    9&nbsp;&nbsp;&nbsp; reserved. <br>
+    11&nbsp;&nbsp;&nbsp; if this bit is set, the first segment in the executable file contains 
+    code that loads the application. <br>
+    13&nbsp;&nbsp;&nbsp; if this bit is set, the linker detects errors at link time but still 
+    creates an executable file. <br>
+    14&nbsp;&nbsp;&nbsp; reserved. <br>
+    15&nbsp;&nbsp;&nbsp; if this bit is set, the executable file is a library module. <br>
+    <br>
+    if bit 15 is set, the cs:ip registers point to an initialization procedure called with the 
+    value in the ax register <br>
+    equal to the module handle. the initialization procedure must execute a far return to the 
+    caller. if the <br>
+    procedure is successful, the value in ax is nonzero. otherwise, the value in ax is zero. <br>
+    the value in the ds register is set to the library's data segment if singledata is set. 
+    otherwise, ds is set <br>
+    to the data segment of the application that loads the library. <br>
+    <br>
+    0eh&nbsp;&nbsp;&nbsp; specifies the automatic data segment number. (0eh is zero if the 
+    singledata and multipledata bits are <br>
+    cleared.) <br>
+    10h&nbsp;&nbsp;&nbsp; specifies the initial size, in bytes, of the local heap. this value 
+    is zero if there is no local allocation. <br>
+    12h&nbsp;&nbsp;&nbsp; specifies the initial size, in bytes, of the stack. this value is 
+    zero if the ss register value does not equal the ds <br>
+    register value. <br>
+    14h&nbsp;&nbsp;&nbsp; specifies the segment:offset value of cs:ip. <br>
+    18h&nbsp;&nbsp;&nbsp; specifies the segment:offset value of ss:sp. <br>
+    <br>
+    the value specified in ss is an index to the module's segment table. the first entry in 
+    the segment table <br>
+    corresponds to segment number 1. <br>
+    if ss addresses the automatic data segment and sp is zero, sp is set to the address 
+    obtained by adding the size of <br>
+    the automatic data segment to the size of the stack. <br>
+    <br>
+    1ch&nbsp;&nbsp;&nbsp; specifies the number of entries in the segment table. <br>
+    1eh&nbsp;&nbsp;&nbsp; specifies the number of entries in the module-reference table. <br>
+    20h&nbsp;&nbsp;&nbsp; specifies the number of bytes in the nonresident-name table. <br>
+    22h&nbsp;&nbsp;&nbsp; specifies a relative offset from the beginning of the windows header 
+    to the beginning of the segment table. <br>
+    24h&nbsp;&nbsp;&nbsp; specifies a relative offset from the beginning of the windows header 
+    to the beginning of the resource table. <br>
+    26h&nbsp;&nbsp;&nbsp; specifies a relative offset from the beginning of the windows header 
+    to the beginning of the resident-name table. <br>
+    28h&nbsp;&nbsp;&nbsp; specifies a relative offset from the beginning of the windows header 
+    to the beginning of the module-reference table. <br>
+    2ah&nbsp;&nbsp;&nbsp; specifies a relative offset from the beginning of the windows header 
+    to the beginning of the imported-name table. <br>
+    2ch&nbsp;&nbsp;&nbsp; specifies a relative offset from the beginning of the file to the 
+    beginning of the nonresident-name table. <br>
+    <br>
+    30h&nbsp;&nbsp;&nbsp; specifies the number of movable entry points. <br>
+    32h&nbsp;&nbsp;&nbsp; specifies a shift count that is used to align the logical sector. 
+    this count is log2 of the segment sector size. it is <br>
+    typically 4, although the default count is 9. (this value corresponds to the /alignment 
+    [/a] linker switch. when the <br>
+    linker command line contains /a:16, the shift count is 4. when the linker command line 
+    contains /a:512, the shift <br>
+    count is 9.) <br>
+    34h&nbsp;&nbsp;&nbsp; specifies the number of resource segments. <br>
+    36h&nbsp;&nbsp;&nbsp; specifies the target operating system, depending on which bits are 
+    set: <br>
+    <br>
+    bit&nbsp;&nbsp;&nbsp; meaning<br>
+    <br>
+    0&nbsp;&nbsp;&nbsp; operating system format is unknown. <br>
+    1&nbsp;&nbsp;&nbsp; reserved. <br>
+    2&nbsp;&nbsp;&nbsp; operating system is microsoft windows. <br>
+    3&nbsp;&nbsp;&nbsp; reserved. <br>
+    4&nbsp;&nbsp;&nbsp; reserved. <br>
+    <br>
+    37h&nbsp;&nbsp;&nbsp; specifies additional information about the executable file. it can 
+    be one or more of the following values: <br>
+    <br>
+    bit&nbsp;&nbsp;&nbsp; meaning<br>
+    <br>
+    1&nbsp;&nbsp;&nbsp; if this bit is set, the executable file contains a windows 2.x 
+    application that runs in version 3.x protected <br>
+    mode. <br>
+    2&nbsp;&nbsp;&nbsp; if this bit is set, the executable file contains a windows 2.x 
+    application that supports proportional fonts. <br>
+    3&nbsp;&nbsp;&nbsp; if this bit is set, the executable file contains a fast-load area. <br>
+    <br>
+    38h&nbsp;&nbsp;&nbsp; specifies the offset, in sectors, to the beginning of the fast-load 
+    area. (only windows uses this value.) <br>
+    3ah&nbsp;&nbsp;&nbsp; specifies the length, in sectors, of the fast-load area. (only 
+    windows uses this value.) <br>
+    3ch&nbsp;&nbsp;&nbsp; reserved. <br>
+    3eh&nbsp;&nbsp;&nbsp; specifies the expected version number for windows. (only windows 
+    uses this value.) <br>
+    <br>
+    segment table<br>
+    <br>
+    the segment table contains information that describes each segment in an executable file. 
+    this information includes the <br>
+    segment length, segment type, and segment-relocation data. the following list summarizes 
+    the values found in the segment <br>
+    table (the locations are relative to the beginning of each entry): <br>
+    <br>
+    location&nbsp;&nbsp;&nbsp; description<br>
+    <br>
+    00h&nbsp;&nbsp;&nbsp; specifies the offset, in sectors, to the segment data (relative to 
+    the beginning of the file). a value of zero means no <br>
+    data exists. <br>
+    02h&nbsp;&nbsp;&nbsp; specifies the length, in bytes, of the segment, in the file. a value 
+    of zero indicates that the segment length is 64k, <br>
+    unless the selector offset is also zero. <br>
+    04h&nbsp;&nbsp;&nbsp; specifies flags that describe the contents of the executable file. 
+    this value can be one or more of the following: <br>
+    <br>
+    bit&nbsp;&nbsp;&nbsp; meaning<br>
+    <br>
+    0&nbsp;&nbsp;&nbsp; if this bit is set, the segment is a data segment. otherwise, the 
+    segment is a code segment. <br>
+    1&nbsp;&nbsp;&nbsp; if this bit is set, the loader has allocated memory for the segment. <br>
+    2&nbsp;&nbsp;&nbsp; if this bit is set, the segment is loaded. <br>
+    3&nbsp;&nbsp;&nbsp; reserved. <br>
+    4&nbsp;&nbsp;&nbsp; if this bit is set, the segment type is movable. otherwise, the 
+    segment type is fixed. <br>
+    5&nbsp;&nbsp;&nbsp; if this bit is set, the segment type is pure or shareable. otherwise, 
+    the segment type is impure or <br>
+    nonshareable. <br>
+    6&nbsp;&nbsp;&nbsp; if this bit is set, the segment type is preload. otherwise, the 
+    segment type is loadoncall. <br>
+    7&nbsp;&nbsp;&nbsp; if this bit is set and the segment is a code segment, the segment type 
+    is executeonly. if this bit is set <br>
+    and the segment is a data segment, the segment type is readonly. <br>
+    <br>
+    8&nbsp;&nbsp;&nbsp; if this bit is set, the segment contains relocation data. <br>
+    9&nbsp;&nbsp;&nbsp; reserved. <br>
+    10&nbsp;&nbsp;&nbsp; reserved. <br>
+    11&nbsp;&nbsp;&nbsp; reserved. <br>
+    12&nbsp;&nbsp;&nbsp; if this bit is set, the segment is discardable. <br>
+    13&nbsp;&nbsp;&nbsp; reserved. <br>
+    14&nbsp;&nbsp;&nbsp; reserved. <br>
+    15&nbsp;&nbsp;&nbsp; reserved. <br>
+    <br>
+    06h&nbsp;&nbsp;&nbsp; specifies the minimum allocation size of the segment, in bytes. a 
+    value of zero indicates that the minimum allocation <br>
+    size is 64k. <br>
+    <br>
+    resource table<br>
+    <br>
+    the resource table describes and identifies the location of each resource in the 
+    executable file. the table has the following form: <br>
+    <br>
+    <br>
+    <br>
+    word rscalignshift;<br>
+    typeinfo rsctypes[];<br>
+    word rscendtypes;<br>
+    byte rscresourcenames[];<br>
+    byte rscendnames;<br>
+    <br>
+    following are the members in the resource table: <br>
+    <br>
+    rscalignshift&nbsp;&nbsp;&nbsp; specifies the alignment shift count for resource data. 
+    when the shift count is used as an exponent of 2, <br>
+    the resulting value specifies the factor, in bytes, for computing the location of a 
+    resource in the <br>
+    executable file. <br>
+    rsctypes&nbsp;&nbsp;&nbsp; specifies an array of typeinfo structures containing 
+    information about resource types. there must <br>
+    be one typeinfo structure for each type of resource in the executable file. <br>
+    rscendtypes&nbsp;&nbsp;&nbsp; specifies the end of the resource type definitions. this 
+    member must be zero. <br>
+    rscresourcenames&nbsp;&nbsp;&nbsp; specifies the names (if any) associated with the 
+    resources in this table. each name is stored as <br>
+    consecutive bytes; the first byte specifies the number of characters in the name. <br>
+    rscendnames&nbsp;&nbsp;&nbsp; specifies the end of the resource names and the end of the 
+    resource table. this member must be <br>
+    zero. <br>
+    <br>
+    type information<br>
+    <br>
+    the typeinfo structure has the following form: <br>
+    <br>
+    <br>
+    <br>
+    typedef struct _typeinfo {<br>
+    word rttypeid;<br>
+    word rtresourcecount;<br>
+    dword rtreserved;<br>
+    nameinfo rtnameinfo[];<br>
+    } typeinfo;<br>
+    <br>
+    following are the members in the typeinfo structure: <br>
+    <br>
+    rttypeid&nbsp;&nbsp;&nbsp; specifies the type identifier of the resource. this integer 
+    value is either a resource-type value or an offset <br>
+    to a resource-type name. if the high bit in this member is set (0x8000), the value is one 
+    of the following <br>
+    resource-type values: <br>
+    <br>
+    value&nbsp;&nbsp;&nbsp; resource type<br>
+    <br>
+    rt_accelerator&nbsp;&nbsp;&nbsp; accelerator table <br>
+    rt_bitmap&nbsp;&nbsp;&nbsp; bitmap <br>
+    rt_cursor&nbsp;&nbsp;&nbsp; cursor <br>
+    rt_dialog&nbsp;&nbsp;&nbsp; dialog box <br>
+    rt_font&nbsp;&nbsp;&nbsp; font component <br>
+    rt_fontdir&nbsp;&nbsp;&nbsp; font directory <br>
+    rt_group_cursor&nbsp;&nbsp;&nbsp; cursor directory <br>
+    rt_group_icon&nbsp;&nbsp;&nbsp; icon directory <br>
+    rt_icon&nbsp;&nbsp;&nbsp; icon <br>
+    rt_menu&nbsp;&nbsp;&nbsp; menu <br>
+    rt_rcdata&nbsp;&nbsp;&nbsp; resource data <br>
+    rt_string&nbsp;&nbsp;&nbsp; string table <br>
+    <br>
+    if the high bit of the value in this member is not set, the value represents an offset, in 
+    bytes relative to the <br>
+    beginning of the resource table, to a name in the rscresourcenames member. <br>
+    <br>
+    rtresourcecount&nbsp;&nbsp;&nbsp; specifies the number of resources of this type in the 
+    executable file. <br>
+    rtreserved&nbsp;&nbsp;&nbsp; reserved. <br>
+    rtnameinfo&nbsp;&nbsp;&nbsp; specifies an array of nameinfo structures containing 
+    information about individual resources. the <br>
+    rtresourcecount member specifies the number of structures in the array. <br>
+    <br>
+    name information<br>
+    <br>
+    the nameinfo structure has the following form: <br>
+    <br>
+    <br>
+    <br>
+    typedef struct _nameinfo {<br>
+    word rnoffset;<br>
+    word rnlength;<br>
+    word rnflags;<br>
+    word rnid;<br>
+    word rnhandle;<br>
+    word rnusage;<br>
+    } nameinfo;<br>
+    <br>
+    following are the members in the nameinfo structure: <br>
+    <br>
+    rnoffset&nbsp;&nbsp;&nbsp; specifies an offset to the contents of the resource data 
+    (relative to the beginning of the file). the offset is in terms of <br>
+    alignment units specified by the rscalignshift member at the beginning of the resource 
+    table. <br>
+    rnlength&nbsp;&nbsp;&nbsp; specifies the resource length, in bytes. <br>
+    rnflags&nbsp;&nbsp;&nbsp; specifies whether the resource is fixed, preloaded, or 
+    shareable. this member can be one or more of the following <br>
+    values: <br>
+    <br>
+    value&nbsp;&nbsp;&nbsp; meaning<br>
+    <br>
+    0x0010&nbsp;&nbsp;&nbsp; resource is movable (moveable). otherwise, it is fixed. <br>
+    0x0020&nbsp;&nbsp;&nbsp; resource can be shared (pure). <br>
+    0x0040&nbsp;&nbsp;&nbsp; resource is preloaded (preload). otherwise, it is loaded on 
+    demand. <br>
+    <br>
+    rnid&nbsp;&nbsp;&nbsp; specifies or points to the resource identifier. if the identifier 
+    is an integer, the high bit is set (8000h). otherwise, it is an <br>
+    offset to a resource string, relative to the beginning of the resource table. <br>
+    rnhandle&nbsp;&nbsp;&nbsp; reserved. <br>
+    rnusage&nbsp;&nbsp;&nbsp; reserved. <br>
+    <br>
+    resident-name table<br>
+    <br>
+    the resident-name table contains strings that identify exported functions in the 
+    executable file. as the name implies, these strings <br>
+    are resident in system memory and are never discarded. the resident-name strings are 
+    case-sensitive and are not <br>
+    null-terminated. the following list summarizes the values found in the resident-name table 
+    (the locations are relative to the <br>
+    beginning of each entry): <br>
+    <br>
+    location&nbsp;&nbsp;&nbsp; description<br>
+    <br>
+    00h&nbsp;&nbsp;&nbsp; specifies the length of a string. if there are no more strings in 
+    the table, this value is zero. <br>
+    01h - xxh&nbsp;&nbsp;&nbsp; specifies the resident-name text. this string is 
+    case-sensitive and is not null-terminated. <br>
+    xxh + 01h&nbsp;&nbsp;&nbsp; specifies an ordinal number that identifies the string. this 
+    number is an index into the entry table. <br>
+    <br>
+    the first string in the resident-name table is the module name. <br>
+    <br>
+    module-reference table<br>
+    <br>
+    the module-reference table contains offsets for module names stored in the imported-name 
+    table. each entry in this table is 2 <br>
+    bytes long. <br>
+    <br>
+    imported-name table<br>
+    <br>
+    the imported-name table contains the names of modules that the executable file imports. 
+    each entry contains two parts: a single <br>
+    byte that specifies the length of the string and the string itself. the strings in this 
+    table are not null-terminated. <br>
+    <br>
+    entry table<br>
+    <br>
+    the entry table contains bundles of entry points from the executable file (the linker 
+    generates each bundle). the numbering <br>
+    system for these ordinal values is 1-based--that is, the ordinal value corresponding to 
+    the first entry point is 1. <br>
+    the linker generates the densest possible bundles under the restriction that it cannot 
+    reorder the entry points. this restriction is <br>
+    necessary because other executable files may refer to entry points within a given bundle 
+    by their ordinal values. <br>
+    the entry-table data is organized by bundle, each of which begins with a 2-byte header. 
+    the first byte of the header specifies the <br>
+    number of entries in the bundle (a value of 00h designates the end of the table). the 
+    second byte specifies whether the <br>
+    corresponding segment is movable or fixed. if the value in this byte is 0ffh, the segment 
+    is movable. if the value in this byte is <br>
+    0feh, the entry does not refer to a segment but refers, instead, to a constant defined 
+    within the module. if the value in this byte is <br>
+    neither 0ffh nor 0feh, it is a segment index. <br>
+    <br>
+    for movable segments, each entry consists of 6 bytes and has the following form: <br>
+    <br>
+    location&nbsp;&nbsp;&nbsp; description<br>
+    <br>
+    00h&nbsp;&nbsp;&nbsp; specifies a byte value. this value can be a combination of the 
+    following bits: <br>
+    <br>
+    bit(s)&nbsp;&nbsp;&nbsp; meaning<br>
+    <br>
+    0&nbsp;&nbsp;&nbsp; if this bit is set, the entry is exported. <br>
+    1&nbsp;&nbsp;&nbsp; if this bit is set, the segment uses a global (shared) data segment. <br>
+    3-7&nbsp;&nbsp;&nbsp; if the executable file contains code that performs ring transitions, 
+    these bits specify the number of words <br>
+    that compose the stack. at the time of the ring transition, these words must be copied 
+    from one ring to the <br>
+    other. <br>
+    <br>
+    01h&nbsp;&nbsp;&nbsp; specifies an int 3fh instruction. <br>
+    03h&nbsp;&nbsp;&nbsp; specifies the segment number. <br>
+    04h&nbsp;&nbsp;&nbsp; specifies the segment offset. <br>
+    <br>
+    for fixed segments, each entry consists of 3 bytes and has the following form: <br>
+    <br>
+    location&nbsp;&nbsp;&nbsp; description<br>
+    <br>
+    00h&nbsp;&nbsp;&nbsp; specifies a byte value. this value can be a combination of the 
+    following bits: <br>
+    <br>
+    bit(s)&nbsp;&nbsp;&nbsp; meaning<br>
+    <br>
+    0&nbsp;&nbsp;&nbsp; if this bit is set, the entry is exported. <br>
+    1&nbsp;&nbsp;&nbsp; if this bit is set, the entry uses a global (shared) data segment. 
+    (this may be set only for singledata <br>
+    library modules.) <br>
+    3-7&nbsp;&nbsp;&nbsp; if the executable file contains code that performs ring transitions, 
+    these bits specify the number of words <br>
+    that compose the stack. at the time of the ring transition, these words must be copied 
+    from one ring to the <br>
+    other. <br>
+    <br>
+    01h&nbsp;&nbsp;&nbsp; specifies an offset. <br>
+    <br>
+    nonresident-name table<br>
+    <br>
+    the nonresident-name table contains strings that identify exported functions in the 
+    executable file. as the name implies, these <br>
+    strings are not always resident in system memory and are discardable. the nonresident-name 
+    strings are case-sensitive; they <br>
+    are not null-terminated. the following list summarizes the values found in the 
+    nonresident-name table (the specified locations are <br>
+    relative to the beginning of each entry): <br>
+    <br>
+    location&nbsp;&nbsp;&nbsp; description<br>
+    <br>
+    00h&nbsp;&nbsp;&nbsp; specifies the length, in bytes, of a string. if this byte is 00h, 
+    there are no more strings in the table. <br>
+    01h - xxh&nbsp;&nbsp;&nbsp; specifies the nonresident-name text. this string is 
+    case-sensitive and is not null-terminated. <br>
+    xx + 01h&nbsp;&nbsp;&nbsp; specifies an ordinal number that is an index to the entry 
+    table. <br>
+    <br>
+    the first name that appears in the nonresident-name table is the module description string 
+    (which was specified in the <br>
+    module-definition file). <br>
+    <br>
+    code segments and relocation data<br>
+    <br>
+    code and data segments follow the windows header. some of the code segments may contain 
+    calls to functions in other <br>
+    segments and may, therefore, require relocation data to resolve those references. this 
+    relocation data is stored in a relocation <br>
+    table that appears immediately after the code or data in the segment. the first 2 bytes in 
+    this table specify the number of <br>
+    relocation items the table contains. a relocation item is a collection of bytes specifying 
+    the following information: <br>
+    <br>
+    &nbsp;&nbsp;&nbsp; address type (segment only, offset only, segment and offset) <br>
+    <br>
+    &nbsp;&nbsp;&nbsp; relocation type (internal reference, imported ordinal, imported name) <br>
+    <br>
+    &nbsp;&nbsp;&nbsp; segment number or ordinal identifier (for internal references) <br>
+    <br>
+    &nbsp;&nbsp;&nbsp; reference-table index or function ordinal number (for imported 
+    ordinals) <br>
+    <br>
+    &nbsp;&nbsp;&nbsp; reference-table index or name-table offset (for imported names) <br>
+    <br>
+    each relocation item contains 8 bytes of data, the first byte of which specifies one of 
+    the following relocation-address types: <br>
+    <br>
+    value&nbsp;&nbsp;&nbsp; meaning<br>
+    <br>
+    0&nbsp;&nbsp;&nbsp; low byte at the specified offset <br>
+    2&nbsp;&nbsp;&nbsp; 16-bit selector <br>
+    3&nbsp;&nbsp;&nbsp; 32-bit pointer <br>
+    5&nbsp;&nbsp;&nbsp; 16-bit offset <br>
+    11&nbsp;&nbsp;&nbsp; 48-bit pointer <br>
+    13&nbsp;&nbsp;&nbsp; 32-bit offset <br>
+    <br>
+    the second byte specifies one of the following relocation types: <br>
+    <br>
+    value&nbsp;&nbsp;&nbsp; meaning<br>
+    <br>
+    0&nbsp;&nbsp;&nbsp; internal reference <br>
+    1&nbsp;&nbsp;&nbsp; imported ordinal <br>
+    2&nbsp;&nbsp;&nbsp; imported name <br>
+    3&nbsp;&nbsp;&nbsp; osfixup <br>
+    <br>
+    the third and fourth bytes specify the offset of the relocation item within the segment. <br>
+    if the relocation type is imported ordinal, the fifth and sixth bytes specify an index to 
+    a module's reference table and the seventh <br>
+    and eighth bytes specify a function ordinal value. <br>
+    if the relocation type is imported name, the fifth and sixth bytes specify an index to a 
+    module's reference table and the seventh and <br>
+    eighth bytes specify an offset to an imported-name table. <br>
+    if the relocation type is internal reference and the segment is fixed, the fifth byte 
+    specifies the segment number, the sixth byte is <br>
+    zero, and the seventh and eighth bytes specify an offset to the segment. if the relocation 
+    type is internal reference and the segment <br>
+    is movable, the fifth byte specifies 0ffh, the sixth byte is zero; and the seventh and 
+    eighth bytes specify an ordinal value found in <br>
+    the segment's entry table. </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

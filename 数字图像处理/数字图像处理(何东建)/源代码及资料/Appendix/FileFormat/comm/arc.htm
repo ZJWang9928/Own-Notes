@@ -1,0 +1,102 @@
+<html>
+
+<head>
+<title>file:///d:/程序资料/format2/arc.txt</title>
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">arc, pak format</font></p>
+<div align="center"><center>
+
+<table border="0" width="80%">
+  <tr>
+    <td width="100%"><pre>the arc files are archive files created by the sea arc program. the compression
+has been superceded by more recent compression programs. similar archives can
+be created by the pak and pkpak programs. there have been many variations
+and enhancements to the arc format though not as many as to the tiff format.</pre>
+    <pre>you may have to use some (paranoid) checks to ensure that you actually are
+processing an arc file, since other archivers also adopted the idea of putting
+a 01ah byte at offset 0, namely the hyper archiver. to check if you have a
+hyper-archive, check the next two bytes for &quot;hp&quot; or &quot;st&quot; (or look below for
+&quot;hyp&quot;). also the zoo archiver also does put a 01ah at the start of the file,
+see the zoo entry below.
+offset              count type   description
+0000h                   1 byte   id=1ah
+0001h                   1 byte   compression method (see table 0001)
+0002h                  12 char   file name
+000fh                   1 dword  compressed file size
+0013h                   1 dword  file date in ms-dos format (see table 0009)
+0017h                   1 word   16-bit crc
+0019h                   1 dword  original file size
+                                 =&quot;siz&quot;
+(table 0001)
+arc compression types
+    0 - end of archive marker
+    1 - unpacked (obsolete) - arc 1.0 ?
+    2 - unpacked - arc 3.1
+    3 - packed (rle encoding)
+    4 - squeezed (after packing)
+    5 - crunched (obsolete) - arc 4.0
+    6 - crunched (after packing) (obsolete) - arc 4.1
+    7 - crunched (after packing, using faster hash algorithm) - arc 4.6
+    8 - crunched (after packing, using dynamic lzw variations) - arc 5.0
+    9 - squashed c/o phil katz (no packing) (var. on crunching)
+   10 - crushed (pak only)
+   11 - distilled (pak only)
+12-19 -  to 19 unknown (arc 6.0 or later) - arc 7.0 (?)
+20-29 - ?informational items? - arc 6.0
+30-39 - ?control items? - arc 6.0
+  40+ - reserved</pre>
+    <pre>according to sea's technical memo, the information and control items
+were added to arc 6.0. information items use the same headers as archived
+files, although the original file size (and name?) can be ignored.</pre>
+    <pre>offset              count type   description
+0000h                   2 byte   length of header (includes &quot;length&quot;
+                                 and &quot;type&quot;?)
+0002h                   1 byte   (sub)type
+0003h                   ? byte   data</pre>
+    <pre>informational item types as used by arc 6.0 :</pre>
+    <pre>block type    subtype   description
+   20                   archive info
+                0       archive description (asciiz)
+                1       name of creator program (asciiz)
+                2       name of modifier program (asciiz)
+   </pre>
+    <pre>   21                   file info
+                0       file description (asciiz)
+                1       long name (if not ms-dos &quot;8.3&quot; filename)
+                2       extended date-time info (reserved)
+                3       icon (reserved)
+                4       file attributes (asciiz)
+   </pre>
+    <pre>                        attributes use an uppercase letter to signify the
+                        following:</pre>
+    <pre>                                r       read access
+                                w       write access
+                                h       hidden file
+                                s       system file
+                                n       network shareable
+   </pre>
+    <pre>   22                   operating system info (reserved)</pre>
+    <pre>(table 0009)
+format of the ms-dos time stamp (32-bit)
+the ms-dos time stamp is limited to an even count of seconds, since the
+count for seconds is only 5 bits wide.</pre>
+    <pre>  31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
+ |&lt;---- year-1980 ---&gt;|&lt;- month -&gt;|&lt;--- day ----&gt;|</pre>
+    <pre>  15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
+ |&lt;--- hour ---&gt;|&lt;---- minute ---&gt;|&lt;- second/2 -&gt;|</pre>
+    <pre>extension:arc,pak
+occurences:pc
+programs:sea arc,pak,pkpak
+see also:hyp,zoo
+validation:filesize=&quot;siz&quot;</pre>
+    </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>pic format</title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">pic format</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%">pic format<br>
+    <br>
+    pic files contain images in an uncompressed format. both the original animator<br>
+    and animator pro from autodesk produce pic files. the file formats are<br>
+    different; animator pro produces a hierarchial block oriented file, while the<br>
+    original animator file is a simpler fixed format. see pic(pro) for further<br>
+    information on the animator pro pic format.<br>
+    <br>
+    the original animator uses this format to store a single-frame picture image.<br>
+    this format description applies to both pic and original animator cel files. the<br>
+    file begins with a 32 byte header, as follows:<br>
+    <br>
+    offset count type description<br>
+    0000h 1 word id=9119h<br>
+    0002h 1 word width of image; pic files have always a width<br>
+    of 320, cel images may have any value.<br>
+    0004h 1 word height of image, 200 for a pic, any value for<br>
+    a cel file.<br>
+    0006h 1 word x offset of image, always 0 for a pic image,<br>
+    may be nonzero in a cel image.<br>
+    0008h 1 word y offset of image. zero for a pic file.<br>
+    000ah 1 byte bits per pixel (8)<br>
+    000bh 1 byte compresion flag, always zero<br>
+    000ch 1 dword size of the image data in bytes<br>
+    0010h 16 byte reserved(0)<br>
+    <br>
+    immediately following the header is the color map. it contains all 256 palette<br>
+    entries in rgb order. each of the r, g, and b components is a single byte in the<br>
+    range of 0-63. following the color palette is the image data, one byte per<br>
+    pixel, from left to right, top to bottom.<hr>
+    <p>pic(pro) format<br>
+    </p>
+    <p>this format description applies to both pic and msk files created with the<br>
+    autodesk animator pro package. the file begins with a 64-byte header defined<br>
+    as follows:<br>
+    <br>
+    offset length name description<br>
+    0000h 1 dword the size of the whole file including the size<br>
+    of this header.<br>
+    0004h 1 word id=9500h<br>
+    0006h 1 word width of the image<br>
+    0008h 1 word height of the image<br>
+    000ah 1 word x offset of image<br>
+    000ch 1 word y offset of image<br>
+    000eh 1 dword user id, set to zero<br>
+    0012h 1 byte bits per pixel (8 for pic, 1 for msk)<br>
+    0013h 45 byte reserved (0)<br>
+    <br>
+    following the file header are the data blocks for the image. each data block<br>
+    within a pic or msk file is formatted as follows:<br>
+    <br>
+    offset count type description<br>
+    0000h 1 dword the size of the block, including this header.<br>
+    0004h 1 word data type id :<br>
+    0 - color palette info<br>
+    1 - byte-per-pixel image data<br>
+    2 - bit-per-pixel mask data<br>
+    0006h ? byte data<br>
+    <br>
+    the type values in the block headers indicate what type of graphics data the<br>
+    block contains.<br>
+    <br>
+    in a pic_cmap block, the first 2-byte word is a version code;<br>
+    currently this is set to zero. following the version word are all 256 palette<br>
+    entries in rgb order. each of the r, g, and b components is a single byte in the<br>
+    range of 0-255. this type of block appears in pic files; there will generally be<br>
+    no color map block in a msk file.<br>
+    <br>
+    in a pic_bytepixels block, the image data appears immediately following the<br>
+    6-byte block header. the data is stored as one byte per pixel, in left-to-right,<br>
+    topd to-bottom sequence.<br>
+    <br>
+    in a pic_bitpixels block, the bitmap data appears immediately following the<br>
+    6-byte block header. the data is stored as bits packed into bytes such that the<br>
+    leftmost bits appear in the high-order positions of each byte. the bits are<br>
+    stored in left-to-right, top-to bottom sequence. when the width of the bitmap is<br>
+    not a multiple of 8, there will be unused bits in the low order positions of the<br>
+    last byte on each line. the number of bytes per line is ((width+7)/8). this type<br>
+    of block appears in msk files.<br>
+    </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

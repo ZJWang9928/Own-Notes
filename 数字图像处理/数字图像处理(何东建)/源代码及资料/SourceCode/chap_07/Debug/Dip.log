@@ -1,0 +1,25 @@
+﻿生成启动时间为 2017/11/27 21:33:04。
+     1>项目“H:\2017教学(下)\图像处理48+0\数字图像处理(何东建)\源代码及资料\SourceCode\chap_07\Dip.vcxproj”在节点 2 上(Build 个目标)。
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"D:\Program Files\MVTec\HALCON-12.0\include\halconcpp" /I"D:\Program Files\MVTec\HALCON-12.0\include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _VC80_UPGRADE=0x0600 /D _MBCS /D _AFXDLL /Gm /EHsc /RTC1 /MDd /GS /Gy- /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp".\Debug\Dip.pch" /Fo".\Debug\\" /Fd".\Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt CombineDlg.cpp Dip.cpp DipDoc.cpp DipView.cpp FreqPro.cpp
+         FreqPro.cpp
+     1>h:\2017教学(下)\图像处理48+0\数字图像处理(何东建)\源代码及资料\sourcecode\chap_07\matlib.h(2867): error C2375: “abs”: 重定义；不同的链接
+                 c:\program files\microsoft visual studio 11.0\vc\include\math.h(494) : 参见“abs”的声明
+         DipView.cpp
+     1>h:\2017教学(下)\图像处理48+0\数字图像处理(何东建)\源代码及资料\sourcecode\chap_07\matlib.h(2867): error C2375: “abs”: 重定义；不同的链接
+                 c:\program files\microsoft visual studio 11.0\vc\include\math.h(494) : 参见“abs”的声明
+         DipDoc.cpp
+     1>h:\2017教学(下)\图像处理48+0\数字图像处理(何东建)\源代码及资料\sourcecode\chap_07\matlib.h(2867): error C2375: “abs”: 重定义；不同的链接
+                 c:\program files\microsoft visual studio 11.0\vc\include\math.h(494) : 参见“abs”的声明
+         Dip.cpp
+     1>h:\2017教学(下)\图像处理48+0\数字图像处理(何东建)\源代码及资料\sourcecode\chap_07\matlib.h(2867): error C2375: “abs”: 重定义；不同的链接
+                 c:\program files\microsoft visual studio 11.0\vc\include\math.h(494) : 参见“abs”的声明
+         CombineDlg.cpp
+     1>h:\2017教学(下)\图像处理48+0\数字图像处理(何东建)\源代码及资料\sourcecode\chap_07\matlib.h(2867): error C2375: “abs”: 重定义；不同的链接
+                 c:\program files\microsoft visual studio 11.0\vc\include\math.h(494) : 参见“abs”的声明
+         正在生成代码...
+     1>已完成生成项目“H:\2017教学(下)\图像处理48+0\数字图像处理(何东建)\源代码及资料\SourceCode\chap_07\Dip.vcxproj”(Build 个目标)的操作 - 失败。
+
+生成失败。
+
+已用时间 00:00:04.11

@@ -1,0 +1,607 @@
+<html>
+
+<head>
+<title>file:///d:/程序资料/format2/tga.txt</title>
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">tga format</font></p>
+<div align="center"><center>
+
+<table border="0" width="80%">
+  <tr>
+    <td width="100%"><pre>this file has been created to satisfy numerous requests for information
+on targa image file formats.  the information has been taken from
+appendix c of the truevision technical guide.  requests for further
+information could be directed to:</pre>
+    <pre>           at&amp;t
+           electronic photography and imaging center
+           2002 wellesley ave.
+           indianapolis, in 42619</pre>
+    <pre>this document does not pretend to be complete, but it does pretend to
+be accurate.  if you discover any finger checks or erroneous information
+please let me know, ( david mcduffee, 75530,2626), and i will upload the
+corrections.  thanks.</pre>
+    <pre>the lack of completeness is due to the fact that the targa recognizes
+over half a dozen image file formats, some of which are more widely
+used than others.  i have chosen to re-key the details on only those
+formats which i actually use.  again, if you want to know more about
+formats not covered here, you could contact your truevision representative.</pre>
+    <pre>all targa formats are identified by a data type field, which is a one
+byte binary integer located in byte three of the file.  the various
+file types specified by this field are as follows:</pre>
+    <pre>       0  -  no image data included.
+       1  -  uncompressed, color-mapped images.
+       2  -  uncompressed, rgb images.
+       3  -  uncompressed, black and white images.
+       9  -  runlength encoded color-mapped images.
+      10  -  runlength encoded rgb images.
+      11  -  compressed, black and white images.
+      32  -  compressed color-mapped data, using huffman, delta, and
+                    runlength encoding.
+      33  -  compressed color-mapped data, using huffman, delta, and
+                    runlength encoding.  4-pass quadtree-type process.</pre>
+    <pre>this document will describe only four formats: 1, 2, 9, and 10.
+
+
+</pre>
+    <pre>--------------------------------------------------------------------------------
+data type 1:  color-mapped images.                                             |
+_______________________________________________________________________________|
+| offset | length |                     description                            |
+|--------|--------|------------------------------------------------------------|
+|--------|--------|------------------------------------------------------------|
+|    0   |     1  |  number of characters in identification field.             |
+|        |        |                                                            |
+|        |        |  this field is a one-byte unsigned integer, specifying     |
+|        |        |  the length of the image identification field.  its range  |
+|        |        |  is 0 to 255.  a value of 0 means that no image            |
+|        |        |  identification field is included.                         |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|    1   |     1  |  color map type.                                           |
+|        |        |                                                            |
+|        |        |  this field contains a binary 1 for data type 1 images.    |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|    2   |     1  |  image type code.                                          |
+|        |        |                                                            |
+|        |        |  this field will always contain a binary 1.                |
+|        |        |  ( that's what makes it data type 1 ).                     |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|    3   |     5  |  color map specification.                                  |
+|        |        |                                                            |
+|    3   |     2  |  color map origin.                                         |
+|        |        |  integer ( lo-hi ) index of first color map entry.         |
+|        |        |                                                            |
+|    5   |     2  |  color map length.                                         |
+|        |        |  integer ( lo-hi ) count of color map entries.             |
+|        |        |                                                            |
+|    7   |     1  |  color map entry size.                                     |
+|        |        |  number of bits in each color map entry.  16 for           |
+|        |        |  the targa 16, 24 for the targa 24, 32 for the targa 32.   |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|    8   |    10  |  image specification.                                      |
+|        |        |                                                            |
+|    8   |     2  |  x origin of image.                                        |
+|        |        |  integer ( lo-hi ) x coordinate of the lower left corner   |
+|        |        |  of the image.                                             |
+|        |        |                                                            |
+|   10   |     2  |  y origin of image.                                        |
+|        |        |  integer ( lo-hi ) y coordinate of the lower left corner   |
+|        |        |  of the image.                                             |
+|        |        |                                                            |
+|   12   |     2  |  width of image.                                           |
+|        |        |  integer ( lo-hi ) width of the image in pixels.           |
+|        |        |                                                            |
+|   14   |     2  |  height of image.                                          |
+|        |        |  integer ( lo-hi ) height of the image in pixels.          |
+|        |        |                                                            |
+|   16   |     1  |  image pixel size.                                         |
+|        |        |  number of bits in a stored pixel index.                   |
+|        |        |                                                            |
+|   17   |     1  |  image descriptor byte.                                    |
+|        |        |  bits 3-0 - number of attribute bits associated with each  |
+|        |        |             pixel.                                         |
+|        |        |  bit 4    - reserved.  must be set to 0.                   |
+|        |        |  bit 5    - screen origin bit.                             |
+|        |        |             0 = origin in lower left-hand corner.          |
+|        |        |             1 = origin in upper left-hand corner.          |
+|        |        |             must be 0 for truevision images.               |
+|        |        |  bits 7-6 - data storage interleaving flag.                |
+|        |        |             00 = non-interleaved.                          |
+|        |        |             01 = two-way (even/odd) interleaving.          |
+|        |        |             10 = four way interleaving.                    |
+|        |        |             11 = reserved.                                 |
+|        |        |  this entire byte should be set to 0.  don't ask me.       |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|   18   | varies |  image identification field.                               |
+|        |        |  contains a free-form identification field of the length   |
+|        |        |  specified in byte 1 of the image record.  it's usually    |
+|        |        |  omitted ( length in byte 1 = 0 ), but can be up to 255    |
+|        |        |  characters.  if more identification information is        |
+|        |        |  required, it can be stored after the image data.          |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+| varies | varies |  color map data.                                           |
+|        |        |                                                            |
+|        |        |  the offset is determined by the size of the image         |
+|        |        |  identification field.  the length is determined by        |
+|        |        |  the color map specification, which describes the          |
+|        |        |  size of each entry and the number of entries.             |
+|        |        |  each color map entry is 2, 3, or 4 bytes.                 |
+|        |        |  unused bits are assumed to specify attribute bits.        |
+|        |        |                                                            |
+|        |        |  the 4 byte entry contains 1 byte for blue, 1 byte         |
+|        |        |  for green, 1 byte for red, and 1 byte of attribute        |
+|        |        |  information, in that order.
+|        |        |                                                            |
+|        |        |  the 3 byte entry contains 1 byte each of blue, green,     |
+|        |        |  and red.                                                  |
+|        |        |                                                            |
+|        |        |  the 2 byte entry is broken down as follows:               |
+|        |        |  arrrrrgg gggbbbbb, where each letter represents a bit.    |
+|        |        |  but, because of the lo-hi storage order, the first byte   |
+|        |        |  coming from the file will actually be gggbbbbb, and the   |
+|        |        |  second will be arrrrrgg. &quot;a&quot; represents an attribute bit. |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+| varies | varies |  image data field.                                         |
+|        |        |                                                            |
+|        |        |  this field specifies (width) x (height) color map         |
+|        |        |  indices.  each index is stored as an integral number      |
+|        |        |  of bytes (typically 1 or 2).   all fields are unsigned.   |
+|        |        |  the low-order byte of a two-byte field is stored first.   |
+|        |        |                                                            |
+--------------------------------------------------------------------------------
+
+
+
+
+</pre>
+    <pre>--------------------------------------------------------------------------------
+data type 2:  unmapped rgb images.                                             |
+_______________________________________________________________________________|
+| offset | length |                     description                            |
+|--------|--------|------------------------------------------------------------|
+|--------|--------|------------------------------------------------------------|
+|    0   |     1  |  number of characters in identification field.             |
+|        |        |                                                            |
+|        |        |  this field is a one-byte unsigned integer, specifying     |
+|        |        |  the length of the image identification field.  its value  |
+|        |        |  is 0 to 255.  a value of 0 means that no image            |
+|        |        |  identification field is included.                         |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|    1   |     1  |  color map type.                                           |
+|        |        |                                                            |
+|        |        |  this field contains either 0 or 1.  0 means no color map  |
+|        |        |  is included.  1 means a color map is included, but since  |
+|        |        |  this is an unmapped image it is usually ignored.  tips    |
+|        |        |  ( a targa paint system ) will set the border color        |
+|        |        |  the first map color if it is present.                     |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|    2   |     1  |  image type code.                                          |
+|        |        |                                                            |
+|        |        |  this field will always contain a binary 2.                |
+|        |        |  ( that's what makes it data type 2 ).                     |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|    3   |     5  |  color map specification.                                  |
+|        |        |                                                            |
+|        |        |  ignored if color map type is 0; otherwise, interpreted    |
+|        |        |  as follows:                                               |
+|        |        |                                                            |
+|    3   |     2  |  color map origin.                                         |
+|        |        |  integer ( lo-hi ) index of first color map entry.         |
+|        |        |                                                            |
+|    5   |     2  |  color map length.                                         |
+|        |        |  integer ( lo-hi ) count of color map entries.             |
+|        |        |                                                            |
+|    7   |     1  |  color map entry size.                                     |
+|        |        |  number of bits in color map entry.  16 for the targa 16,  |
+|        |        |  24 for the targa 24, 32 for the targa 32.                 |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|    8   |    10  |  image specification.                                      |
+|        |        |                                                            |
+|    8   |     2  |  x origin of image.                                        |
+|        |        |  integer ( lo-hi ) x coordinate of the lower left corner   |
+|        |        |  of the image.                                             |
+|        |        |                                                            |
+|   10   |     2  |  y origin of image.                                        |
+|        |        |  integer ( lo-hi ) y coordinate of the lower left corner   |
+|        |        |  of the image.                                             |
+|        |        |                                                            |
+|   12   |     2  |  width of image.                                           |
+|        |        |  integer ( lo-hi ) width of the image in pixels.           |
+|        |        |                                                            |
+|   14   |     2  |  height of image.                                          |
+|        |        |  integer ( lo-hi ) height of the image in pixels.          |
+|        |        |                                                            |
+|   16   |     1  |  image pixel size.                                         |
+|        |        |  number of bits in a pixel.  this is 16 for targa 16,      |
+|        |        |  24 for targa 24, and .... well, you get the idea.         |
+|        |        |                                                            |
+|   17   |     1  |  image descriptor byte.                                    |
+|        |        |  bits 3-0 - number of attribute bits associated with each  |
+|        |        |             pixel.  for the targa 16, this would be 0 or   |
+|        |        |             1.  for the targa 24, it should be 0.  for     |
+|        |        |             targa 32, it should be 8.                      |
+|        |        |  bit 4    - reserved.  must be set to 0.                   |
+|        |        |  bit 5    - screen origin bit.                             |
+|        |        |             0 = origin in lower left-hand corner.          |
+|        |        |             1 = origin in upper left-hand corner.          |
+|        |        |             must be 0 for truevision images.               |
+|        |        |  bits 7-6 - data storage interleaving flag.                |
+|        |        |             00 = non-interleaved.                          |
+|        |        |             01 = two-way (even/odd) interleaving.          |
+|        |        |             10 = four way interleaving.                    |
+|        |        |             11 = reserved.                                 |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|   18   | varies |  image identification field.                               |
+|        |        |  contains a free-form identification field of the length   |
+|        |        |  specified in byte 1 of the image record.  it's usually    |
+|        |        |  omitted ( length in byte 1 = 0 ), but can be up to 255    |
+|        |        |  characters.  if more identification information is        |
+|        |        |  required, it can be stored after the image data.          |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+| varies | varies |  color map data.                                           |
+|        |        |                                                            |
+|        |        |  if the color map type is 0, this field doesn't exist.     |
+|        |        |  otherwise, just read past it to get to the image.         |
+|        |        |  the color map specification describes the size of each    |
+|        |        |  entry, and the number of entries you'll have to skip.     |
+|        |        |  each color map entry is 2, 3, or 4 bytes.                 |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+| varies | varies |  image data field.                                         |
+|        |        |                                                            |
+|        |        |  this field specifies (width) x (height) pixels.  each     |
+|        |        |  pixel specifies an rgb color value, which is stored as    |
+|        |        |  an integral number of bytes.                              |
+|        |        |                                                            |
+|        |        |  the 2 byte entry is broken down as follows:               |
+|        |        |  arrrrrgg gggbbbbb, where each letter represents a bit.    |
+|        |        |  but, because of the lo-hi storage order, the first byte   |
+|        |        |  coming from the file will actually be gggbbbbb, and the   |
+|        |        |  second will be arrrrrgg. &quot;a&quot; represents an attribute bit. |
+|        |        |                                                            |
+|        |        |  the 3 byte entry contains 1 byte each of blue, green,     |
+|        |        |  and red.                                                  |
+|        |        |                                                            |
+|        |        |  the 4 byte entry contains 1 byte each of blue, green,     |
+|        |        |  red, and attribute.  for faster speed (because of the     |
+|        |        |  hardware of the targa board itself), targa 24 images are  |
+|        |        |  sometimes stored as targa 32 images.                      |
+|        |        |                                                            |
+--------------------------------------------------------------------------------
+
+
+
+</pre>
+    <pre>--------------------------------------------------------------------------------
+data type 9:  run length encoded, color-mapped images.                         |
+_______________________________________________________________________________|
+| offset | length |                     description                            |
+|--------|--------|------------------------------------------------------------|
+|--------|--------|------------------------------------------------------------|
+|    0   |     1  |  number of characters in identification field.             |
+|        |        |                                                            |
+|        |        |  this field is a one-byte unsigned integer, specifying     |
+|        |        |  the length of the image identification field.  its value  |
+|        |        |  is 0 to 255.  a value of 0 means that no image            |
+|        |        |  identification field is included.                         |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|    1   |     1  |  color map type.                                           |
+|        |        |                                                            |
+|        |        |  this field is always 1 for color-mapped images.           |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|    2   |     1  |  image type code.                                          |
+|        |        |                                                            |
+|        |        |  a binary 9 for this data type.                            |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|    3   |     5  |  color map specification.                                  |
+|        |        |                                                            |
+|    3   |     2  |  color map origin.                                         |
+|        |        |  integer ( lo-hi ) index of first color map entry.         |
+|        |        |                                                            |
+|    5   |     2  |  color map length.                                         |
+|        |        |  integer ( lo-hi ) count of color map entries.             |
+|        |        |                                                            |
+|    7   |     1  |  color map entry size.                                     |
+|        |        |  number of bits in each color map entry.  16 for the       |
+|        |        |  targa 16, 24 for the targa 24, 32 for the targa 32.       |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|    8   |    10  |  image specification.                                      |
+|        |        |                                                            |
+|    8   |     2  |  x origin of image.                                        |
+|        |        |  integer ( lo-hi ) x coordinate of the lower left corner   |
+|        |        |  of the image.                                             |
+|        |        |                                                            |
+|   10   |     2  |  y origin of image.                                        |
+|        |        |  integer ( lo-hi ) y coordinate of the lower left corner   |
+|        |        |  of the image.                                             |
+|        |        |                                                            |
+|   12   |     2  |  width of image.                                           |
+|        |        |  integer ( lo-hi ) width of the image in pixels.           |
+|        |        |                                                            |
+|   14   |     2  |  height of image.                                          |
+|        |        |  integer ( lo-hi ) height of the image in pixels.          |
+|        |        |                                                            |
+|   16   |     1  |  image pixel size.                                         |
+|        |        |  number of bits in a pixel.  this is 16 for targa 16,      |
+|        |        |  24 for targa 24, and .... well, you get the idea.         |
+|        |        |                                                            |
+|   17   |     1  |  image descriptor byte.                                    |
+|        |        |  bits 3-0 - number of attribute bits associated with each  |
+|        |        |             pixel.  for the targa 16, this would be 0 or   |
+|        |        |             1.  for the targa 24, it should be 0.  for the |
+|        |        |             targa 32, it should be 8.                      |
+|        |        |  bit 4    - reserved.  must be set to 0.                   |
+|        |        |  bit 5    - screen origin bit.                             |
+|        |        |             0 = origin in lower left-hand corner.          |
+|        |        |             1 = origin in upper left-hand corner.          |
+|        |        |             must be 0 for truevision images.               |
+|        |        |  bits 7-6 - data storage interleaving flag.                |
+|        |        |             00 = non-interleaved.                          |
+|        |        |             01 = two-way (even/odd) interleaving.          |
+|        |        |             10 = four way interleaving.                    |
+|        |        |             11 = reserved.                                 |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|   18   | varies |  image identification field.                               |
+|        |        |  contains a free-form identification field of the length   |
+|        |        |  specified in byte 1 of the image record.  it's usually    |
+|        |        |  omitted ( length in byte 1 = 0 ), but can be up to 255    |
+|        |        |  characters.  if more identification information is        |
+|        |        |  required, it can be stored after the image data.          |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+| varies | varies |  color map data.                                           |
+|        |        |                                                            |
+|        |        |  the offset is determined by the size of the image         |
+|        |        |  identification field.  the length is determined by        |
+|        |        |  the color map specification, which describes the          |
+|        |        |  size of each entry and the number of entries.             |
+|        |        |  each color map entry is 2, 3, or 4 bytes.                 |
+|        |        |  unused bits are assumed to specify attribute bits.        |
+|        |        |                                                            |
+|        |        |  the 4 byte entry contains 1 byte for blue, 1 byte         |
+|        |        |  for green, 1 byte for red, and 1 byte of attribute        |
+|        |        |  information, in that order.
+|        |        |                                                            |
+|        |        |  the 3 byte entry contains 1 byte each of blue, green,     |
+|        |        |  and red.                                                  |
+|        |        |                                                            |
+|        |        |  the 2 byte entry is broken down as follows:               |
+|        |        |  arrrrrgg gggbbbbb, where each letter represents a bit.    |
+|        |        |  but, because of the lo-hi storage order, the first byte   |
+|        |        |  coming from the file will actually be gggbbbbb, and the   |
+|        |        |  second will be arrrrrgg. &quot;a&quot; represents an attribute bit. |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+| varies | varies |  image data field.                                         |
+|        |        |                                                            |
+|        |        |  this field specifies (width) x (height) color map         |
+|        |        |  indices.  the indices are stored in packets.  there       |
+|        |        |  two types of packets:  run-length packets, and raw        |
+|        |        |  packets.  both types of packets consist of a 1-byte       |
+|        |        |  header, identifying the type of packet and specifying a   |
+|        |        |  count, followed by a variable-length body.                |
+|        |        |  the high-order bit of the header is &quot;1&quot; for the           |
+|        |        |  run length packet, and &quot;0&quot; for the raw packet.            |
+|        |        |                                                            |
+|        |        |  for the run-length packet, the header consists of:        |
+|        |        |      __________________________________________________    |
+|        |        |      | 1 bit |   7 bit repetition count minus 1.      |    |
+|        |        |      |   id  |   since the maximum value of this      |    |
+|        |        |      |       |   field is 127, the largest possible   |    |
+|        |        |      |       |   run size would be 128.               |    |
+|        |        |      |-------|----------------------------------------|    |
+|        |        |      |   1   |  c     c     c     c     c     c    c  |    |
+|        |        |      --------------------------------------------------    |
+|        |        |                                                            |
+|        |        |  for the raw packet, the header consists of:               |
+|        |        |      __________________________________________________    |
+|        |        |      | 1 bit |   7 bit number of pixels minus 1.      |    |
+|        |        |      |   id  |   since the maximum value of this      |    |
+|        |        |      |       |   field is 127, there can never be     |    |
+|        |        |      |       |   more than 128 pixels per packet.     |    |
+|        |        |      |-------|----------------------------------------|    |
+|        |        |      |   0   |  n     n     n     n     n     n    n  |    |
+|        |        |      --------------------------------------------------    |
+|        |        |                                                            |
+|        |        |  for the run length packet, the header is followed by      |
+|        |        |  a single color index, which is assumed to be repeated     |
+|        |        |  the number of times specified in the header.  the rle     |
+|        |        |  packet may cross scan lines ( begin on one line and end   |
+|        |        |  on the next ).                                            |
+|        |        |                                                            |
+|        |        |  for the raw packet, the header is followed by the number  |
+|        |        |  of color indices specified in the header.  the raw        |
+|        |        |  packet may cross scan lines ( begin on one line and end   |
+|        |        |  on the next ).                                            |
+|        |        |                                                            |
+--------------------------------------------------------------------------------
+
+
+
+</pre>
+    <pre>--------------------------------------------------------------------------------
+data type 10:  run length encoded, rgb images.                                 |
+_______________________________________________________________________________|
+| offset | length |                     description                            |
+|--------|--------|------------------------------------------------------------|
+|--------|--------|------------------------------------------------------------|
+|    0   |     1  |  number of characters in identification field.             |
+|        |        |                                                            |
+|        |        |  this field is a one-byte unsigned integer, specifying     |
+|        |        |  the length of the image identification field.  its range  |
+|        |        |  is 0 to 255.  a value of 0 means that no image            |
+|        |        |  identification field is included.                         |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|    1   |     1  |  color map type.                                           |
+|        |        |                                                            |
+|        |        |  this field contains either 0 or 1.  0 means no color map  |
+|        |        |  is included.  1 means a color map is included, but since  |
+|        |        |  this is an unmapped image it is usually ignored.  tips    |
+|        |        |  ( a targa paint system ) will set the border color        |
+|        |        |  the first map color if it is present.  wowie zowie.       |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|    2   |     1  |  image type code.                                          |
+|        |        |                                                            |
+|        |        |  binary 10 for this type of image.                         |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|    3   |     5  |  color map specification.                                  |
+|        |        |                                                            |
+|        |        |  ignored if color map type is 0; otherwise, interpreted    |
+|        |        |  as follows:                                               |
+|        |        |                                                            |
+|    3   |     2  |  color map origin.                                         |
+|        |        |  integer ( lo-hi ) index of first color map entry.         |
+|        |        |                                                            |
+|    5   |     2  |  color map length.                                         |
+|        |        |  integer ( lo-hi ) count of color map entries.             |
+|        |        |                                                            |
+|    7   |     1  |  color map entry size.                                     |
+|        |        |  number of bits in color map entry.  this value is 16 for  |
+|        |        |  the targa 16, 24 for the targa 24, 32 for the targa 32.   |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|    8   |    10  |  image specification.                                      |
+|        |        |                                                            |
+|    8   |     2  |  x origin of image.                                        |
+|        |        |  integer ( lo-hi ) x coordinate of the lower left corner   |
+|        |        |  of the image.                                             |
+|        |        |                                                            |
+|   10   |     2  |  y origin of image.                                        |
+|        |        |  integer ( lo-hi ) y coordinate of the lower left corner   |
+|        |        |  of the image.                                             |
+|        |        |                                                            |
+|   12   |     2  |  width of image.                                           |
+|        |        |  integer ( lo-hi ) width of the image in pixels.           |
+|        |        |                                                            |
+|   14   |     2  |  height of image.                                          |
+|        |        |  integer ( lo-hi ) height of the image in pixels.          |
+|        |        |                                                            |
+|   16   |     1  |  image pixel size.                                         |
+|        |        |  number of bits in a pixel.  this is 16 for targa 16,      |
+|        |        |  24 for targa 24, and .... well, you get the idea.         |
+|        |        |                                                            |
+|   17   |     1  |  image descriptor byte.                                    |
+|        |        |  bits 3-0 - number of attribute bits associated with each  |
+|        |        |             pixel.  for the targa 16, this would be 0 or   |
+|        |        |             1.  for the targa 24, it should be 0.  for the |
+|        |        |             targa 32, it should be 8.                      |
+|        |        |  bit 4    - reserved.  must be set to 0.                   |
+|        |        |  bit 5    - screen origin bit.                             |
+|        |        |             0 = origin in lower left-hand corner.          |
+|        |        |             1 = origin in upper left-hand corner.          |
+|        |        |             must be 0 for truevision images.               |
+|        |        |  bits 7-6 - data storage interleaving flag.                |
+|        |        |             00 = non-interleaved.                          |
+|        |        |             01 = two-way (even/odd) interleaving.          |
+|        |        |             10 = four way interleaving.                    |
+|        |        |             11 = reserved.                                 |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+|   18   | varies |  image identification field.                               |
+|        |        |  contains a free-form identification field of the length   |
+|        |        |  specified in byte 1 of the image record.  it's usually    |
+|        |        |  omitted ( length in byte 1 = 0 ), but can be up to 255    |
+|        |        |  characters.  if more identification information is        |
+|        |        |  required, it can be stored after the image data.          |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+| varies | varies |  color map data.                                           |
+|        |        |                                                            |
+|        |        |  if the color map type is 0, this field doesn't exist.     |
+|        |        |  otherwise, just read past it to get to the image.         |
+|        |        |  the color map specification, describes the size of each   |
+|        |        |  entry, and the number of entries you'll have to skip.     |
+|        |        |  each color map entry is 2, 3, or 4 bytes.                 |
+|        |        |                                                            |
+|--------|--------|------------------------------------------------------------|
+| varies | varies |  image data field.                                         |
+|        |        |                                                            |
+|        |        |  this field specifies (width) x (height) pixels.  the      |
+|        |        |  rgb color information for the pixels is stored in         |
+|        |        |  packets.  there are two types of packets:  run-length     |
+|        |        |  encoded packets, and raw packets.  both have a 1-byte     |
+|        |        |  header, identifying the type of packet and specifying a   |
+|        |        |  count, followed by a variable-length body.                |
+|        |        |  the high-order bit of the header is &quot;1&quot; for the           |
+|        |        |  run length packet, and &quot;0&quot; for the raw packet.            |
+|        |        |                                                            |
+|        |        |  for the run-length packet, the header consists of:        |
+|        |        |      __________________________________________________    |
+|        |        |      | 1 bit |   7 bit repetition count minus 1.      |    |
+|        |        |      |   id  |   since the maximum value of this      |    |
+|        |        |      |       |   field is 127, the largest possible   |    |
+|        |        |      |       |   run size would be 128.               |    |
+|        |        |      |-------|----------------------------------------|    |
+|        |        |      |   1   |  c     c     c     c     c     c    c  |    |
+|        |        |      --------------------------------------------------    |
+|        |        |                                                            |
+|        |        |  for the raw packet, the header consists of:               |
+|        |        |      __________________________________________________    |
+|        |        |      | 1 bit |   7 bit number of pixels minus 1.      |    |
+|        |        |      |   id  |   since the maximum value of this      |    |
+|        |        |      |       |   field is 127, there can never be     |    |
+|        |        |      |       |   more than 128 pixels per packet.     |    |
+|        |        |      |-------|----------------------------------------|    |
+|        |        |      |   0   |  n     n     n     n     n     n    n  |    |
+|        |        |      --------------------------------------------------    |
+|        |        |                                                            |
+|        |        |                                                            |
+|        |        |  for the run length packet, the header is followed by      |
+|        |        |  a single color value, which is assumed to be repeated     |
+|        |        |  the number of times specified in the header.  the         |
+|        |        |  packet may cross scan lines ( begin on one line and end   |
+|        |        |  on the next ).                                            |
+|        |        |                                                            |
+|        |        |  for the raw packet, the header is followed by             |
+|        |        |  the number of color values specified in the header.       |
+|        |        |                                                            |
+|        |        |  the color entries themselves are two bytes, three bytes,  |
+|        |        |  or four bytes ( for targa 16, 24, and 32 ), and are       |
+|        |        |  broken down as follows:                                   |
+|        |        |                                                            |
+|        |        |  the 2 byte entry -                                        |
+|        |        |  arrrrrgg gggbbbbb, where each letter represents a bit.    |
+|        |        |  but, because of the lo-hi storage order, the first byte   |
+|        |        |  coming from the file will actually be gggbbbbb, and the   |
+|        |        |  second will be arrrrrgg. &quot;a&quot; represents an attribute bit. |
+|        |        |                                                            |
+|        |        |  the 3 byte entry contains 1 byte each of blue, green,     |
+|        |        |  and red.                                                  |
+|        |        |                                                            |
+|        |        |  the 4 byte entry contains 1 byte each of blue, green,     |
+|        |        |  red, and attribute.  for faster speed (because of the     |
+|        |        |  hardware of the targa board itself), targa 24 image are   |
+|        |        |  sometimes stored as targa 32 images.                      |
+|        |        |                                                            |
+--------------------------------------------------------------------------------</pre>
+    </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

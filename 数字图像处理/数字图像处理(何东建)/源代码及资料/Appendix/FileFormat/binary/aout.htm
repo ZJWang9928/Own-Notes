@@ -1,0 +1,1199 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>architecture</title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+<font face="宋体" size="3">
+
+<p align="center"></font><font face="宋体" size="6" color="#0000ff">architecture-dependent 
+file format</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%">　<pre>      name
+           a.out - assembler and link editor output
+     
+      remarks
+           a separate manual entry describes each implementation of the a.out
+           file format for series 300/400 and series 700/800 systems.
+     
+      description
+           the a.out (i.e., object file) format is completely machine-dependent
+           except for the first word, which contains a magic number as defined in
+           magic(4).
+     
+           the archive symbol table format is also completely machine-dependent
+           except for its name in the archive.  see ar(4) for a description of
+           the format of the archive symbol table.
+     
+      see also
+           crt0(3), end(3c), a.out_300(4), a.out_800(4), ar(4), magic(4).
+     
+     
+      name
+           a.out - assembler and link editor output
+     
+      remarks:
+           this manual entry describes the a.out file format for series 300/400
+           computers.  refer to other a.out*(4) manual entries for descriptions
+           of other implementations.
+     
+      description
+           the a.out file is the output file of the link editor ld (see ld(1).
+           the linker makes a.out executable if there were no linking errors and
+           no unresolved external references.  the assembler as (or ld with the
+           -r option) produces non-executable files with the same basic
+           structure.
+     
+           file a.out has eight defined sections: a header, the program text and
+           data segments, a pascal interface section, a symbol table, a
+           supplementary symbol table, and text and data relocation information
+           (in that order).      pascal interface text will only be present in those
+           pascal code segments that have not been linked.  the symbol table may
+           be missing if the program was linked with the ld -s option, or if the
+           symbol table and debug information were removed by strip (see
+           strip(1)).  the supplementary symbol table is present only in files
+           containing position-independent code, or in files that were produced
+           with the pascal compiler or the +s option to the assembler.  also note
+           that relocation information is not normally present in executable
+           files.
+     
+           in addition to these sections, there may be one or more extensions.
+           each extension is preceded by a header consisting of an extension-
+           independent part and an extension-dependent part.       currently defined
+           extensions include one for dynamic loading support and one for
+           debugger support.       the dynamic loader extension is actually placed
+           within the text segment of shared library files (created with the -b
+           option to ld) and executables that use shared libraries.      the debugger
+           extension is placed after the relocation sections.  hp-ux compilers
+           create this information under control of the -g option.
+     
+           when an a.out file is loaded into memory for execution, three logical
+           segments are set up: the text segment, the data segment (initialized
+           data followed by uninitialized, the latter actually being initialized
+           to all 0's), and a stack.       the text segment begins at location 0x0 in
+           the core image; the header is not loaded.       if the magic number (the
+           first field in the header) is exec_magic, it indicates that the text
+           segment is not to be write-protected or shared, so the data segment
+           will be contiguous with the text segment.       if the magic number is
+           share_magic or demand_magic, the data segment begins at the first 0
+           mod 0x1000 byte boundary following the text segment, and the text
+           segment is not writable by the program; if other processes are
+           executing the same a.out file, they will share a single text segment.
+           if the magic number is demand_magic, the text and data segments are
+           not read in from the file until they are referenced by the program.
+     
+           the stack will occupy the highest possible locations in the core image
+           and grow downward (the stack is automatically extended as required).
+           the data segment is only extended as requested by the brk() system
+           call (see brk(2)).
+     
+           shared libraries, indicated by the magic number shl_magic, are similar
+           to demand-loaded executables, except that they are loaded by the
+           dynamic loader /lib/dld.sl (see dld.sl(5)) at some point during
+           startup, rather than by exec(), and that the load address is
+           arbitrary.  no stack segment is set up for shared libraries; they
+           share the stack used by the executable.  the data and bss segments of
+           a shared library are shared on a page by page basis by all processes
+           using the library.  whenever a process writes to a shared library data
+           or bss segment, a modified copy of that page is made for the process.
+           dynamic load libraries, indicated by the magic number dl_magic, are
+           analagous to shared libraries except that the text segment is also
+           made copy on write in order to support dynamic relocation.
+     
+           the start of the text segment in the a.out file is given by the macro
+           text_offset(hdr), where hdr is a copy of the file header.       the macro
+           data_offset(hdr) provides the starting location of the data segment.
+     
+           the value of a word in the text or data portions that is not a
+           reference to an undefined external symbol is exactly the value that
+           will appear in memory when the file is executed.      if a word in the
+           text or data portion involves a reference to an undefined external
+           symbol, as indicated by the relocation information (discussed below)
+           for that word, then the value of the word as stored in the file is an
+           offset from the associated external symbol.  when the file is
+           processed by the link editor and the external symbol becomes defined,
+           the value of the symbol will be added to the word in the file.
+     
+         header
+           the format of the a.out header for the mc68000 is as follows (segment
+           sizes are in bytes):
+     
+              struct exec \{
+                  magic   a_magic;             /* magic number */
+                  short   a_stamp;             /* version id */
+                  short   a_highwater;    /* shlib highwater mark */
+                  long    a_miscinfo;     /* miscellaneous info */
+                  long    a_text;             /* size of text segment */
+                  long    a_data;             /* size of data segment */
+                  long    a_bss;             /* size of bss segment */
+                  long    a_trsize;       /* text relocation size */
+                  long    a_drsize;       /* data relocation size */
+                  long    a_pasint;       /* pascal interface size */
+                  long    a_lesyms;       /* symbol table size */
+                  long    a_spared;
+                  long    a_entry;             /* entry point */
+                  long    a_spares;
+                  long    a_supsym;       /* supplementary symtab size */
+                  long    a_drelocs;      /* nonpic relocations */
+                  long    a_extension;    /* file offset of extension */
+              \};
+     
+         pascal interface section
+           the pascal interface section consists of the ascii representation of
+           the interface text for that pascal module.
+     
+           the start of the pascal interface section is given by the macro
+           modcal_offset(hdr).
+     
+         symbol table
+           the symbol table consists of entries of the form:
+     
+              struct nlist \{
+                  long             n_value;
+                  unsigned char   n_type;
+                  unsigned char   n_length;
+                  short             n_almod;
+                  int             n_dlt:1;
+                  int             n_plt:1;
+                  int             n_dreloc:1;
+                  int             n_list:1;
+                  int             n_unused:12;
+              \};
+     
+           this structure is followed by n_length ascii characters which compose
+           the symbol name.
+     
+           the n_type field indicates the type of the symbol; the following
+           values are possible:
+     
+              undef     undefined symbol
+              abs           absolute symbol
+              text           text segment symbol
+              data           data segment symbol
+              bss           bss segment symbol
+     
+           one of these values ored with 040 indicates an external symbol.  one
+           of these values ored with 020 indicates an aligned symbol.  one of
+           these values ored with 0100 indicates a secondary definition.
+     
+           the bit fields are used by the linker for the relocation of position-
+           independent code (generated with the +z option to the compilers) when
+           creating a shared library.
+     
+           the start of the symbol table is given by the macro lesym_offset(hdr).
+           in object files that were compiled as position-independent code,
+           generated by the pascal compiler, or assembled with the as +s option,
+           a supplementary symbol table follows the standard symbol table.  this
+           table is a simple array of eight-byte structures which stand in one-
+           to-one correspondence with the symbol table entries.  the fields of
+           this structure are used by the linker when creating a shared library.
+     
+         relocation
+           if relocation information is present, it amounts to eight bytes per
+           relocatable datum.
+     
+           the format of the relocation data is:
+     
+              struct r_info  \{
+                  long  r_address;
+                  short  r_symbolnum;
+                  char   r_segment;
+                  char   r_length;
+              \};
+     
+           the r_address field indicates the position of the relocation within
+           the segment.
+     
+           the r_segment field indicates the segment referred to by the text or
+           data word associated with the relocation word:
+     
+              rtext     indicates the reference is to the text segment;
+              rdata     indicates the reference is to initialized data;
+              rbss           indicates the reference is to bss (uninitialized data);
+              rext           indicates the reference is to an undefined external
+                      symbol;
+              rpc           indicates the reference is pc relative;
+              rdlt           indicates the reference is to an offset from the base
+                      of the data linkage table;
+              rplt           indicates the reference is to an entry within the
+                      procedure linkage table.
+     
+           the latter three relocation types are found primarily in position-
+           independent code.
+     
+           the r_symbolnum field contains a symbol number in the case of external
+           references, and is unused otherwise.  the first symbol is numbered 0,
+           the second 1, etc.
+     
+           the r_length field indicates the length of the datum to be relocated.
+     
+              rbyte     indicates it is a byte
+              rword     indicates it is a short
+              rlong     indicates it is a long
+              ralign    indicates it is a special align symbol
+           the start of the text relocation section is provided by the macro
+           rtext_offset(hdr).
+     
+           the start of the data relocation section is provided by the macro
+           rdata_offset(hdr).
+     
+         extensions
+           the a_extension field of the header gives the file offset of the first
+           extension, and each extension header gives the file offset of the
+           next.  the dynamic loader extension, if present, will be the first
+           extension present, and the debugger extension, if present, will be
+           next.  additional extensions can be defined by certain languages or
+           tools.  when present, they are placed after the dynamic loader and
+           debugger extensions.
+     
+           the extension header is of the form
+     
+              struct header_extension
+              \{
+                  union
+                  \{
+                    long spare1[13];
+                    struct _dl_header dl_header;
+                    struct _debug_header debug_header;
+                  \} e_spec;
+                  short e_header;
+                  short e_version;
+                  long e_size;
+                  long e_extension;
+              \};
+     
+           the union allows for extension specific information to be included in
+           the header.  the e_header field contains a constant which identifies
+           the extension type.  currently defined values include dl_header and
+           debug_header.  the e_version field can be used to identify different
+           versions of an extension.       the e_size field gives the collective size
+           for the extension; e_extension gives the file offset of the next
+           extension.
+     
+           for more information about the dynamic loader extension and the debug
+           extension, consult the files /usr/include/shl.h and
+           /usr/include/debug.h, respectively.
+     
+      see also
+           as_300(1), ld(1), nm_300(1), strip(1), crt0(3), end(3c), a.out_800(4),
+           magic(4).
+     
+     
+     
+     
+      name
+           a.out - assembler and link editor output
+     
+      synopsis
+           #include &lt;a.out.h&gt;
+     
+      remarks:
+           this manual entry describes the a.out file format for series 700 and
+           series 800 computers.  refer to other a.out(4) manual entries for
+           descriptions of other valid implementations.
+     
+      description
+           the file name a.out is the output file from the assembler (see as(1)),
+           compilers, and the linker (see ld(1)).  the assembler and compilers
+           create relocatable object files ready for input to the linker; the
+           linker creates executable object files and shared library files.
+     
+           an object file consists of a file header, auxiliary headers, space
+           dictionary, subspace dictionary, symbol table, relocation information,
+           compiler records, space string table, symbol string table, and the
+           data for initialized code and data.  not all of these sections are
+           required for all object files.  the file must begin with the file
+           header, but the remaining sections do not have to be in any particular
+           order; the file header contains pointers to each of the other sections
+           of the file.
+     
+           a relocatable object file, created by the assembler or compiler, must
+           contain at least the following sections:      file header, space
+           dictionary, subspace dictionary, symbol table, relocation information,
+           space string table, symbol string table, and code and data.  it may
+           also contain auxiliary headers and compiler records.  relocatable
+           files generally contain unresolved symbols; the linker combines
+           relocatable files and searches libraries to produce an executable
+           file.  the linker can also be used to combine relocatable files and
+           produce a new relocatable file as output, suitable for input to a
+           subsequent linker run.
+     
+           an executable file, created by the linker, typically contains the
+           following sections:  file header, an hp-ux auxiliary header, space
+           dictionary, subspace dictionary, symbol table, space string table,
+           symbol string table, and code and data.  the linker also copies any
+           auxiliary headers and compiler records from the input files to the
+           output file.  if the file has been stripped (see strip(1)), it will
+           not contain a symbol table, symbol string table, or compiler records.
+           an executable file must not contain any unresolved symbols.
+     
+           a shared library file, created by the linker, contains the same
+           sections found in an executable file, with additional information
+           added to the code section of the file.  this additional information
+           contains a header, export table, import table, and dynamic relocation
+           records to be used by the dynamic loader.
+     
+           programs for the series 700/800 architecture consist of two loadable
+           spaces: a shared, non-writable, code space named $text$; and a
+           private, writable, data space named $private$.  a program may contain
+           other non-loadable spaces that contain data needed by development
+           tools; for example, symbolic debugging information is contained in a
+           space named $debug$.  the linker treats loadable and unloadable spaces
+           exactly the same, so the full generality of symbol resolution and
+           relocation is available for the symbolic debugging information.
+           spaces have an addressing range of 4,294,967,296 (2^32) bytes; each
+           loadable space is divided into four 1,073,741,824 (2^30) byte
+           quadrants.  the hp-ux operating system places all code in the first
+           quadrant of the $text$ space, all data in the second quadrant of the
+           $private$ space, and all shared library code into the third quadrant
+           of shared memory space.
+     
+           each space is also divided into logical units called subspaces.  when
+           the linker combines relocatable object files, it groups all subspaces
+           from the input files by name, then arranges the groups within the
+           space by a sort key associated with each subspace.  subspaces are not
+           architecturally significant; they merely provide a mechanism for
+           combining individual parts of spaces independently from many input
+           files.  some typical subspaces in a program are shown in the following
+           table:
+     
+              $shlib_info$        information needed for dynamic loading.
+              $millicode$        code for millicode routines
+              $lit$        sharable literals
+              $code$        code
+              $unwind$        stack unwind information
+              $global$        outer block declarations for pascal
+              $data$        static initialized data
+              $common$        fortran common
+              $shlib_data$         imported data from referenced shared libraries.
+              $bss$        uninitialized data
+     
+           subspaces can be initialized or uninitialized (although typically,
+           only $bss$ is uninitialized).  the subspace dictionary entry for an
+           initialized subspace contains a file pointer to the initialization
+           data, while the entry for an uninitialized subspace contains only a
+           32-bit pattern used to initialize the entire area at load time.
+     
+           in a relocatable file, initialized code and data often contains
+           references to locations elsewhere in the file, and to unresolved
+           symbols defined in other files.  these references are patched at link
+           time using the relocation information.  each entry in the relocation
+           information (a ``fixup'') specifies a location within the initialized
+           data for a subspace, and an expression that defines the actual value
+           that should be placed at that location, relative to one or two
+           symbols.
+     
+           the linker summarizes the subspace dictionary in the hp-ux auxiliary
+           header when creating an executable file.      hp-ux programs contain only
+           three separate sections:      one for the code, one for initialized data,
+           and one for uninitialized data.  by convention, this auxiliary header
+           is placed immediately following the file header.
+     
+           when an a.out file is loaded into memory for execution, three areas of
+           memory are set up:  the a.out code is loaded into the first quadrant
+           of a new, sharable space; the data (initialized followed by
+           uninitialized) is loaded into the second quadrant of a new, private
+           space; and a stack is created beginning at a fixed address near the
+           middle of the second quadrant of the data space.
+     
+           if the a.out file uses shared libraries then the dynamic loader
+           /lib/dld.sl is loaded into memory, and called to map all shared
+           libraries, requested by the program, into memory.       the shared library
+           text is loaded into the third quadrant of the shared memory space, and
+           the shared library data is allocated in the second quadrant of the
+           data space.
+     
+           the file format described here is a common format for all operating
+           systems designed for hp's precision architecture.       therefore, there
+           are some fields and structures that are not used on hp-ux or have been
+           reserved for future use.
+     
+         file header
+           the format of the file header is described by the following structure
+           declaration from &lt;filehdr.h&gt;.
+     
+              struct header \{
+                  short int system_id;                 /* system id */
+                  short int a_magic;                 /* magic number */
+                  unsigned int version_id;                 /* a.out format version */
+                  struct sys_clock file_time;           /* timestamp */
+                  unsigned int entry_space;           /* reserved */
+                  unsigned int entry_subspace;           /* reserved */
+                  unsigned int entry_offset;           /* reserved */
+                  unsigned int aux_header_location;     /* file ptr to aux hdrs */
+                  unsigned int aux_header_size;           /* sizeof aux hdrs */
+                  unsigned int som_length;                 /* length of object module */
+                  unsigned int presumed_dp;           /* reserved */
+                  unsigned int space_location;           /* file ptr to space dict */
+                  unsigned int space_total;           /* # of spaces */
+                  unsigned int subspace_location;           /* file ptr to subsp dict */
+                  unsigned int subspace_total;           /* # of subspaces */
+                  unsigned int loader_fixup_location;   /* reserved */
+                  unsigned int loader_fixup_total;           /* reserved */
+                  unsigned int space_strings_location;  /* file ptr to sp. strings */
+                  unsigned int space_strings_size;           /* sizeof sp. strings */
+                  unsigned int init_array_location;     /* reserved */
+                  unsigned int init_array_total;           /* reserved */
+                  unsigned int compiler_location;           /* file ptr to comp recs */
+                  unsigned int compiler_total;           /* # of compiler recs */
+                  unsigned int symbol_location;           /* file ptr to sym table */
+                  unsigned int symbol_total;           /* # of symbols */
+                  unsigned int fixup_request_location;  /* file ptr to fixups */
+                  unsigned int fixup_request_total;     /* # of fixups */
+                  unsigned int symbol_strings_location; /* file ptr to sym strings */
+                  unsigned int symbol_strings_size;     /* sizeof sym strings */
+                  unsigned int unloadable_sp_location;  /* file ptr to debug info */
+                  unsigned int unloadable_sp_size;           /* size of debug info */
+                  unsigned int checksum;                 /* header checksum */
+              \};
+     
+           the timestamp is a two-word structure as shown below.  if unused, both
+           fields are zero.
+     
+              struct sys_clock \{
+                  unsigned int secs;
+                  unsigned int nanosecs;
+              \};
+     
+         auxiliary headers
+           the auxiliary headers are contained in a single contiguous area in the
+           file, and are located by a pointer in the file header.  auxiliary
+           headers are used for two purposes:  users can attach version and
+           copyright strings to an object file, and an auxiliary header contains
+           the information needed to load an executable program.  in an
+           executable program, the hp-ux auxiliary header must precede all other
+           auxiliary headers.  the following declarations are found in
+           &lt;aouthdr.h&gt;.
+     
+              struct aux_id \{
+                  unsigned int  mandatory : 1;  /* reserved */
+                  unsigned int  copy : 1;           /* reserved */
+                  unsigned int  append : 1;     /* reserved */
+                  unsigned int  ignore : 1;     /* reserved */
+                  unsigned int  reserved : 12;  /* reserved */
+                  unsigned int  type : 16;           /* aux hdr type */
+                  unsigned int  length;           /* sizeof rest of aux hdr */
+              \};
+     
+              /* values for the aux_id.type field */
+              #define hpux_aux_id 4
+              #define version_aux_id 6
+              #define copyright_aux_id 9
+              #define shlib_version_aux_id 10
+     
+              struct som_exec_auxhdr \{          /* hp-ux auxiliary header */
+                  struct      aux_id som_auxhdr;  /* aux header id */
+                  long            exec_tsize;   /* text size */
+                  long            exec_tmem;    /* start address of text */
+                  long            exec_tfile;   /* file ptr to text */
+                  long            exec_dsize;   /* data size */
+                  long            exec_dmem;    /* start address of data */
+                  long            exec_dfile;   /* file ptr to data */
+                  long            exec_bsize;   /* bss size */
+                  long            exec_entry;   /* address of entry point */
+                  long            exec_flags;   /* loader flags */
+                  long            exec_bfill;   /* bss initialization value */
+              \};
+     
+              /* values for exec_flags */
+              #define trap_nil_ptrs    01
+     
+              struct user_string_aux_hdr \{             /* version string auxiliary header */
+                  struct aux_id  header_id;       /* aux header id */
+                  unsigned int   string_length;   /* strlen(user_string) */
+                  char            user_string[1];  /* user-defined string */
+              \};
+     
+              struct copyright_aux_hdr \{            /* copyright string auxiliary header */
+                  struct aux_id  header_id;      /* aux header id */
+                  unsigned int   string_length;  /* strlen(user_string) */
+                  char            copyright[1];   /* user-defined string */
+              \};
+              struct shlib_version_aux_hdr \{
+                  struct aux_id  header_id;      /* aux header id */
+                  short  version;                  /* version number */
+              \};
+     
+         space dictionary
+           the space dictionary consists of a sequence of space records as
+           defined in &lt;spacehdr.h&gt;.
+     
+           struct space_dictionary_record \{&quot;
+             union name_pt name;                /* index to space name */
+             unsigned int      is_loadable: 1;          /* space is loadable */
+             unsigned int      is_defined: 1;          /* space is defined within file */
+             unsigned int      is_private: 1;          /* space is not sharable */
+             unsigned int      reserved: 13;          /* reserved */
+             unsigned int      sort_key: 8;          /* sort key for space */
+             unsigned int      reserved2: 8;          /* reserved */
+             int            space_number;          /* space index */
+             int            subspace_index;          /* index to first subspace */
+             unsigned int      subspace_quantity;  /* # of subspaces in space */
+             int            loader_fix_index;       /* reserved */
+             unsigned int      loader_fix_quantity;       /* reserved */
+             int            init_pointer_index;       /* reserved */
+             unsigned int      init_pointer_quantity;       /* reserved */
+           \};
+           the strings for the space names are contained in the space strings
+           table, which is located by a pointer in the file header.      each entry
+           in the space strings table is preceded by a 4-byte integer that
+           defines the length of the string, and is terminated by one to five
+           null characters to pad the string out to a word boundary.       indices to
+           this table are relative to the start of the table, and point to the
+           first byte of the string (not the preceding length word).       the union
+           defined below is used for all such string pointers; the character
+           pointer is defined for programs that read the string table into memory
+           and wish to relocate in-memory copies of space records.
+     
+              union name_pt \{
+                  char           *n_name;
+                  unsigned int   n_strx;
+              \};
+     
+         subspace dictionary
+           the subspace dictionary consists of a sequence of subspace records as
+           defined in &lt;scnhdr.h&gt;.  strings for subspace names are contained in
+           the space strings table.
+     
+           struct subspace_dictionary_record \{
+             int            space_index;
+             unsigned int      access_control_bits: 7; /* reserved */
+             unsigned int      memory_resident: 1;      /* reserved */
+             unsigned int      dup_common: 1;            /* cobol-style common */
+             unsigned int      is_common: 1;            /* subspace is a common block */
+             unsigned int      is_loadable: 1;            /* subspace is loadable */
+             unsigned int      quadrant: 2;            /* reserved */
+             unsigned int      initially_frozen: 1;      /* reserved */
+             unsigned int      is_first: 1;            /* reserved */
+             unsigned int      code_only: 1;            /* subspace contains only code */
+             unsigned int      sort_key: 8;            /* subspace sort key */
+             unsigned int      replicate_init: 1;      /* reserved */
+             unsigned int      continuation: 1;      /* reserved */
+             unsigned int      reserved: 6;            /* reserved */
+             int            file_loc_init_value;      /* file location or init value */
+             unsigned int      initialization_length;      /* length of initialization */
+             unsigned int      subspace_start;            /* starting offset */
+             unsigned int      subspace_length;      /* total subspace length */
+             unsigned int      reserved2: 16;            /* reserved */
+             unsigned int      alignment: 16;            /* alignment required */
+             union name_pt name;                  /* index of subspace name */
+             int            fixup_request_index;      /* index to first fixup */
+             unsigned int      fixup_request_quantity; /* # of fixup requests */
+           \};
+     
+         symbol table
+           the symbol table consists of a sequence of entries described by the
+           structure shown below, from &lt;syms.h&gt;.  strings for symbol and
+           qualifier names are contained in the symbol strings table, whose
+           structure is identical with the space strings table.
+     
+              struct symbol_dictionary_record \{
+                  unsigned int    hidden: 1;          /* reserved */
+                  unsigned int    symbol_type: 7;          /* symbol type */
+                  unsigned int    symbol_scope: 4;          /* symbol value */
+                  unsigned int    check_level: 3;          /* type checking level */
+                  unsigned int    must_qualify: 1;          /* qualifier required */
+                  unsigned int    initially_frozen: 1; /* reserved */
+                  unsigned int    memory_resident: 1;  /* reserved */
+                  unsigned int    is_common: 1;          /* common block */
+                  unsigned int    dup_common: 1;          /* cobol-style common */
+                  unsigned int    xleast: 2;          /* reserved */
+                  unsigned int    arg_reloc: 10;          /* parameter relocation bits */
+                  union name_pt   name;                /* index to symbol name */
+                  union name_pt   qualifier_name;          /* index to qual name */
+                  unsigned int    symbol_info;          /* subspace index */
+                  unsigned int    symbol_value;          /* symbol value */
+              \};
+     
+              /* values for symbol_type */
+              #define st_null         0      /* unused symbol entry */
+              #define st_absolute         1      /* non-relocatable symbol */
+              #define st_data         2      /* data symbol */
+              #define st_code         3      /* generic code symbol */
+              #define st_pri_prog         4      /* program entry point */
+              #define st_sec_prog         5      /* secondary prog entry point*/
+              #define st_entry         6      /* procedure entry point */
+              #define st_storage         7      /* storage request */
+              #define st_stub         8      /* reserved */
+              #define st_module         9      /* pascal module name */
+              #define st_sym_ext         10      /* symbol extension record */
+              #define st_arg_ext         11      /* argument extension record */
+              #define st_millicode         12      /* millicode entry point */
+              #define st_plabel         13      /* reserved */
+              #define st_oct_dis         14      /* reserved */
+              #define st_milli_ext         15      /* reserved */
+     
+              /* values for symbol_scope */
+              #define ss_unsat         0      /* unsatisfied reference */
+              #define ss_external         1      /* reserved */
+              #define ss_local         2      /* local symbol */
+              #define ss_universal         3      /* global symbol */
+     
+           the meaning of the symbol value depends on the symbol type.  for the
+           code symbols (generic code, program entry points, procedure and
+           millicode entry points), the low-order two bits of the symbol value
+           encode the execution privilege level, which is not used on hp-ux, but
+           is generally set to 3.  the symbol value with those bits masked out is
+           the address of the symbol (which is always a multiple of 4).  for data
+           symbols, the symbol value is simply the address of the symbol.  for
+           storage requests, the symbol value is the number of bytes requested;
+           the linker allocates space for the largest request for each symbol in
+           the $bss$ subspaces, unless a local or universal symbol is found for
+           that symbol (in which case the storage request is treated like an
+           unsatisfied reference).
+     
+           if a relocatable file is compiled with parameter type checking,
+           extension records follow symbols that define and reference procedure
+           entry points and global variables.  the first extension record, the
+           symbol extension record, defines the type of the return value or
+           global variable, and (if a procedure or function) the number of
+           parameters and the types of the first three parameters.  if more
+           parameter type descriptors are needed, one or more argument extension
+           records follow, each containing four more descriptors.  a check level
+           of 0 specifies no type checking; no extension records follow.  a check
+           level of 1 or more specifies checking of the return value or global
+           variable type.  a check level of 2 or more specifies checking of the
+           number of parameters, and a check level of 3 specifies checking the
+           types of each individual parameter.  the linker performs the requested
+           level of type checking between unsatisfied symbols and local or
+           universal symbols as it resolves symbol references.
+     
+              union arg_descriptor \{
+                  struct \{
+                  unsigned int    reserved: 3;    /* not used */
+                  unsigned int    packing: 1;     /* reserved */
+                  unsigned int    alignment: 4;   /* byte alignment */
+                  unsigned int    reserved2: 1;   /* not used */
+                  unsigned int    mode: 3;             /* use of symbol */
+                  unsigned int    structure: 4;   /* structure of symbol */
+                  unsigned int    hash: 1;             /* set if arg_type is hashed */
+                  int             arg_type: 15;   /* data type */
+                  \}             arg_desc;
+                  unsigned int    word;
+              \};
+     
+              struct symbol_extension_record \{
+                  unsigned int    type:           8;             /* always st_sym_ext */
+                  unsigned int    max_num_args: 8;             /* max # of parameters */
+                  unsigned int    min_num_args: 8;             /* min # of parameters */
+                  unsigned int    num_args:     8;             /* actual # of parameters */
+                  union arg_descriptor symbol_desc;       /* symbol type desc. */
+                  union arg_descriptor argument_desc[3];  /* first 3 parameters */
+              \};
+     
+              struct argument_desc_array \{
+                  unsigned int    type:        8;             /* always st_arg_ext */
+                  unsigned int    reserved: 24;             /* not used */
+                  union arg_descriptor argument_desc[4];  /* next 4 parameters */
+              \};
+           the values for the alignment, mode, structure, and arg_type (when the
+           data type is not hashed) fields are given in the following table.
+     
+          value   alignment       mode               structure         arg_type
+          _______________________________________________________________________
+            0     byte       any               any               any
+            1     half-word       value parm         scalar         void
+            2     word       reference parm         array         signed byte
+            3     dbl word       value-result         struct         unsigned byte
+            4             name               pointer         signed short
+            5             variable         long ptr         unsigned short
+            6     64-byte       function return   c string         signed long
+            7             procedure         pascal string   unsigned long
+            8             long ref parm         procedure         signed dbl word
+            9                           function         unsigned dbl word
+           10                           label         short real
+           11     page                                 real
+           12                                       long real
+           13                                       short complex
+           14                                       complex
+           15                                       long complex
+           16                                       packed decimal
+           17                                       struct/array
+     
+           for procedure entry points, the parameter relocation bits define the
+           locations of the formal parameters and the return value.      normally,
+           the first four words of the parameter list are passed in general
+           registers (r26-r23) instead of on the stack, and the return value is
+           returned in r29.      floating-point parameters in this range are passed
+           instead in floating-point registers (fr4-fr7) and a floating-point
+           value is returned in fr4.       the parameter relocation bits consist of
+           five pairs of bits that describe the first four words of the parameter
+           list and the return value.  the leftmost pair of bits describes the
+           first parameter word, and the rightmost pair of bits describes the
+           return value.  the meanings of these bits are shown in the following
+           table.
+     
+     
+              bits | meaning
+              _____|_____________________________________________________
+               00      | no parameter or return value
+               01      | parameter or return value in general register
+               10      | parameter or return value in floating-point register
+               11      | double-precision floating-point value
+     
+           for double-precision floating-point parameters, the odd-numbered
+           parameter word should be marked 11 and the even-numbered parameter
+           word should be marked 10.       double-precision return values are simply
+           marked 11.
+           every procedure call is tagged with a similar set of bits (see
+           relocation information, below), so that the linker can match each call
+           with the expectations of the procedure entry point.  if the call and
+           entry point mismatch, the linker creates a stub that relocates the
+           parameters and return value as appropriate.
+     
+         relocation information
+           each initialized subspace defines a range of fixups that apply to the
+           data in that subspace.  a fixup request is associated with every word
+           that requires relocation or that contains a reference to an
+           unsatisfied symbol.  in relocatable object files created prior to hp-
+           ux release 3.0 on series 800 systems each fixup request is a five-word
+           structure describing a code or data word to be patched at link time.
+           object files created on release 3.0 or later contain variable-length
+           fixup requests that describe every byte of the subspace.      the
+           version_id field in the file header distinguishes these two formats;
+           the constant version_id is found in older object files, and the
+           constant new_version_id is found in newer ones.
+     
+           in older object files, fixups can compute an expression involving
+           zero, one, or two symbols and a constant, then extract a field of bits
+           from that result and deposit those bits in any of several different
+           formats (corresponding to the precision architecture instruction set).
+           the fixup_request_index field in the subspace dictionary entry indexes
+           into the fixup request area defined by the file header, and the
+           fixup_request_quantity field refers to the number of fixup requests
+           used for that subspace.  the structure of a fixup request is contained
+           in &lt;reloc.h&gt;.
+     
+              struct fixup_request_record \{
+                  unsigned int    need_data_ref:      1;     /* reserved */
+                  unsigned int    arg_reloc:      10;     /* parameter relocation bits */
+                  unsigned int    expression_type: 5;     /* how to compute value */
+                  unsigned int    exec_level:      2;     /* reserved */
+                  unsigned int    fixup_format:      6;     /* how to deposit bits */
+                  unsigned int    fixup_field:      8;     /* field to extract */
+                  unsigned int    subspace_offset;             /* subspace offset of word */
+                  unsigned int    symbol_index_one;       /* index of first symbol */
+                  unsigned int    symbol_index_two;       /* index of second symbol */
+                  int             fixup_constant;             /* constant */
+              \};
+     
+              /* values for expression_type */
+              #define e_one      0       /* symbol1 + constant */
+              #define e_two      1       /* symbol1 - symbol2 + constant */
+              #define e_pcrel    2       /* symbol1 - pc + constant */
+              #define e_con      3       /* constant */
+              #define e_plabel   7       /* symbol1 + constant */
+              #define e_abs     18       /* reserved */
+              /* values for fixup_field (assembler mnemonics shown) */
+              #define e_fsel     0       /* f': no change */
+              #define e_lssel    1       /* ls': inverse of rs' */
+              #define e_rssel    2       /* rs': rightmost 11 bits, signed */
+              #define e_lsel     3       /* l': leftmost 21 bits */
+              #define e_rsel     4       /* r': rightmost 11 bits */
+              #define e_ldsel    5       /* ld': inverse of rd' */
+              #define e_rdsel    6       /* rd': rightmost 11 bits, filled left with ones */
+              #define e_lrsel    7       /* lr': l' with  rounded&quot; constant */&quot;
+              #define e_rrsel    8       /* rr': r' with  rounded&quot; constant */&quot;
+     
+              /* values for fixup_format (typical instructions shown) */&quot;
+              #define i_exp14    0       /* 14-bit immediate (ldw, stw) */
+              #define i_exp21    1       /* 21-bit immediate (ldil, addil) */
+              #define i_exp11    2       /* 11-bit immediate (addi, subi) */
+              #define i_rel17    3       /* 17-bit pc-relative (bl) */
+              #define i_rel12    4       /* 12 bit pc-relative (combt, combf, etc.) */
+              #define i_data     5       /* whole word */
+              #define i_none     6       /* not used */
+              #define i_abs17    7       /* 17-bit absolute (be, ble) */
+              #define i_milli    8       /* 17-bit millicode call (ble) */
+              #define i_break    9       /* reserved (no effect on hp-ux) */
+     
+           in newer object files, relocation entries consist of a stream of
+           bytes.  the fixup_request_index field in the subspace dictionary entry
+           is a byte offset into the fixup dictionary defined by the file header,
+           and the fixup_request_quantity field defines the length of the fixup
+           request stream, in bytes, for that subspace.  the first byte of each
+           fixup request (the opcode) identifies the request and determines the
+           length of the request.
+     
+           in general, the fixup stream is a series of linker instructions that
+           governs how the linker places data in the a.out file.  certain fixup
+           requests cause the linker to copy one or more bytes from the input
+           subspace to the output subspace without change, while others direct
+           the linker to relocate words or resolve external references.  still
+           others direct the linker to insert zeroes in the output subspace or to
+           leave areas uninitialized without copying any data from the input
+           subspace, and others describe points in the code without contributing
+           any new data to the output file.
+     
+           the include file &lt;reloc.h&gt; defines constants for each major opcode.
+           many fixup requests use a range of opcodes; only a constant for the
+           beginning of the range is defined.  the meaning of each fixup request
+           is described below.  the opcode ranges and parameters for each fixup
+           are described in the table further below.
+     
+           r_no_relocation
+                      copy l bytes with no relocation.
+           r_zeroes           insert l zero bytes into the output subspace.
+     
+           r_uninit           skip l bytes in the output subspace.
+     
+           r_relocation   copy one data word with relocation.  the word is
+                      assumed to contain a 32-bit pointer relative to its own
+                      subspace.
+     
+           r_data_one_symbol
+                      copy one data word with relocation relative to an
+                      external symbol whose symbol index is s.
+     
+           r_data_plabel  copy one data word as a 32-bit procedure label,
+                      referring to the symbol s.       the original contents of
+                      the word should be 0 (no static link) or 2 (static link
+                      required).
+     
+           r_space_ref    copy one data word as a space reference.  this fixup
+                      request is not currently supported.
+     
+           r_repeated_init
+                      copy l bytes from the input subspace, replicating the
+                      data to fill m bytes in the output subspace.
+     
+           r_pcrel_call   copy one instruction word with relocation.       the word is
+                      assumed to be a pc-relative procedure call instruction
+                      (for example, bl).       the target procedure is identified
+                      by symbol s, and the parameter relocation bits are r.
+     
+           r_abs_call     copy one instruction word with relocation.       the word is
+                      assumed to be an absolute procedure call instruction
+                      (for example, ble).  the target procedure is identified
+                      by symbol s, and the parameter relocation bits are r.
+     
+           r_dp_relative  copy one instruction word with relocation.       the word is
+                      assumed to be a dp-relative load or store instruction
+                      (for example, addil, ldw, stw).  the target symbol is
+                      identified by symbol s.  the linker forms the
+                      difference between the value of the symbol s and the
+                      value of the symbol $global$.  by convention, the value
+                      of $global$ is always contained in register 27.
+                      instructions other than ldil and addil may have a small
+                      constant in the displacement field of the instruction.
+     
+           r_dlt_rel           copy one instruction word with relocation.       the word is
+                      assumed to be a register-r18-relative load or store
+                      instruction (for example, ldw, ldo, stw).      the target
+                      symbol is identified by symbol s.      the linker computes
+                      a linkage table offset relative to register 18
+                      (reserved for a linkage table pointer in position-
+                      independent code) for the symbol s.
+           r_code_one_symbol
+                      copy one instruction word with relocation.       the word is
+                      assumed to be an instruction referring to symbol s (for
+                      example, ldil, ldw, be).  instructions other than ldil
+                      and addil may have a small constant in the displacement
+                      field of the instruction.
+     
+           r_milli_rel    copy one instruction word with relocation.       the word is
+                      assumed to be a short millicode call instruction (for
+                      example, ble).  the linker forms the difference between
+                      the value of the target symbol s and the value of
+                      symbol 1 in the module's symbol table.  by convention,
+                      the value of symbol 1 should have been previously
+                      loaded into the base register used in the ble
+                      instruction.  the instruction may have a small constant
+                      in the displacement field of the instruction.
+     
+           r_code_plabel  copy one instruction word with relocation.       the word is
+                      assumed to be part of a code sequence forming a
+                      procedure label (for example, ldil, ldo), referring to
+                      symbol s.      the ldo instruction should contain the value
+                      0 (no static link) or 2 (static link required) in its
+                      displacement field.
+     
+           r_breakpoint   copy one instruction word conditionally.  on hp-ux, the
+                      linker always replaces the word with a nop instruction.
+     
+           r_entry           define a procedure entry point.  the stack unwind bits,
+                      u, and the frame size, f, are recorded in a stack
+                      unwind descriptor.
+     
+           r_alt_entry    define an alternate procedure entry point.
+     
+           r_exit           define a procedure exit point.
+     
+           r_begin_try    define the beginning of a try/recover region.
+     
+           r_end_try           define the end of a try/recover region.  the offset r
+                      defines the distance in bytes from the end of the
+                      region to the beginning of the recover block.
+     
+           r_begin_brtab  define the beginning of a branch table.
+     
+           r_end_brtab    define the end of a branch table.
+     
+           r_aux_unwind   define an auxiliary unwind table.      cn is a symbol index
+                      of the symbol that labels the beginning of the
+                      compilation unit string table.  sn is the offset,
+                      relative to the cn symbol, of the scope name string.
+                      sk is an integer specifying the scope kind.
+           r_statement    define the beginning of statement number n.
+     
+           r_sec_statement
+                      define the beginning of a secondary statement number n.
+     
+           r_data_expr    pop one word from the expression stack and copy one
+                      data word from the input subspace to the output
+                      subspace, adding the popped value to it.
+     
+           r_code_expr    pop one word from the expression stack, and copy one
+                      instruction word from the input subspace to the output
+                      subspace, adding the popped value to the displacement
+                      field of the instruction.
+     
+           r_fsel           use an f' field selector for the next fixup request
+                      instead of the default appropriate for the instruction.
+     
+           r_lsel           use an l-class field selector for the next fixup
+                      request instead of the default appropriate for the
+                      instruction.  depending on the current rounding mode,
+                      l', ls', ld', or lr' may be used.
+     
+           r_rsel           use an r-class field selector for the next fixup
+                      request instead of the default appropriate for the
+                      instruction.  depending on the current rounding mode,
+                      r', rs', rd', or rr' may be used.
+     
+           r_n_mode           select round-down mode (l'/r').  this is the default
+                      mode at the beginning of each subspace.  this setting
+                      remains in effect until explicitly changed or until the
+                      end of the subspace.
+     
+           r_s_mode           select round-to-nearest-page mode (ls'/rs').  this
+                      setting remains in effect until explicitly changed or
+                      until the end of the subspace.
+     
+           r_d_mode           select round-up mode (ld'/rd').  this setting remains
+                      in effect until explicitly changed or until the end of
+                      the subspace.
+     
+           r_r_mode           select round-down-with-adjusted-constant mode
+                      (lr'/rr').       this setting remains in effect until
+                      explicitly changed or until the end of the subspace.
+     
+           r_data_override
+                      use the constant v for the next fixup request in place
+                      of the constant from the data word or instruction in
+                      the input subspace.
+     
+           r_translated   toggle ``translated'' mode.  this fixup request is
+                      generated only by the linker during a relocatable link
+                      to indicate a subspace that was originally read from an
+                      old-format relocatable object file.
+     
+           r_comp1           stack operations.      the second byte of this fixup
+                      request contains a secondary opcode.  in the
+                      descriptions below, a refers to the top of the stack
+                      and b refers to the next item on the stack.  all items
+                      on the stack are considered signed 32-bit integers.
+                         r_push_pcon1            push the (positive) constant
+                                         v.
+                         r_push_dot            push the current virtual
+                                         address.
+                         r_max                  pop a and b, then push max(a,
+                                         b).
+                         r_min                  pop a and b, then push min(a,
+                                         b).
+                         r_add                  pop a and b, then push a + b.
+                         r_sub                  pop a and b, then push b - a.
+                         r_mult            pop a and b, then push a * b.
+                         r_div                  pop a and b, then push b / a.
+                         r_mod                  pop a and b, then push b % a.
+                         r_and                  pop a and b, then push a &amp; b.
+                         r_or                  pop a and b, then push a | b.
+                         r_xor                  pop a and b, then push a xor
+                                         b.
+                         r_not                  replace a with its complement.
+                         r_lshift            if c = 0, pop a and b, then
+                                         push b &lt;&lt; a.  otherwise,
+                                         replace a with a &lt;&lt; c.
+                         r_arith_rshift      if c = 0, pop a and b, then
+                                         push b &gt;&gt; a.  otherwise,
+                                         replace a with a &gt;&gt; c.  the
+                                         shifting is done with sign
+                                         extension.
+                         r_logic_rshift      if c = 0, pop a and b, then
+                                         push b &gt;&gt; a.  otherwise,
+                                         replace a with a &gt;&gt; c.  the
+                                         shifting is done with zero
+                                         fill.
+                         r_push_ncon1            push the (negative) constant
+                                         v.
+     
+           r_comp2           more stack operations.
+                         r_push_pcon2            push the (positive) constant
+                                         v.
+                         r_push_sym            push the value of the symbol
+                                         s.
+                         r_push_plabel            push the value of a procedure
+                                         label for symbol s.  the
+                                         static link bit is l.
+                         r_push_ncon2            push the (negative) constant
+                                         v.
+     
+           r_comp3           more stack operations.
+                         r_push_proc            push the value of the
+                                         procedure entry point s.      the
+                                         parameter relocation bits are
+                                         r.
+                         r_push_const            push the constant v.
+     
+           r_prev_fixup   the linker keeps a queue of the last four unique
+                      multi-byte fixup requests; this is an abbreviation for
+                      a fixup request identical to one on the queue.  the
+                      queue index x references one of the four; x = 0 refers
+                      to the most recent.  as a side effect of this fixup
+                      request, the referenced fixup is moved to the front of
+                      the queue.
+     
+           r_reserved     fixups in this range are reserved for internal use by
+                      the compilers and linker.
+     
+           the following table shows the mnemonic fixup request type and length
+           and parameter information for each range of opcodes.  in the
+           parameters column, the symbol d refers to the difference between the
+           opcode and the beginning of the range described by that table entry;
+           the symbols b1, b2, b3, and b4 refer to the value of the next one,
+           two, three, or four bytes of the fixup request, respectively.
+     
+        mnemonic             opcodes       length        parameters
+        ____________________________________________________________________________
+        r_no_relocation       0-23          1        l = (d+1) * 4
+                       24-27          2        l = (d&lt;&lt;8 + b1 + 1) * 4
+                       28-30          3        l = (d&lt;&lt;16 + b2 + 1) * 4
+                        31          4        l = b3 + 1
+        r_zeroes             32          2        l = (b1 + 1) * 4
+                        33          4        l = b3 + 1
+        r_uninit             34          2        l = (b1 + 1) * 4
+                        35          4        l = b3 + 1
+        r_relocation             36          1        none
+        r_data_one_symbol       37          2        s = b1
+                        38          4        s = b3
+        r_data_plabel       39          2        s = b1
+                        40          4        s = b3
+        r_space_ref             41          1        none
+        r_repeated_init       42          2        l = 4; m = (b1 + 1) * 4
+                        43          3        l = b1 * 4; m = (b1 + 1) * l
+                        44          5        l = b1 * 4; m = (b3 + 1) * 4
+                        45          8        l = b3 + 1; m = b4 + 1
+        r_pcrel_call            48-57          2        r = rbits1(d); s = b1
+                       58-59          3        r = rbits2(d&lt;&lt;8 + b1); s = b1
+                       60-61          5        r = rbits2(d&lt;&lt;8 + b1); s = b3
+        r_abs_call            64-73          2        r = rbits1(d); s = b1
+                       74-75          3        r = rbits2(d&lt;&lt;8 + b1); s = b1
+                       76-77          5        r = rbits2(d&lt;&lt;8 + b1); s = b3
+        r_dp_relative      80-111          1        s = d
+                        112          2        s = b1
+                        113          4        s = b3
+        r_dlt_rel             120          2        s = b1
+                        121          4        s = b3
+        r_code_one_symbol   128-159          1        s = d
+                        160          2        s = b1
+                        161          2        s = b3
+        r_milli_rel             174          2        s = b1
+                        175          4        s = b3
+        r_code_plabel       176          2        s = b1
+                        177          4        s = b3
+        r_breakpoint             178          1        none
+        r_entry             179          9        u,f = b8 (u is 37 bits; f is 27 bits)
+                        180          6        u = b5 &gt;&gt; 3; f = pop a
+        r_alt_entry             181          1        none
+        r_exit             182          1        none
+        r_begin_try             183          1        none
+        r_end_try             184          1        r = 0
+                        185          2        r = b1 * 4
+                        186          4        r = b3 * 4
+        r_begin_brtab       187          1        none
+        r_end_brtab             188          1        none
+        r_statement             189          2        n = b1
+                        190          3        n = b2
+                        191          4        n = b3
+        r_data_expr             192          1        none
+        r_code_expr             193          1        none
+        r_fsel             194          1        none
+        r_lsel             195          1        none
+        r_rsel             196          1        none
+        r_n_mode             197          1        none
+        r_s_mode             198          1        none
+        r_d_mode             199          1        none
+        r_r_mode             200          1        none
+        r_data_override       201          1        v = 0
+                        202          2        v = b1
+                        203          3        v = b2
+                        204          4        v = b3
+                        205          5        v = b4
+        r_translated             206          1        none
+        r_aux_unwind             207         12        cu,sn,sk = b11 (cu is 24 bits;
+                                         sn is 32 bits; sk is 32 bits)
+        r_comp1             208          2        op = b1; v = op &amp; 0x3f; c = op &amp; 0x1f
+        r_comp2             209          5        op = b1; s = b3; l = op &amp; 1;
+                                     v = ((op &amp; 0x7f) &lt;&lt; 24) | s
+        r_comp3             210          6        op = b1; v = b4;
+                                     r = ((op &amp; 1) &lt;&lt; 8) | (v &gt;&gt; 16);
+                                     s = v &amp; 0xffffff
+        r_prev_fixup             211-214          1        x = d
+        r_sec_stmt             215          1        none
+        r_reserved             224-255         -        reserved
+     
+           parameter relocation bits are encoded in the fixup requests in two
+           ways, noted as rbits1 and rbits2 in the above table.  the first
+           encoding recognizes that the most common procedure calls have only
+           general register arguments with no holes in the parameter list.  the
+           encoding for such calls is simply the number of parameters in general
+           registers (0 to 4), plus 5 if there is a return value in a general
+           register.
+     
+           the second encoding is more complex; the 10 argument relocation bits
+           are compressed into 9 bits by eliminating some impossible
+           combinations.  the encoding is the combination of three contributions.
+           the first contribution is the pair of bits for the return value, which
+           are not modified.       the second contribution is 9 if the first two
+           parameter words together form a double-precision parameter; otherwise,
+           it is 3 times the pair of bits for the first word plus the pair of
+           bits for the second word.       similarly, the third contribution is formed
+           based on the third and fourth parameter words.  the second
+           contribution is multiplied by 40, the third is multiplied by 4, then
+           the three are added together.
+     
+         compiler records
+           compiler records are placed in relocatable files by each compiler or
+           assembler to identify the version of the compiler that was used to
+           produce the file.       these records are copied into the executable file
+           by the linker, but are strippable.  the structure of a compiler record
+           is shown below.  all strings are contained in the symbol string table.
+     
+              struct compilation_unit \{
+                  union name_pt       name;
+                  union name_pt       language_name;
+                  union name_pt       product_id;
+                  union name_pt       version_id;
+                  int             reserved;
+                  struct sys_clock       compile_time;
+                  struct sys_clock       source_time;
+              \};
+     
+      see also
+           as_300(1), as_800(1), cc(1), ld(1), nm_300(1), nm_800(1), strip(1),
+           crt0(3), end(3c), a.out_300(4), magic(4).
+     }</pre>
+    </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

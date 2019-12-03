@@ -1,0 +1,546 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>gif graphics interchange format</title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">gif graphics interchange format</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%"><br>
+    a standard defining a mechanism<br>
+    for the storage and transmission<br>
+    of raster-based graphics information<br>
+    june 15, 1987<br>
+    (c) compuserve incorporated, 1987<br>
+    all rights reserved<br>
+    while this document is copyrighted, the information<br>
+    contained within is made available for use in computer<br>
+    software without royalties, or licensing restrictions.<br>
+    gif and 'graphics interchange format' are trademarks of<br>
+    compuserve, incorporated.<br>
+    an h&amp;r block company<br>
+    5000 arlington centre blvd.<br>
+    columbus, ohio 43220<br>
+    (614) 457-8600<br>
+    page 2<br>
+    graphics interchange format (gif) specification<br>
+    table of contents<br>
+    introduction . . . . . . . . . . . . . . . . . page 3<br>
+    general file format . . . . . . . . . . . . . page 3<br>
+    gif signature . . . . . . . . . . . . . . . . page 4<br>
+    screen descriptor . . . . . . . . . . . . . . page 4<br>
+    global color map . . . . . . . . . . . . . . . page 5<br>
+    image descriptor . . . . . . . . . . . . . . . page 6<br>
+    local color map . . . . . . . . . . . . . . . page 7<br>
+    raster data . . . . . . . . . . . . . . . . . page 7<br>
+    gif terminator . . . . . . . . . . . . . . . . page 8<br>
+    gif extension blocks . . . . . . . . . . . . . page 8<br>
+    appendix a - glossary . . . . . . . . . . . . page 9<br>
+    appendix b - interactive sequences . . . . . . page 10<br>
+    appendix c - image packaging &amp; compression . . page 12<br>
+    appendix d - multiple image processing . . . . page 15<br>
+    graphics interchange format (gif) page 3<br>
+    specification<br>
+    introduction<br>
+    'gif' (tm) is compuserve's standard for defining generalized color<br>
+    raster images. this 'graphics interchange format' (tm) allows<br>
+    high-quality, high-resolution graphics to be displayed on a variety of<br>
+    graphics hardware and is intended as an exchange and display mechanism<br>
+    for graphics images. the image format described in this document is<br>
+    designed to support current and future image technology and will in<br>
+    addition serve as a basis for future compuserve graphics products.<br>
+    the main focus of this document is to provide the technical<br>
+    information necessary for a programmer to implement gif encoders and<br>
+    decoders. as such, some assumptions are made as to terminology relavent<br>
+    to graphics and programming in general.<br>
+    the first section of this document describes the gif data format<br>
+    and its components and applies to all gif decoders, either as standalone<br>
+    programs or as part of a communications package. appendix b is a<br>
+    section relavent to decoders that are part of a communications software<br>
+    package and describes the protocol requirements for entering and exiting<br>
+    gif mode, and responding to host interrogations. a glossary in appendix<br>
+    a defines some of the terminology used in this document. appendix c<br>
+    gives a detailed explanation of how the graphics image itself is<br>
+    packaged as a series of data bytes.<br>
+    graphics interchange format data definition<br>
+    general file format<br>
+    +-----------------------+<br>
+    | +-------------------+ |<br>
+    | | gif signature | |<br>
+    | +-------------------+ |<br>
+    | +-------------------+ |<br>
+    | | screen descriptor | |<br>
+    | +-------------------+ |<br>
+    | +-------------------+ |<br>
+    | | global color map | |<br>
+    | +-------------------+ |<br>
+    . . . . . .<br>
+    | +-------------------+ | ---+ <br>
+    | | image descriptor | | | <br>
+    | +-------------------+ | | <br>
+    | +-------------------+ | | <br>
+    | | local color map | | |- repeated 1 to n times<br>
+    | +-------------------+ | | <br>
+    | +-------------------+ | | <br>
+    | | raster data | | | <br>
+    | +-------------------+ | ---+ <br>
+    . . . . . . <br>
+    |- gif terminator -| <br>
+    +-----------------------+<br>
+    graphics interchange format (gif) page 4<br>
+    specification<br>
+    gif signature<br>
+    the following gif signature identifies the data following as a<br>
+    valid gif image stream. it consists of the following six characters:<br>
+    g i f 8 7 a<br>
+    the last three characters '87a' may be viewed as a version number<br>
+    for this particular gif definition and will be used in general as a<br>
+    reference in documents regarding gif that address any version<br>
+    dependencies.<br>
+    screen descriptor<br>
+    the screen descriptor describes the overall parameters for all gif<br>
+    images following. it defines the overall dimensions of the image space<br>
+    or logical screen required, the existance of color mapping information,<br>
+    background../jpg/di1.JPGn color, and color depth information. this information<br>
+    is stored in a series of 8-bit bytes as described below.<br>
+    bits<br>
+    7 6 5 4 3 2 1 0 byte #<br>
+    +---------------+<br>
+    | | 1<br>
+    +-screen width -+ raster width in pixels (lsb first)<br>
+    | | 2<br>
+    +---------------+<br>
+    | | 3<br>
+    +-screen height-+ raster height in pixels (lsb first)<br>
+    | | 4<br>
+    +-+-----+-+-----+ m = 1, global color map follows descriptor<br>
+    |m| cr |0|pixel| 5 cr+1 = # bits of color resolution<br>
+    +-+-----+-+-----+ pixel+1 = # bits/pixel in image<br>
+    | background | 6 background=../jpg/di1.JPG index of screen background<br>
+    +---------------+ (color is defined from the global color<br>
+    |0 0 0 0 0 0 0 0| 7 map or default map if none specified)<br>
+    +---------------+<br>
+    the logical screen width and height can both be larger than the<br>
+    physical display. how images larger than the physical display are<br>
+    handled is implementation dependent and can take advantage of hardware<br>
+    characteristics (e.g. macintosh scrolling windows). otherwise images<br>
+    can be clipped to the edges of the display.<br>
+    the value of 'pixel' also defines the maximum number of colors<br>
+    within an image. the range of values for 'pixel' is 0 to 7 which<br>
+    represents 1 to 8 bits. this translates to a range of 2 (b &amp; w) to 256<br>
+    colors. bit 3 of word 5 is reserved for future definition and must be<br>
+    zero.<br>
+    graphics interchange format (gif) page 5<br>
+    specification<br>
+    global color map<br>
+    the global color map is optional but recommended for images where<br>
+    accurate color rendition is desired. the existence of this color map is<br>
+    indicated in the 'm' field of byte 5 of the screen descriptor. a color<br>
+    map can also be associated with each image in a gif file as described<br>
+    later. however this global map will normally be used because of<br>
+    hardware restrictions in equipment available today. in the individual<br>
+    image descriptors the 'm' flag will normally be zero. if the global<br>
+    color map is present, it's definition immediately follows the screen<br>
+    descriptor. the number of color map entries following a screen<br>
+    descriptor is equal to 2**(# bits per pixel), where each entry consists<br>
+    of three byte values representing the relative intensities of red, green<br>
+    and blue respectively. the structure of the color map block is:<br>
+    bits<br>
+    7 6 5 4 3 2 1 0 byte #<br>
+    +---------------+<br>
+    | red intensity | 1 red value for color index 0<br>
+    +---------------+<br>
+    |green intensity| 2 green value for color index 0<br>
+    +---------------+<br>
+    | blue intensity| 3 blue value for color index 0<br>
+    +---------------+<br>
+    | red intensity | 4 red value for color index 1<br>
+    +---------------+<br>
+    |green intensity| 5 green value for color index 1<br>
+    +---------------+<br>
+    | blue intensity| 6 blue value for color index 1<br>
+    +---------------+<br>
+    : : (continues for remaining colors)<br>
+    each image pixel value received will be displayed according to its<br>
+    closest match with an available color of the display based on this color<br>
+    map. the color components represent a fractional intensity value from<br>
+    none (0) to full (255). white would be represented as (255,255,255),<br>
+    black as (0,0,0) and medium yellow as (180,180,0). for display, if the<br>
+    device supports fewer than 8 bits per color component, the higher order<br>
+    bits of each component are used. in the creation of a gif color map<br>
+    entry with hardware supporting fewer than 8 bits per component, the<br>
+    component values for the hardware should be converted to the 8-bit<br>
+    format with the following calculation:<br>
+    &lt;map_value&gt; = &lt;component_value&gt;*255/(2**&lt;nbits&gt; -1)<br>
+    this assures accurate translation of colors for all displays. in<br>
+    the cases of creating gif images from hardware without color palette<br>
+    capability, a fixed palette should be created based on the available<br>
+    display colors for that hardware. if no global color map is indicated,<br>
+    a default color map is generated internally which maps each possible<br>
+    incoming color index to the same hardware color index modulo &lt;n&gt; where<br>
+    &lt;n&gt; is the number of available hardware colors.<br>
+    graphics interchange format (gif) page 6<br>
+    specification<br>
+    image descriptor<br>
+    the image descriptor defines the actual placement and extents of<br>
+    the following image within the space defined in the screen descriptor.<br>
+    also defined are flags to indicate the presence of a local color lookup<br>
+    map, and to define the pixel display sequence. each image descriptor is<br>
+    introduced by an image separator character. the role of the image<br>
+    separator is simply to provide a synchronization character to introduce<br>
+    an image descriptor. this is desirable if a gif file happens to contain<br>
+    more than one image. this character is defined as 0x2c hex or ','<br>
+    (comma). when this character is encountered between images, the image<br>
+    descriptor will follow immediately.<br>
+    any characters encountered between the end of a previous image and<br>
+    the image separator character are to be ignored. this allows future gif<br>
+    enhancements to be present in newer image formats and yet ignored safely<br>
+    by older software decoders.<br>
+    bits<br>
+    7 6 5 4 3 2 1 0 byte #<br>
+    +---------------+<br>
+    |0 0 1 0 1 1 0 0| 1 ',' - image separator character<br>
+    +---------------+<br>
+    | | 2 start of image in pixels from the<br>
+    +- image left -+ left side of the screen (lsb first)<br>
+    | | 3<br>
+    +---------------+<br>
+    | | 4<br>
+    +- image top -+ start of image in pixels from the<br>
+    | | 5 top of the screen (lsb first)<br>
+    +---------------+<br>
+    | | 6<br>
+    +- image width -+ width of the image in pixels (lsb first)<br>
+    | | 7<br>
+    +---------------+<br>
+    | | 8<br>
+    +- image height-+ height of the image in pixels (lsb first)<br>
+    | | 9<br>
+    +-+-+-+-+-+-----+ m=0 - use global color map, ignore 'pixel'<br>
+    |m|i|0|0|0|pixel| 10 m=1 - local color map follows, use 'pixel'<br>
+    +-+-+-+-+-+-----+ i=0 - image formatted in sequential order<br>
+    i=1 - image formatted in interlaced order<br>
+    pixel+1 - # bits per pixel for this image<br>
+    the specifications for the image position and size must be confined<br>
+    to the dimensions defined by the screen descriptor. on the other hand<br>
+    it is not necessary that the image fill the entire screen defined.<br>
+    local color map<br>
+    graphics interchange format (gif) page 7<br>
+    specification<br>
+    a local color map is optional and defined here for future use. if<br>
+    the 'm' bit of byte 10 of the image descriptor is set, then a color map<br>
+    follows the image descriptor that applies only to the following image.<br>
+    at the end of the image, the color map will revert to that defined after<br>
+    the screen descriptor. note that the 'pixel' field of byte 10 of the<br>
+    image descriptor is used only if a local color map is indicated. this<br>
+    defines the parameters not only for the image pixel size, but determines<br>
+    the number of color map entries that follow. the bits per pixel value<br>
+    will also revert to the value specified in the screen descriptor when<br>
+    processing of the image is complete.<br>
+    raster data<br>
+    the format of the actual image is defined as the series of pixel<br>
+    color index values that make up the image. the pixels are stored left<br>
+    to right sequentially for an image row. by default each image row is<br>
+    written sequentially, top to bottom. in the case that the interlace or<br>
+    'i' bit is set in byte 10 of the image descriptor then the row order of<br>
+    the image display follows a four-pass process in which the image is<br>
+    filled in by widely spaced rows. the first pass writes every 8th row,<br>
+    starting with the top row of the image window. the second pass writes<br>
+    every 8th row starting at the fifth row from the top. the third pass<br>
+    writes every 4th row starting at the third row from the top. the fourth<br>
+    pass completes the image, writing every other row, starting at the<br>
+    second row from the top. a graphic description of this process follows:<br>
+    image<br>
+    row pass 1 pass 2 pass 3 pass 4 result<br>
+    ---------------------------------------------------<br>
+    0 **1a** **1a**<br>
+    1 **4a** **4a**<br>
+    2 **3a** **3a**<br>
+    3 **4b** **4b**<br>
+    4 **2a** **2a**<br>
+    5 **4c** **4c**<br>
+    6 **3b** **3b**<br>
+    7 **4d** **4d**<br>
+    8 **1b** **1b**<br>
+    9 **4e** **4e**<br>
+    10 **3c** **3c**<br>
+    11 **4f** **4f**<br>
+    12 **2b** **2b**<br>
+    . . . <br>
+    the image pixel values are processed as a series of color indices<br>
+    which map into the existing color map. the resulting color value from<br>
+    the map is what is actually displayed. this series of pixel indices,<br>
+    the number of which is equal to image-width*image-height pixels, are<br>
+    passed to the gif image data stream one value per pixel, compressed and<br>
+    packaged according to a version of the lzw compression algorithm as<br>
+    defined in appendix c.<br>
+    graphics interchange format (gif) page 8<br>
+    specification<br>
+    gif terminator<br>
+    in order to provide a synchronization for the termination of a gif<br>
+    image file, a gif decoder will process the end of gif mode when the<br>
+    character 0x3b hex or ';' is found after an image has been processed.<br>
+    by convention the decoding software will pause and wait for an action<br>
+    indicating that the user is ready to continue. this may be a carriage<br>
+    return entered at the keyboard or a mouse click. for interactive<br>
+    applications this user action must be passed on to the host as a<br>
+    carriage return character so that the host application can continue.<br>
+    the decoding software will then typically leave graphics mode and resume<br>
+    any previous process.<br>
+    gif extension blocks<br>
+    to provide for orderly extension of the gif definition, a mechanism<br>
+    for defining the packaging of extensions within a gif data stream is<br>
+    necessary. specific gif extensions are to be defined and documented by<br>
+    compuserve in order to provide a controlled enhancement path.<br>
+    gif extension blocks are packaged in a manner similar to that used<br>
+    by the raster data though not compressed. the basic structure is:<br>
+    7 6 5 4 3 2 1 0 byte #<br>
+    +---------------+<br>
+    |0 0 1 0 0 0 0 1| 1 '!' - gif extension block introducer<br>
+    +---------------+<br>
+    | function code | 2 extension function code (0 to 255)<br>
+    +---------------+ ---+<br>
+    | byte count | |<br>
+    +---------------+ |<br>
+    : : +-- repeated as many times as necessary<br>
+    |func data bytes| |<br>
+    : : |<br>
+    +---------------+ ---+<br>
+    . . . . . .<br>
+    +---------------+<br>
+    |0 0 0 0 0 0 0 0| zero byte count (terminates block)<br>
+    +---------------+<br>
+    a gif extension block may immediately preceed any image descriptor<br>
+    or occur before the gif terminator.<br>
+    all gif decoders must be able to recognize the existence of gif<br>
+    extension blocks and read past them if unable to process the function<br>
+    code. this ensures that older decoders will be able to process extended<br>
+    gif image files in the future, though without the additional<br>
+    functionality.<br>
+    graphics interchange format (gif) page 9<br>
+    appendix a - glossary<br>
+    glossary<br>
+    pixel - the smallest picture element of a graphics image. this usually<br>
+    corresponds to a single dot on a graphics screen. image resolution is<br>
+    typically given in units of pixels. for example a fairly standard<br>
+    graphics screen format is one 320 pixels across and 200 pixels high.<br>
+    each pixel can appear as one of several colors depending on the<br>
+    capabilities of the graphics hardware.<br>
+    raster - a horizontal row of pixels representing one line of an image. a<br>
+    typical method of working with images since most hardware is oriented to<br>
+    work most efficiently in this manner.<br>
+    lsb - least significant byte. refers to a convention for two byte numeric<br>
+    values in which the less significant byte of the value preceeds the more<br>
+    significant byte. this convention is typical on many microcomputers.<br>
+    color map - the list of definitions of each color used in a gif image.<br>
+    these desired colors are converted to available colors through a table<br>
+    which is derived by assigning an incoming color index (from the image)<br>
+    to an output color index (of the hardware). while the color map<br>
+    definitons are specified in a gif image, the output pixel colors will<br>
+    vary based on the hardware used and its ability to match the defined<br>
+    color.<br>
+    interlace - the method of displaying a gif image in which multiple passes<br>
+    are made, outputting raster lines spaced apart to provide a way of<br>
+    visualizing the general content of an entire image before all of the<br>
+    data has been processed.<br>
+    b protocol - a compuserve-developed error-correcting file transfer protocol<br>
+    available in the public domain and implemented in compuserve vidtex<br>
+    products. this error checking mechanism will be used in transfers of<br>
+    gif images for interactive applications.<br>
+    lzw - a sophisticated data compression algorithm based on work done by<br>
+    lempel-ziv &amp; welch which has the feature of very efficient one-pass<br>
+    encoding and decoding. this allows the image to be decompressed and<br>
+    displayed at the same time. the original article from which this<br>
+    technique was adapted is:<br>
+    terry a. welch, &quot;a technique for high performance data<br>
+    compression&quot;, ieee computer, vol 17 no 6 (june 1984)<br>
+    this basic algorithm is also used in the public domain arc file<br>
+    compression utilities. the compuserve adaptation of lzw for gif is<br>
+    described in appendix c.<br>
+    graphics interchange format (gif) page 10<br>
+    appendix b - interactive sequences<br>
+    gif sequence exchanges for an interactive environment<br>
+    the following sequences are defined for use in mediating control<br>
+    between a gif sender and gif receiver over an interactive communications<br>
+    line. these sequences do not apply to applications that involve<br>
+    downloading of static gif files and are not considered part of a gif<br>
+    file.<br>
+    gif capabilities enquiry<br>
+    the gce sequence is issued from a host and requests an interactive<br>
+    gif decoder to return a response message that defines the graphics<br>
+    parameters for the decoder. this involves returning information about<br>
+    available screen sizes, number of bits/color supported and the amount of<br>
+    color detail supported. the escape sequence for the gce is defined as:<br>
+    esc [ &gt; 0 g (g is lower case, spaces inserted for clarity)<br>
+    (0x1b 0x5b 0x3e 0x30 0x67)<br>
+    gif capabilities response<br>
+    the gif capabilities response message is returned by an interactive<br>
+    gif decoder and defines the decoder's display capabilities for all<br>
+    graphics modes that are supported by the software. note that this can<br>
+    also include graphics printers as well as a monitor screen. the general<br>
+    format of this message is:<br>
+    #version;protocol{;dev, width, height, color-bits, color-res}... &lt;cr&gt;<br>
+    '#' - gcr identifier character (number sign)<br>
+    version - gif format version number; initially '87a'<br>
+    protocol='0' - no end-to-end protocol supported by decoder<br>
+    transfer as direct 8-bit data stream.<br>
+    protocol='1' - can use an error correction protocol to transfer gif data<br>
+    interactively from the host directly to the display.<br>
+    dev = '0' - screen parameter set follows<br>
+    dev = '1' - printer parameter set follows<br>
+    width - maximum supported display width in pixels<br>
+    height - maximum supported display height in pixels<br>
+    color-bits - number of bits per pixel supported. the number of<br>
+    supported colors is therefore 2**color-bits.<br>
+    color-res - number of bits per color component supported in the<br>
+    hardware color palette. if color-res is '0' then no<br>
+    hardware palette table is available.<br>
+    note that all values in the gcr are returned as ascii decimal<br>
+    numbers and the message is terminated by a carriage return character.<br>
+    graphics interchange format (gif) page 11<br>
+    appendix b - interactive sequences<br>
+    the following gcr message describes three standard ega<br>
+    configurations with no printer; the gif data stream can be processed<br>
+    within an error correcting protocol:<br>
+    #87a;1 ;0,320,200,4,0 ;0,640,200,2,2 ;0,640,350,4,2&lt;cr&gt;<br>
+    enter gif graphics mode<br>
+    two sequences are currently defined to invoke an interactive gif<br>
+    decoder into action. the only difference between them is that different<br>
+    output media are selected. these sequences are:<br>
+    esc [ &gt; 1 g display gif image on screen<br>
+    (0x1b 0x5b 0x3e 0x31 0x67)<br>
+    esc [ &gt; 2 g display image directly to an attached graphics printer.<br>
+    the image may optionally be displayed on the screen as<br>
+    well.<br>
+    (0x1b 0x5b 0x3e 0x32 0x67)<br>
+    note that the 'g' character terminating each sequence is in lower<br>
+    case.<br>
+    interactive environment<br>
+    the assumed environment for the transmission of gif image data from<br>
+    an interactive application is a full 8-bit data stream from host to<br>
+    micro. all 256 character codes must be transferrable. the establishing<br>
+    of an 8-bit data path for communications will normally be taken care of<br>
+    by the host application programs. it is however up to the receiving<br>
+    communications programs supporting gif to be able to receive and pass on<br>
+    all 256 8-bit codes to the gif decoder software.<br>
+    graphics interchange format (gif) page 12<br>
+    appendix c - image packaging &amp; compression<br>
+    the raster data stream that represents the actual output image can<br>
+    be represented as:<br>
+    7 6 5 4 3 2 1 0<br>
+    +---------------+<br>
+    | code size | <br>
+    +---------------+ ---+<br>
+    |blok byte count| |<br>
+    +---------------+ |<br>
+    : : +-- repeated as many times as necessary<br>
+    | data bytes | |<br>
+    : : |<br>
+    +---------------+ ---+<br>
+    . . . . . .<br>
+    +---------------+<br>
+    |0 0 0 0 0 0 0 0| zero byte count (terminates data stream)<br>
+    +---------------+<br>
+    the conversion of the image from a series of pixel values to a<br>
+    transmitted or stored character stream involves several steps. in brief<br>
+    these steps are:<br>
+    1. establish the code size - define the number of bits needed to<br>
+    represent the actual data.<br>
+    2. compress the data - compress the series of image pixels to a series<br>
+    of compression codes.<br>
+    3. build a series of bytes - take the set of compression codes and<br>
+    convert to a string of 8-bit bytes.<br>
+    4. package the bytes - package sets of bytes into blocks preceeded by<br>
+    character counts and output.<br>
+    establish code size<br>
+    the first byte of the gif raster data stream is a value indicating<br>
+    the minimum number of bits required to represent the set of actual pixel<br>
+    values. normally this will be the same as the number of color bits.<br>
+    because of some algorithmic constraints however, black &amp; white images<br>
+    which have one color bit must be indicated as having a code size of 2.<br>
+    this code size value also implies that the compression codes must start<br>
+    out one bit longer.<br>
+    compression<br>
+    the lzw algorithm converts a series of data values into a series of<br>
+    codes which may be raw values or a code designating a series of values.<br>
+    using text characters as an analogy, the output code consists of a<br>
+    character or a code representing a string of characters.<br>
+    graphics interchange format (gif) page 13<br>
+    appendix c - image packaging &amp; compression<br>
+    the lzw algorithm used in gif matches algorithmically with the<br>
+    standard lzw algorithm with the following differences:<br>
+    1. a special clear code is defined which resets all<br>
+    compression/decompression parameters and tables to a start-up state.<br>
+    the value of this code is 2**&lt;code size&gt;. for example if the code<br>
+    size indicated was 4 (image was 4 bits/pixel) the clear code value<br>
+    would be 16 (10000 binary). the clear code can appear at any point<br>
+    in the image data stream and therefore requires the lzw algorithm to<br>
+    process succeeding codes as if a new data stream was starting.<br>
+    encoders should output a clear code as the first code of each image<br>
+    data stream.<br>
+    2. an end of information code is defined that explicitly indicates the<br>
+    end of the image data stream. lzw processing terminates when this<br>
+    code is encountered. it must be the last code output by the encoder<br>
+    for an image. the value of this code is &lt;clear code&gt;+1.<br>
+    3. the first available compression code value is &lt;clear code&gt;+2.<br>
+    4. the output codes are of variable length, starting at &lt;code size&gt;+1<br>
+    bits per code, up to 12 bits per code. this defines a maximum code<br>
+    value of 4095 (hex fff). whenever the lzw code value would exceed<br>
+    the current code length, the code length is increased by one. the<br>
+    packing/unpacking of these codes must then be altered to reflect the<br>
+    new code length.<br>
+    build 8-bit bytes<br>
+    because the lzw compression used for gif creates a series of<br>
+    variable length codes, of between 3 and 12 bits each, these codes must<br>
+    be reformed into a series of 8-bit bytes that will be the characters<br>
+    actually stored or transmitted. this provides additional compression of<br>
+    the image. the codes are formed into a stream of bits as if they were<br>
+    packed right to left and then picked off 8 bits at a time to be output.<br>
+    assuming a character array of 8 bits per character and using 5 bit codes<br>
+    to be packed, an example layout would be similar to:<br>
+    byte n byte 5 byte 4 byte 3 byte 2 byte 1<br>
+    +-.....-----+--------+--------+--------+--------+--------+<br>
+    | and so on |hhhhhggg|ggfffffe|eeeedddd|dcccccbb|bbbaaaaa|<br>
+    +-.....-----+--------+--------+--------+--------+--------+<br>
+    note that the physical packing arrangement will change as the<br>
+    number of bits per compression code change but the concept remains the<br>
+    same.<br>
+    package the bytes<br>
+    once the bytes have been created, they are grouped into blocks for<br>
+    output by preceeding each block of 0 to 255 bytes with a character count<br>
+    byte. a block with a zero byte count terminates the raster data stream<br>
+    for a given image. these blocks are what are actually output for the<br>
+    graphics interchange format (gif) page 14<br>
+    appendix c - image packaging &amp; compression<br>
+    gif image. this block format has the side effect of allowing a decoding<br>
+    program the ability to read past the actual image data if necessary by<br>
+    reading block counts and then skipping over the data.<br>
+    graphics interchange format (gif) page 15<br>
+    appendix d - multiple image processing<br>
+    since a gif data stream can contain multiple images, it is<br>
+    necessary to describe processing and display of such a file. because<br>
+    the image descriptor allows for placement of the image within the<br>
+    logical screen, it is possible to define a sequence of images that may<br>
+    each be a partial screen, but in total fill the entire screen. the<br>
+    guidelines for handling the multiple image situation are:<br>
+    1. there is no pause between images. each is processed immediately as<br>
+    seen by the decoder.<br>
+    2. each image explicitly overwrites any image already on the screen<br>
+    inside of its window. the only screen clears are at the beginning<br>
+    and end of the gif image process. see discussion on the gif<br>
+    terminator.<br>
+    &#26;</td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

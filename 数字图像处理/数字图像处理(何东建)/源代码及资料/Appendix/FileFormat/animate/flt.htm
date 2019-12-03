@@ -1,0 +1,324 @@
+<html>
+
+<head>
+<title>file:///d:/程序资料/format2/flt.txt</title>
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">flc, flt format</font></p>
+<div align="center"><center>
+
+<table border="0" width="80%">
+  <tr>
+    <td width="100%"><pre>the flc files are files created by the autodesk animator pro and contain
+animations. the flc files are a superset of those created by the autodesk
+animator (flic files). in some cases, new data fields or compression methods
+were added. the flc files use a hierarchical block oriented structure and blocks
+are a combination of control information and data. the file consists of one
+header followed by data blocks. it is possible that new types of blocks not
+described in this document will be added to animation files in the future. it is
+recommended that you quietly ignore unknown block types you encounter during
+animation playback.  the size fields in the block headers make it easy to skip
+an entire unrecognized block.</pre>
+    <pre>the flc files consist of one 128-byte header block and one or more of the
+following blocks :</pre>
+    <pre>the prefix block, if present, contains animator pro settings information,
+cel placement information, and other auxiliary data.</pre>
+    <pre>a frame block exists for each frame in the animation. in addition, a ring frame
+follows all the animation frames. each frame block contains color palette
+information and/or pixel data.</pre>
+    <pre>the ring frame contains delta-compressed information to loop from the last frame
+of the flic back to the first. it can be helpful to think of the ring frame as a
+copy of the first frame, compressed in a different way. all flic files will
+contain a ring frame, including a single-frame flic.</pre>
+    <pre>the flc file header</pre>
+    <pre>offset              count type   description
+0000h                   1 dword  the size of the whole animation file, including
+                                 the size of this header.
+0004h                   1 word   id=0af12h
+0006h                   1 word   number of frames in this animation, not
+                                 including the ring frame. flc files have a
+                                 maximum length of 4000 frames.
+0008h                   1 word   screen width in pixels
+000ah                   1 word   screen height in pixels
+000ch                   1 word   bits per pixel (always 8)
+000eh                   1 word   flags - bitmapped
+                                 0 - ring frame not written / ring frame written
+                                 1 - flic header not updated / updated
+                              2-15 - reserved
+0010h                   1 dword  delay between frames in miliseconds.
+0014h                   1 word   reserved
+0016h                   1 dword  ms-dos date and time of file creation (see table 0009)
+001ah                   1 dword  serial number of the animator pro program used
+                                 to create the file. if the file was created
+                                 with the fliclib development kit, this value
+                                 equals 0464c4942h (&quot;flib&quot;).
+001eh                   1 dword  ms-dos date and time of last modification (see table 0009)
+0022h                   1 dword  serial number of program that made the last
+                                 modification. see serial number.
+0026h                   1 word   x-axis aspect ratio of the file
+0028h                   1 word   y-axis aspect ratio of the file
+                                 (320x200 = 6:5)
+002ah                  38 byte   reserved (0)
+0050h                   1 dword  offset from begin of file to the first
+                                 animation frame block.
+0054h                   1 dword  offset from begin of file to the second
+                                 animation frame block. this value is used
+                                 when looping the animation.
+0058h                  40 byte   reserved (0)</pre>
+    <pre>each subblock in the animation file has an identical header structure,
+which is formatted like this :
+0000h                   1 dword  the size of the whole block and all subordinate
+                                 blocks including the size of this header
+0004h                   1 word   block id, varies depending on the block type.
+0006h                   1 word   number of subordinate blocks in this block.
+                                 including the ring frame. flc files have a
+                                 maximum length of 4000 frames.
+0008h                   8 byte   reserved(0)</pre>
+    <pre>immediately after the header there may be an optional prefix block, which is
+used to store additional data which is not directly involved in animation
+playback.</pre>
+    <pre>the prefix block has the usual header with an id of 0f100h.
+the prefix block should only be created by the animator pro programs and never
+by any other software, it is to be ignored by other software.</pre>
+    <pre>the flc frame blocks contain the information to convert the current frame into
+the next frame; they have an id of 0f1fah. directly after the frame header,
+there are the subordinate data blocks - if the subblock count is 0 this means,
+that the current frame is identical to the previous frame, only the appropriate
+delay has to be made.
+the data blocks have a different header format :
+offset              count type   description
+0000h                   1 dword  size of this block, including header size
+0004h                   1 word   data type identifier :
+                                  4 - 256-level color palette info
+                                  7 - word-oriented delta compression
+                                 11 - 64-level color palette info
+                                 12 - byte-oriented delta compression
+                                 13 - entire frame is color index 0
+                                 15 - byte run length compression
+                                 16 - no compression
+                                 18 - postage stamp sized image
+0006h                   ? byte   color or pixel data</pre>
+    <pre>the following sections describe each of these data encoding methods in detail.</pre>
+    <pre>--- block type  4 (fli_color256) - 256-level color</pre>
+    <pre>the data in this block is organized in packets.  the first word following the
+block header is a count of the number of packets in the blocks. each packet
+consists of a one-byte color index skip count, a one-byte color count and three
+bytes of color information for each color defined.</pre>
+    <pre>at the start of the block, the color index is assumed to be zero. before
+processing any colors in a packet, the color index skip count is added to the
+current color index.  the number of colors defined in the packet is retrieved.
+a zero in this byte indicates 256 colors follow. the three bytes for each color
+define the red, green, and blue components of the color in that order. each
+component can range from 0 (off) to 255 (full on).  the data to change colors
+2,7,8, and 9 would appear as follows:</pre>
+    <pre>     2                      ; two packets
+     2,1,r,g,b              ; skip 2, change 1
+     4,3,r,g,b,r,g,b,r,g,b  ; skip 4, change 3</pre>
+    <pre>--- block type 11 (fli_color) - 64-level color</pre>
+    <pre>this block is identical to fli_color256 except that the values for the red,
+green and blue components are in the range of 0-63 instead of 0-255, i.e. in
+native vga values which can be written to the vga without modification.</pre>
+    <pre>--- block type 13 (fli_black) - no data
+this block has no data following the header. all pixels in the frame are set to
+color index 0.</pre>
+    <pre>--- block type 16 (fli_copy) - no compression</pre>
+    <pre>this block contains an uncompressed raw image of the frame, from upper left
+to the lower right, storing each line sequentially. this type of block is
+created when the preferred compression method (ss2 or brun) generates more
+data than the uncompressed frame image; a relatively rare situation.</pre>
+    <pre>--- block type 15 (fli_brun) - byte run length compression</pre>
+    <pre>this block contains the entire image in a compressed format. usually this block
+is used in the first frame of an animation, or within a postage stamp image
+block.</pre>
+    <pre>the data is organized in lines. each line contains packets of compressed pixels.
+the first line is at the top of the animation, followed by subsequent lines
+moving downward. the number of lines in this block is given by the height of the
+animation.</pre>
+    <pre>the first byte of each line is a count of packets in the line. this value is
+ignored, it is a holdover from the original animator. it is possible to generate
+more than 255 packets on a line. the width of the animation is now used to drive
+the decoding of packets on a line; continue reading and processing packets until
+width pixels have been processed, then proceed to the next line.</pre>
+    <pre>each packet consist of a type/size byte, followed by one or more pixels. if the
+number is negative (the high bit of the packet type is set), the absolute value
+is the count of pixels to be copied from the packet to the animation image,
+otherwise the next byte contains a single pixel which is to be replicated;
+the lower 7 bits are the number of times the pixel is to be replicated.</pre>
+    <pre>--- block type 12 (fli_lc) - byte aligned delta compression</pre>
+    <pre>this block contains the differences between the previous frame and this frame.
+this compression method was used by the original animator, but is not created by
+animator pro. this type of block can appear in an animator pro file, however, if
+the file was originally created by animator, then some (but not all) frames were
+modified using animator pro.</pre>
+    <pre>the first word following the block header contains the position of the first
+line in the block. this is a count of lines (down from the top of the image)
+which are unchanged from the prior frame. the second word contains the number of
+lines in the block. the data for the lines follows these two words.</pre>
+    <pre>each line begins with two bytes. the first byte contains the starting x position
+of the data on the line, and the second byte the number of packets for the line.
+unlike brun compression, the packet count is significant (because this
+compression method is only used on 320x200 flics).</pre>
+    <pre>each packet consists of a single byte column skip, followed by a packet type/
+size byte, which has the reverse meaning of in the block type 15.</pre>
+    <pre>--- block type  7 (fli_ss2) - word aligned delta compression</pre>
+    <pre>this format contains the differences between consecutive frames. this is the
+format most often used by animator pro for frames other than the first frame of
+an animation. it is similar to the line coded delta (lc) compression, but is
+word oriented instead of byte oriented. the data is organized into lines and
+each line is organized into packets.</pre>
+    <pre>the first word in the data following the block header contains the number of
+lines in the block. each line can begin with some optional words that are used
+to skip lines and set the last byte in the line for animations with odd widths.
+these optional words are followed by a count of the packets in the line. the
+line count does not include skipped lines.</pre>
+    <pre>the high order two bits of the word is used to determine the contents of
+the word :</pre>
+    <pre>     bit 15  bit 14       meaning</pre>
+    <pre>       0      0           the word contains the packet count. the packets follow
+                          this word. the packet count can be zero; this occurs
+                          when only the last pixel on a line changes.</pre>
+    <pre>       1      0           the low order byte is to be stored in the last byte of
+                          the current line. the packet count always follows this
+                          word.</pre>
+    <pre>       1      1           the word contains a line skip count. the number of
+                          lines skipped is given by the absolute value of the
+                          word.  this word can be followed by more skip counts,
+                          by a last byte word, or by the packet count.</pre>
+    <pre>the packets in each line are similar to the packets for the line coded block.
+the first byte of each packet is a column skip count. the second byte is a
+packet type. if the packet type is positive, the packet type is a count of words
+to be copied from the packet to the animation image. if the packet type is
+negative, the packet contains one more word which is to be replicated. the
+absolute value of the packet type gives the number of times the word is to be
+replicated. the high and low order byte in the replicated word do not
+necessarily have the same value.</pre>
+    <pre>--- block type 18 (fli_pstamp) - postage stamp image</pre>
+    <pre>this block type holds a postage stamp - a reduced-size image - of the frame. it
+generally appears only in the first frame block within a flic file. when
+creating a postage stamp, animator pro considers the ideal size to be 100x63
+pixels. the actual size will vary as needed to maintain the same aspect ratio as
+the original.
+the pixels in a postage stamp image are mapped into a six-cube color space,
+regardless of the color palette settings for the full frame image. a six-cube
+color space is formed as follows:</pre>
+    <pre>     start at palette entry 0
+     for red = 0 thru 5
+          for green = 0 thru 5
+               for blue = 0 thru 5
+                    palette_red   = (red   * 256)/6
+                    palette_green = (green * 256)/6
+                    palette_blue  = (blue  * 256)/6
+                    move to next palette entry
+               end for blue
+          end for green
+     end for red</pre>
+    <pre>any arbitrary rgb value (where each component is in the range of 0-255) can be
+mapped into the six-cube space using the formula:</pre>
+    <pre>  ((6*red)/256)*36 + ((6*green)/256)*6 + ((6*blue)/256)</pre>
+    <pre>the full postage stamp block header is defined as follows:</pre>
+    <pre>offset  length  name         description
+offset              count type   description
+0000h                   1 dword  size of this block, including header size
+0004h                   1 word   id=18
+0006h                   1 word   height of the postage stamp image
+0008h                   1 word   width of the image
+000ah                   1 word   color translation type :
+                                 1 - six-cube color space</pre>
+    <pre>immediately following this header is the postage stamp data. the data is
+formatted as a block with standard size/type header. the type will be one of:</pre>
+    <pre>     15     fps_brun         byte run length compression
+     16     fps_copy         no compression
+     18     fps_xlat256      six-cube color xlate table</pre>
+    <pre>the fps_brun and fps_copy types are identical to the fli_brun and fli_copy
+encoding methods described above.</pre>
+    <pre>the fps_xlat256 type indicates that the block contains a 256-byte color
+translation table instead of pixel data. to process this type of postage stamp,
+read the pixel data for the full-sized frame image, and translate its pixels
+into six-cube space using a lookup in the 256-byte color translation table. this
+type of postage stamp appears when the size of the animation frames is smaller
+than the standard 100x63 postage stamp size. 
+*************
+twe - tween data files</pre>
+    <pre>a twe file holds information about a tweening operation set up
+via the tween menus.  the information includes the starting and
+ending shapes, and the optional userd specified links between the
+shapes.  animator pro creates tween files.</pre>
+    <pre>a twe file begins with an 8-byte header defined as follows:</pre>
+    <pre>offset  length  name         description</pre>
+    <pre>  0       2     magic        file format identifier. always hex 1995.</pre>
+    <pre>  2       2     version      the file format version; always zero.</pre>
+    <pre>  4       4     tcount       the number of tween shapes in the file;
+                             always 2.</pre>
+    <pre>  8       8     reserved     unused space; set to zeroes.</pre>
+    <pre>  16      4     linkcount    the number of link entries in the file.</pre>
+    <pre>immediately following the file header are the link entries.  if
+the linkcount value is zero there are no links.  each link entry
+is a pair of 32-bit integers. the first value in each pair is the
+index of the point in the first shape, and the second value is
+the index of the point in the ending shape.  (ie, a link value of
+2,7 says to link the second starting-shape point to the seventh
+ending-shape point.)</pre>
+    <pre>following the link entries is the data block that describes the
+starting shape, then the data block that describes the ending
+shape.  the format of these blocks is identical to that of the
+polygon (ply) file, including file header data.  in other words,
+they appear as if a pair of polygon files are embedded in the
+tween file at this point.</pre>
+    <pre>**********
+opt - optics menu settings files
+</pre>
+    <pre>an opt file holds information about an optics operation set up
+via the optics menus.  both animator pro and the original
+animator create opt files.  the file format is the same for both.</pre>
+    <pre>an opt file starts with a 4-byte header, as follows:</pre>
+    <pre>offset  length  name         description</pre>
+    <pre>  0       2     magic        file type identifier.  always hex 1a3f.</pre>
+    <pre>  2       2     count        number of records in the file.</pre>
+    <pre>following the file header are optics records of 50 bytes each.  a
+record is generated for each click on continue move in the optics
+menu.  the move records are formatted as follows:</pre>
+    <pre>offset  length  name         description</pre>
+    <pre>  0       4     link         in the file, this field is always zero.
+                             in memory, it's a pointer to the next 
+                             move record.</pre>
+    <pre>  4       6     spincenter   the x,y,z coordinates of the spin
+                             center point; three 16-bit values.</pre>
+    <pre>  10      6     spinaxis     the x,y,z coordinates of the spin axis;
+                             three 16-bit values.</pre>
+    <pre>  16      6     spinturns    the x,y,z coordinates of the spin turns;
+                             three 16-bit values.</pre>
+    <pre>  22      4     spininter    intermediate turns.  two 16-bit values.
+                             these are values for a conjugation matrix 
+                             that corresponds to spin axis.</pre>
+    <pre>  26      6     sizecenter   the x,y,z coordinates of the size
+                             center point; three 16-bit values.</pre>
+    <pre>  32      2     xmultiplier  determines (along with xdivisor)
+                             how to scale along x dimension.</pre>
+    <pre>  34      2     xdivisor     determines (along with xmultiplier) how
+                             to scale along x dimension.</pre>
+    <pre>  36      2     ymultiplier  determines (along with ydivisor)
+                             how to scale along y dimension.</pre>
+    <pre>  38      2     ydivisor     determines (along with ymultiplier) how
+                             to scale along y dimension.</pre>
+    <pre>  40      2     bothmult     like xmultiplier, but applied to both
+                             dimensions.</pre>
+    <pre>  42      2     bothdiv      like xdivisor, but applied to both
+                             dimensions.</pre>
+    <pre>  44      6     linearmove   the x,y,z offset for a linear move;
+                             three 16-bit values.</pre>
+    <pre>extension:flt
+occurences:pc
+programs:autodesk animator pro
+reference:
+see also:flic
+validation:</pre>
+    </td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>

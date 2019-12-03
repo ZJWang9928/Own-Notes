@@ -1,0 +1,368 @@
+{\rtf1\ansi\deff0\deftab720{\fonttbl{\f0\fnil MS Sans Serif;}{\f1\fnil\fcharset2 Symbol;}{\f2\fswiss\fprq2 System;}{\f3\fnil\fcharset134 \'cb\'ce\'cc\'e5;}}
+{\colortbl\red0\green0\blue0;}
+\deflang1033{\info{\horzdoc }{\*\fchars !),.:\'3b?\}]\'a1\'a2\'a1\'a3\'a1\'a4\'a1\'a5\'a1\'a6\'a1\'a7\'a1\'a8\'a1\'a9\'a1\'aa\'a1\'ab\'a1\'ac\'a1\'ad\'a1\'af\'a1\'b1\'a1\'b3\'a1\'b5\'a1\'b7\'a1\'b9\'a1\'bb\'a1\'bd\'a1\'bf\'a1\'c3\'a3\'a1\'a3\'a2\'a3\'a7\'a3\'a9\'a3\'ac\'a3\'ae\'a3\'ba\'a3\'bb\'a3\'bf\'a3\'dd\'a3\'e0}{\*\lchars ([\{\'a1\'ae\'a1\'b0\'a1\'b2\'a1\'b4\'a1\'b6\'a1\'b8\'a1\'ba\'a1\'bc\'a1\'be\'a3\'a8\'a3\'db\'a3\'fb\'a3\'ae\'a1\'a4}}
+\pard\nowwrap\nooverflow\plain\f3\fs21  \'db\'db\'db\'db\'db\'db\'bb\'20  \'db\'db\'db\'db\'db\'bb  \'db\'db\'db\'db\'db\'db\'bb\'0d\
+ \'db\'db\'c9\'cd\'cd\'db\'db\'bb \'db\'db\'c9\'cd\'cd\'db\'db\'bb \'db\'db\'c9\'cd\'cd\'db\'db\'bb     RAR version 2.02 - Technical information
+\par  \'db\'db\'db\'db\'db\'db\'c9\'bc \'db\'db\'db\'db\'db\'db\'db\'ba \'db\'db\'db\'db\'db\'db\'c9\'bc     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\par  \'db\'db\'c9\'cd\'cd\'db\'db\'bb \'db\'db\'c9\'cd\'cd\'db\'db\'ba \'db\'db\'c9\'cd\'cd\'db\'db\'bb
+\par  \'db\'db\'ba\'20 \'db\'db\'ba\'20\'db\'db\'ba\'20 \'db\'db\'ba\'20\'db\'db\'ba\'20 \'db\'db\'ba\'0d\
+ \'c8\'cd\'bc\'20 \'c8\'cd\'bc\'20\'c8\'cd\'bc\'20 \'c8\'cd\'bc\'20\'c8\'cd\'bc\'20 \'c8\'cd\'bc\'0d\
+
+\par  \'da\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'bf
+\par  \'b3\'54HE ARCHIVE FORMAT DESCRIBED BELOW IS ONLY VALID FOR VERSIONS SINCE 1.50\'b3\'0d\
+ \'c0\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'c4\'d9
+\par 
+\par  \'c9\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'bb
+\par  \'ba\'20\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1 RAR archive file format \'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'ba\'0d\
+ \'c8\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'bc
+\par 
+\par    Archive file consists of variable length blocks. The order of these
+\par blocks may vary, but the first block must be a marker block followed by
+\par an archive header block.
+\par 
+\par    Each block begins with the following fields:
+\par 
+\par HEAD_CRC       2 bytes     CRC of total block or block part
+\par HEAD_TYPE      1 byte      Block type
+\par HEAD_FLAGS     2 bytes     Block flags
+\par HEAD_SIZE      2 bytes     Block size
+\par ADD_SIZE       4 bytes     Optional field - added block size
+\par 
+\par    Field ADD_SIZE present only if (HEAD_FLAGS & 0x8000) != 0
+\par 
+\par    Total block size is HEAD_SIZE if (HEAD_FLAGS & 0x8000) == 0
+\par and HEAD_SIZE+ADD_SIZE if the field ADD_SIZE is present - when
+\par (HEAD_FLAGS & 0x8000) != 0.
+\par 
+\par    In each block the followings bits in HEAD_FLAGS have the same meaning:
+\par 
+\par   0x4000 - if set, older RAR versions will ignore the block
+\par            and remove it when the archive is updated.
+\par            if clear, the block is copied to the new archive
+\par            file when the archive is updated;
+\par 
+\par   0x8000 - if set, ADD_SIZE field is present and the full block
+\par            size is HEAD_SIZE+ADD_SIZE.
+\par 
+\par   Declared block types:
+\par 
+\par HEAD_TYPE=0x72          marker block
+\par HEAD_TYPE=0x73          archive header
+\par HEAD_TYPE=0x74          file header
+\par HEAD_TYPE=0x75          comment header
+\par HEAD_TYPE=0x76          extra information
+\par HEAD_TYPE=0x77          subblock
+\par HEAD_TYPE=0x78          recovery record
+\par 
+\par    Comment block is actually used only within other blocks and doesn't
+\par exist separately.
+\par 
+\par    Archive processing is made in the following manner:
+\par 
+\par 1. Read and check marker block
+\par 2. Read archive header
+\par 3. Read or skip HEAD_SIZE-sizeof(MAIN_HEAD) bytes
+\par 4. If end of archive encountered then terminate archive processing,
+\par    else read 7 bytes into fields HEAD_CRC, HEAD_TYPE, HEAD_FLAGS,
+\par    HEAD_SIZE.
+\par 5. Check HEAD_TYPE.
+\par    In case block read needed:
+\par          if HEAD_TYPE==0x74
+\par            read file header ( first 7 bytes already read )
+\par            read or skip HEAD_SIZE-sizeof(FILE_HEAD) bytes
+\par            read or skip FILE_SIZE bytes
+\par          else
+\par            read corresponding HEAD_TYPE block:
+\par              read HEAD_SIZE-7 bytes
+\par              if (HEAD_FLAGS & 0x8000)
+\par                read ADD_SIZE bytes
+\par    In case block skip needed:
+\par          skip HEAD_SIZE-7 bytes
+\par          if (HEAD_FLAGS & 0x8000)
+\par            skip ADD_SIZE bytes
+\par 6. go to 4.
+\par 
+\par 
+\par  \'c9\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'bb
+\par  \'ba\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1  Block Formats  \'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'ba\'0d\
+ \'c8\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'bc
+\par 
+\par 
+\par    Marker block ( MARK_HEAD )
+\par 
+\par 
+\par HEAD_CRC        Always 0x6152
+\par 2 bytes
+\par 
+\par HEAD_TYPE       Header type: 0x72
+\par 1 byte
+\par 
+\par HEAD_FLAGS      Always 0x1a21
+\par 2 bytes
+\par 
+\par HEAD_SIZE       Block size = 0x0007
+\par 2 bytes
+\par 
+\par    The marker block is actually considered as a fixed byte
+\par sequence: 0x52 0x61 0x72 0x21 0x1a 0x07 0x00
+\par 
+\par 
+\par 
+\par    Archive header ( MAIN_HEAD )
+\par 
+\par 
+\par HEAD_CRC        CRC of fields HEAD_TYPE to RESERVED2
+\par 2 bytes
+\par 
+\par HEAD_TYPE       Header type: 0x73
+\par 1 byte
+\par 
+\par HEAD_FLAGS      Bit flags:
+\par 2 bytes
+\par                 0x01    - Volume attribute (archive volume)
+\par                 0x02    - Archive comment present
+\par                 0x04    - Archive lock attribute
+\par                 0x08    - Solid attribute (solid archive)
+\par                 0x10    - Unused
+\par                 0x20    - Authenticity information present
+\par 
+\par                 other bits in HEAD_FLAGS are reserved for
+\par                 internal use
+\par 
+\par HEAD_SIZE       Archive header total size including archive comments
+\par 2 bytes
+\par 
+\par RESERVED1       Reserved
+\par 2 bytes
+\par 
+\par RESERVED2       Reserved
+\par 4 bytes
+\par 
+\par 
+\par Comment block   present if (HEAD_FLAGS & 0x02) != 0
+\par 
+\par 
+\par 
+\par    File header (File in archive)
+\par 
+\par 
+\par HEAD_CRC        CRC of fields from HEAD_TYPE to FILEATTR
+\par 2 bytes         and file name
+\par 
+\par HEAD_TYPE       Header type: 0x74
+\par 1 byte
+\par 
+\par HEAD_FLAGS      Bit flags:
+\par 2 bytes
+\par                 0x01 - file continued from previous volume
+\par                 0x02 - file continued in next volume
+\par                 0x04 - file encrypted with password
+\par                 0x08 - file comment present
+\par                 0x10 - information from previous files is used (solid flag)
+\par                        (for RAR 2.0 and later)
+\par 
+\par                 bits 7 6 5 (for RAR 2.0 and later)
+\par 
+\par                      0 0 0    - dictionary size   64 Kb
+\par                      0 0 1    - dictionary size  128 Kb
+\par                      0 1 0    - dictionary size  256 Kb
+\par                      0 1 1    - dictionary size  512 Kb
+\par                      1 0 0    - dictionary size 1024 Kb
+\par                      1 0 1    - reserved
+\par                      1 1 0    - reserved
+\par                      1 1 1    - file is directory
+\par 
+\par                 (HEAD_FLAGS & 0x8000) == 1, because full
+\par                 block size is HEAD_SIZE + PACK_SIZE
+\par 
+\par HEAD_SIZE       File header full size including file name and comments
+\par 2 bytes
+\par 
+\par PACK_SIZE       Compressed file size
+\par 4 bytes
+\par 
+\par UNP_SIZE        Uncompressed file size
+\par 4 bytes
+\par 
+\par HOST_OS         Operating system used for archiving
+\par 1 byte                 0 - MS DOS
+\par                        1 - OS/2
+\par                        2 - Win32
+\par                        3 - Unix
+\par 
+\par FILE_CRC        File CRC
+\par 4 bytes
+\par 
+\par FTIME           Date and time in standard MS DOS format
+\par 4 bytes
+\par 
+\par UNP_VER         RAR version needed to extract file
+\par 1 byte
+\par 
+\par METHOD          Packing method
+\par 1 byte
+\par 
+\par NAME_SIZE       File name size
+\par 2 bytes
+\par 
+\par ATTR            File attributes
+\par 4 bytes
+\par 
+\par FILE_NAME       File name - string of NAME_SIZE bytes size
+\par 
+\par 
+\par Comment block   present if (HEAD_FLAGS & 0x08) != 0
+\par 
+\par 
+\par 
+\par   Comment block
+\par 
+\par 
+\par HEAD_CRC        CRC of fields from HEAD_TYPE to COMM_CRC
+\par 2 bytes
+\par 
+\par HEAD_TYPE       Header type: 0x75
+\par 1 byte
+\par 
+\par HEAD_FLAGS      Bit flags
+\par 2 bytes
+\par 
+\par HEAD_SIZE       Comment header size + comment size
+\par 2 bytes
+\par 
+\par UNP_SIZE        Uncompressed comment size
+\par 2 bytes
+\par 
+\par UNP_VER         RAR version needed to extract comment
+\par 1 byte
+\par 
+\par METHOD          Packing method
+\par 1 byte
+\par 
+\par COMM_CRC        Comment CRC
+\par 2 bytes
+\par 
+\par COMMENT         Comment text
+\par 
+\par 
+\par 
+\par   Extra info block
+\par 
+\par 
+\par HEAD_CRC        Block CRC
+\par 2 bytes
+\par 
+\par HEAD_TYPE       Header type: 0x76
+\par 1 byte
+\par 
+\par HEAD_FLAGS      Bit flags
+\par 2 bytes
+\par 
+\par HEAD_SIZE       Total block size
+\par 2 bytes
+\par 
+\par INFO            Other data
+\par 
+\par 
+\par   Subblock
+\par 
+\par An object in the archive (the block or header) can be followed
+\par by a subblock. The subblock is dependant upon the main object.
+\par Subblock can be erased or moved to a new version of the archive
+\par when it is updated.
+\par 
+\par  The subblock contains the following fields:
+\par 
+\par HEAD_CRC        Block CRC
+\par 2 bytes
+\par 
+\par HEAD_TYPE       Header type: 0x77
+\par 1 byte
+\par 
+\par HEAD_FLAGS      Bit flags
+\par 2 bytes
+\par                 (HEAD_FLAGS & 0x8000) == 1, because full
+\par                 block size is HEAD_SIZE + DATA_SIZE
+\par 
+\par HEAD_SIZE       Total block size
+\par 2 bytes
+\par 
+\par DATA_SIZE       Total data size
+\par 4 bytes
+\par 
+\par SUB_TYPE        Subblock type
+\par 2 bytes
+\par 
+\par RESERVED        Must be 0
+\par 1 byte
+\par 
+\par Other           Other fields depending on the subblock type
+\par fields
+\par 
+\par 
+\par   OS/2 extended attributes subblock
+\par 
+\par 
+\par HEAD_CRC        Block CRC
+\par 2 bytes
+\par 
+\par HEAD_TYPE       Header type: 0x77
+\par 1 byte
+\par 
+\par HEAD_FLAGS      Bit flags
+\par 2 bytes
+\par                 (HEAD_FLAGS & 0x8000) == 1, because full
+\par                 block size is HEAD_SIZE + DATA_SIZE
+\par 
+\par HEAD_SIZE       Total block size
+\par 2 bytes
+\par 
+\par DATA_SIZE       Total data size (packed extended attributes size)
+\par 4 bytes
+\par 
+\par SUB_TYPE        0x100
+\par 2 bytes
+\par 
+\par RESERVED        Must be 0
+\par 1 byte
+\par 
+\par UNP_SIZE        Uncompressed extended attributes size
+\par 4 bytes
+\par 
+\par UNP_VER         RAR version needed to extract extended attributes
+\par 1 byte
+\par 
+\par METHOD          Packing method
+\par 1 byte
+\par 
+\par EA_CRC          Extended attributes CRC
+\par 4 bytes
+\par 
+\par 
+\par  \'c9\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'bb
+\par  \'ba\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'20 Application notes  \'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'b1\'ba
+\par  \'c8\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'cd\'bc
+\par 
+\par 
+\par    1. To process an SFX archive you need to skip the SFX module searching
+\par for the marker block in the archive. There is no marker block sequence (0x52
+\par 0x61 0x72 0x21 0x1a 0x07 0x00) in the SFX module itself.
+\par 
+\par    2. The CRC is calculated using the standard polynomial 0xEDB88320. In
+\par case the size of the CRC is less than 4 bytes, only the low order bytes
+\par are used.
+\par 
+\par    3. Packing method encoding:
+\par          0x30 - storing
+\par          0x31 - fastest compression
+\par          0x32 - fast compression
+\par          0x33 - normal compression
+\par          0x34 - good compression
+\par          0x35 - best compression
+\par 
+\par    4. The RAR extraction version number is encoded as 10 * Major version
+\par + minor version.
+\par 
+\par 
+\par }
+ 

@@ -1,0 +1,1054 @@
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<title>graphics file formats</title>
+<meta name="generator" content="microsoft frontpage 3.0">
+</head>
+
+<body background="../jpg/di1.JPG">
+
+<p align="center"><font size="6" color="#0000ff">graphics file formats</font></p>
+<div align="center"><center>
+
+<table border="0" width="88%">
+  <tr>
+    <td width="100%" height="148"><br>
+    <br>
+    this topic describes the graphics-file formats used by the microsoft windows<br>
+    operating system. graphics files include bitmap files, icon-resource files,<br>
+    and cursor-resource files.<br>
+    <br>
+    bitmap-file formats<br>
+    <br>
+    windows bitmap files are stored in a device-independent bitmap (dib) format<br>
+    that allows windows to display the bitmap on any type of display device. the<br>
+    term &quot;device independent&quot; means that the bitmap specifies pixel color in a<br>
+    form independent of the method used by a display to represent color. the<br>
+    default filename extension of a windows dib file is .bmp.<br>
+    <br>
+    bitmap-file structures<br>
+    <br>
+    each bitmap file contains a bitmap-file header, a bitmap-information header,<br>
+    a color table, and an array of bytes that defines the bitmap bits. the file<br>
+    has the following form:<br>
+    <br>
+    bitmapfileheader bmfh;<br>
+    bitmapinfoheader bmih;<br>
+    rgbquad acolors[];<br>
+    byte abitmapbits[];<br>
+    <br>
+    the bitmap-file header contains information about the type, size, and layout<br>
+    of a device-independent bitmap file. the header is defined as a<br>
+    bitmapfileheader structure.<br>
+    <br>
+    the bitmap-information header, defined as a bitmapinfoheader structure,<br>
+    specifies the dimensions, compression type, and color format for the bitmap.<br>
+    <br>
+    the color table, defined as an array of rgbquad structures, contains as many<br>
+    elements as there are colors in the bitmap. the color table is not present<br>
+    for bitmaps with 24 color bits because each pixel is represented by 24-bit<br>
+    red-green-blue (rgb) values in the actual bitmap data area. the colors in the<br>
+    table should appear in order of importance. this helps a display driver<br>
+    render a bitmap on a device that cannot display as many colors as there are<br>
+    in the bitmap. if the dib is in windows version 3.0 or later format, the<br>
+    driver can use the biclrimportant member of the bitmapinfoheader structure to<br>
+    determine which colors are important.<br>
+    <br>
+    the bitmapinfo structure can be used to represent a combined<br>
+    bitmap-information header and color table. the bitmap bits, immediately<br>
+    following the color table, consist of an array of byte values representing<br>
+    consecutive rows, or &quot;scan lines,&quot; of the bitmap. each scan line consists of<br>
+    consecutive bytes representing the pixels in the scan line, in left-to-right<br>
+    order. the number of bytes representing a scan line depends on the color<br>
+    format and the width, in pixels, of the bitmap. if necessary, a scan line<br>
+    must be zero-padded to end on a 32-bit boundary. however, segment boundaries<br>
+    can appear anywhere in the bitmap. the scan lines in the bitmap are stored<br>
+    from bottom up. this means that the first byte in the array represents the<br>
+    pixels in the lower-left corner of the bitmap and the last byte represents<br>
+    the pixels in the upper-right corner.<br>
+    <br>
+    the bibitcount member of the bitmapinfoheader structure determines the number<br>
+    of bits that define each pixel and the maximum number of colors in the<br>
+    bitmap. these members can have any of the following values:<br>
+    <br>
+    value meaning<br>
+    <br>
+    1 bitmap is monochrome and the color table contains two entries. each<br>
+    bit in the bitmap array represents a pixel. if the bit is clear, the pixel is<br>
+    displayed with the color of the first entry in the color table. if the bit is<br>
+    set, the pixel has the color of the second entry in the table.<br>
+    <br>
+    4 bitmap has a maximum of 16 colors. each pixel in the bitmap is<br>
+    represented by a 4-bit index into the color table. for example, if the first<br>
+    byte in the bitmap is 0x1f, the byte represents two pixels. the first pixel<br>
+    contains the color in the second table entry, and the second pixel contains<br>
+    the color in the sixteenth table entry.<br>
+    <br>
+    8 bitmap has a maximum of 256 colors. each pixel in the bitmap is<br>
+    represented by a 1-byte index into the color table. for example, if the first<br>
+    byte in the bitmap is 0x1f, the first pixel has the color of the<br>
+    thirty-second table entry.<br>
+    <br>
+    24 bitmap has a maximum of 2^24 colors. the bmicolors (or bmcicolors)<br>
+    member is null, and each 3-byte sequence in the bitmap array represents the<br>
+    relative intensities of red, green, and blue, respectively, for a pixel.<br>
+    <br>
+    the biclrused member of the bitmapinfoheader structure specifies the number<br>
+    of color indexes in the color table actually used by the bitmap. if the<br>
+    biclrused member is set to zero, the bitmap uses the maximum number of colors<br>
+    corresponding to the value of the bibitcount member. an alternative form of<br>
+    bitmap file uses the bitmapcoreinfo, bitmapcoreheader, and rgbtriple<br>
+    structures.<br>
+    <br>
+    bitmap compression<br>
+    <br>
+    windows versions 3.0 and later support run-length encoded (rle) formats for<br>
+    compressing bitmaps that use 4 bits per pixel and 8 bits per pixel.<br>
+    compression reduces the disk and memory storage required for a bitmap.<br>
+    <br>
+    compression of 8-bits-per-pixel bitmaps<br>
+    <br>
+    when the bicompression member of the bitmapinfoheader structure is set to<br>
+    bi_rle8, the dib is compressed using a run-length encoded format for a<br>
+    256-color bitmap. this format uses two modes: encoded mode and absolute mode.<br>
+    both modes can occur anywhere throughout a single bitmap.<br>
+    <br>
+    encoded mode<br>
+    <br>
+    a unit of information in encoded mode consists of two bytes. the first byte<br>
+    specifies the number of consecutive pixels to be drawn using the color index<br>
+    contained in the second byte. the first byte of the pair can be set to zero<br>
+    to indicate an escape that denotes the end of a line, the end of the bitmap,<br>
+    or a delta. the interpretation of the escape depends on the value of the<br>
+    second byte of the pair, which must be in the range 0x00 through 0x02.<br>
+    following are the meanings of the escape values that can be used in the<br>
+    second byte:<br>
+    <br>
+    second byte meaning<br>
+    <br>
+    0 end of line. <br>
+    1 end of bitmap. <br>
+    2 delta. the two bytes following the escape contain unsigned values<br>
+    indicating the horizontal and vertical offsets of the next pixel from the<br>
+    current position.<br>
+    <br>
+    absolute mode<br>
+    <br>
+    absolute mode is signaled by the first byte in the pair being set to zero and<br>
+    the second byte to a value between 0x03 and 0xff. the second byte represents<br>
+    the number of bytes that follow, each of which contains the color index of a<br>
+    single pixel. each run must be aligned on a word boundary. following is an<br>
+    example of an 8-bit rle bitmap (the two-digit hexadecimal values in the<br>
+    second column represent a color index for a single pixel):<br>
+    <br>
+    compressed data expanded data<br>
+    <br>
+    03 04 04 04 04 <br>
+    05 06 06 06 06 06 06 <br>
+    00 03 45 56 67 00 45 56 67 <br>
+    02 78 78 78 <br>
+    00 02 05 01 move 5 right and 1 down <br>
+    02 78 78 78 <br>
+    00 00 end of line <br>
+    09 1e 1e 1e 1e 1e 1e 1e 1e 1e 1e <br>
+    00 01 end of rle bitmap <br>
+    <br>
+    compression of 4-bits-per-pixel bitmaps<br>
+    <br>
+    when the bicompression member of the bitmapinfoheader structure is set to<br>
+    bi_rle4, the dib is compressed using a run-length encoded format for a<br>
+    16-color bitmap. this format uses two modes: encoded mode and absolute mode.<br>
+    <br>
+    encoded mode<br>
+    <br>
+    a unit of information in encoded mode consists of two bytes. the first byte<br>
+    of the pair contains the number of pixels to be drawn using the color indexes<br>
+    in the second byte.<br>
+    <br>
+    the second byte contains two color indexes, one in its high-order nibble<br>
+    (that is, its low-order 4 bits) and one in its low-order nibble.<br>
+    <br>
+    the first pixel is drawn using the color specified by the high-order nibble,<br>
+    the second is drawn using the color in the low-order nibble, the third is<br>
+    drawn with the color in the high-order nibble, and so on, until all the<br>
+    pixels specified by the first byte have been drawn.<br>
+    <br>
+    the first byte of the pair can be set to zero to indicate an escape that<br>
+    denotes the end of a line, the end of the bitmap, or a delta. the<br>
+    interpretation of the escape depends on the value of the second byte of the<br>
+    pair. in encoded mode, the second byte has a value in the range 0x00 through<br>
+    0x02. the meaning of these values is the same as for a dib with 8 bits per<br>
+    pixel.<br>
+    <br>
+    absolute mode<br>
+    <br>
+    in absolute mode, the first byte contains zero, the second byte contains the<br>
+    number of color indexes that follow, and subsequent bytes contain color<br>
+    indexes in their high- and low-order nibbles, one color index for each pixel.<br>
+    each run must be aligned on a word boundary.<br>
+    <br>
+    following is an example of a 4-bit rle bitmap (the one-digit hexadecimal<br>
+    values in the second column represent a color index for a single pixel):<br>
+    <br>
+    compressed data expanded data<br>
+    <br>
+    03 04 0 4 0<br>
+    05 06 0 6 0 6 0 <br>
+    00 06 45 56 67 00 4 5 5 6 6 7 <br>
+    04 78 7 8 7 8 <br>
+    00 02 05 01 move 5 right and 1 down <br>
+    04 78 7 8 7 8 <br>
+    00 00 end of line <br>
+    09 1e 1 e 1 e 1 e 1 e 1 <br>
+    00 01 end of rle bitmap <br>
+    <br>
+    bitmap example<br>
+    <br>
+    the following example is a text dump of a 16-color bitmap (4 bits per pixel):<br>
+    <br>
+    win3dibfile<br>
+    bitmapfileheader<br>
+    type 19778<br>
+    size 3118<br>
+    reserved1 0<br>
+    reserved2 0<br>
+    offsetbits 118<br>
+    bitmapinfoheader<br>
+    size 40<br>
+    width 80<br>
+    height 75<br>
+    planes 1<br>
+    bitcount 4<br>
+    compression 0<br>
+    sizeimage 3000<br>
+    <br>
+    xpelspermeter 0<br>
+    ypelspermeter 0<br>
+    colorsused 16<br>
+    colorsimportant 16<br>
+    win3colortable<br>
+    blue green red unused<br>
+    [00000000] 84 252 84 0<br>
+    [00000001] 252 252 84 0<br>
+    [00000002] 84 84 252 0<br>
+    [00000003] 252 84 252 0<br>
+    [00000004] 84 252 252 0<br>
+    [00000005] 252 252 252 0<br>
+    [00000006] 0 0 0 0<br>
+    [00000007] 168 0 0 0<br>
+    [00000008] 0 168 0 0<br>
+    [00000009] 168 168 0 0<br>
+    [0000000a] 0 0 168 0<br>
+    [0000000b] 168 0 168 0<br>
+    [0000000c] 0 168 168 0<br>
+    [0000000d] 168 168 168 0<br>
+    [0000000e] 84 84 84 0<br>
+    [0000000f] 252 84 84 0<br>
+    image<br>
+    .<br>
+    . bitmap data<br>
+    .<br>
+    <br>
+    icon-resource file format<br>
+    <br>
+    an icon-resource file contains image data for icons used by windows<br>
+    applications. the file consists of an icon directory identifying the number<br>
+    and types of icon images in the file, plus one or more icon images. the<br>
+    default filename extension for an icon-resource file is .ico.<br>
+    <br>
+    icon directory<br>
+    <br>
+    each icon-resource file starts with an icon directory. the icon directory,<br>
+    defined as an icondir structure, specifies the number of icons in the<br>
+    resource and the dimensions and color format of each icon image. the icondir<br>
+    structure has the following form:<br>
+    <br>
+    <br>
+    <br>
+    typedef struct icondir {<br>
+    word idreserved;<br>
+    word idtype;<br>
+    word idcount;<br>
+    icondirentry identries[1];<br>
+    } iconheader;<br>
+    <br>
+    following are the members in the icondir structure:<br>
+    <br>
+    idreserved reserved; must be zero. <br>
+    idtype specifies the resource type. this member is set to 1. <br>
+    idcount specifies the number of entries in the directory. <br>
+    identries specifies an array of icondirentry structures containing<br>
+    information about individual icons. the idcount member specifies the number<br>
+    of structures in the array.<br>
+    <br>
+    the icondirentry structure specifies the dimensions and color format for an<br>
+    icon. the structure has the following form:<br>
+    <br>
+    <br>
+    <br>
+    struct icondirectoryentry {<br>
+    byte bwidth;<br>
+    byte bheight;<br>
+    byte bcolorcount;<br>
+    byte breserved;<br>
+    word wplanes;<br>
+    word wbitcount;<br>
+    dword dwbytesinres;<br>
+    dword dwimageoffset;<br>
+    };<br>
+    <br>
+    following are the members in the icondirentry structure: <br>
+    <br>
+    bwidth specifies the width of the icon, in pixels. acceptable values<br>
+    are 16, 32, and 64.<br>
+    <br>
+    bheight specifies the height of the icon, in pixels. acceptable<br>
+    values are 16, 32, and 64.<br>
+    <br>
+    bcolorcount specifies the number of colors in the icon. acceptable values<br>
+    are 2, 8, and 16.<br>
+    <br>
+    breserved reserved; must be zero. <br>
+    wplanes specifies the number of color planes in the icon bitmap. <br>
+    wbitcount specifies the number of bits in the icon bitmap. <br>
+    dwbytesinres specifies the size of the resource, in bytes. <br>
+    dwimageoffset specifies the offset, in bytes, from the beginning of the<br>
+    file to the icon image.<br>
+    <br>
+    icon image<br>
+    <br>
+    each icon-resource file contains one icon image for each image identified in<br>
+    the icon directory. an icon image consists of an icon-image header, a color<br>
+    table, an xor mask, and an and mask. the icon image has the following form:<br>
+    <br>
+    <br>
+    <br>
+    bitmapinfoheader icheader;<br>
+    rgbquad iccolors[];<br>
+    byte icxor[];<br>
+    byte icand[];<br>
+    <br>
+    the icon-image header, defined as a bitmapinfoheader structure, specifies the<br>
+    dimensions and color format of the icon bitmap. only the bisize through<br>
+    bibitcount members and the bisizeimage member are used. all other members<br>
+    (such as bicompression and biclrimportant) must be set to zero.<br>
+    <br>
+    the color table, defined as an array of rgbquad structures, specifies the<br>
+    colors used in the xor mask. as with the color table in a bitmap file, the<br>
+    bibitcount member in the icon-image header determines the number of elements<br>
+    in the array. for more information about the color table, see section 1.1,<br>
+    &quot;bitmap-file formats.&quot;<br>
+    <br>
+    the xor mask, immediately following the color table, is an array of byte<br>
+    values representing consecutive rows of a bitmap. the bitmap defines the<br>
+    basic shape and color of the icon image. as with the bitmap bits in a bitmap<br>
+    file, the bitmap data in an icon-resource file is organized in scan lines,<br>
+    with each byte representing one or more pixels, as defined by the color<br>
+    format. for more information about these bitmap bits, see section 1.1,<br>
+    &quot;bitmap-file formats.&quot;<br>
+    <br>
+    the and mask, immediately following the xor mask, is an array of byte values,<br>
+    representing a monochrome bitmap with the same width and height as the xor<br>
+    mask. the array is organized in scan lines, with each byte representing 8<br>
+    pixels.<br>
+    <br>
+    when windows draws an icon, it uses the and and xor masks to combine the icon<br>
+    image with the pixels already on the display surface. windows first applies<br>
+    the and mask by using a bitwise and operation; this preserves or removes<br>
+    existing pixel color. windows then applies the xor mask by using a bitwise<br>
+    xor operation. this sets the final color for each pixel.<br>
+    <br>
+    the following illustration shows the xor and and masks that create a<br>
+    monochrome icon (measuring 8 pixels by 8 pixels) in the form of an uppercase<br>
+    k:<br>
+    <br>
+    windows icon selection<br>
+    <br>
+    windows detects the resolution of the current display and matches it against<br>
+    the width and height specified for each version of the icon image. if windows<br>
+    determines that there is an exact match between an icon image and the current<br>
+    device, it uses the matching image. otherwise, it selects the closest match<br>
+    and stretches the image to the proper size.<br>
+    <br>
+    if an icon-resource file contains more than one image for a particular<br>
+    resolution, windows uses the icon image that most closely matches the color<br>
+    capabilities of the current display. if no image matches the device<br>
+    capabilities exactly, windows selects the image that has the greatest number<br>
+    of colors without exceeding the number of display colors. if all images<br>
+    exceed the color capabilities of the current display, windows uses the icon<br>
+    image with the least number of colors.<br>
+    <br>
+    <br>
+    <br>
+    cursor-resource file format<br>
+    <br>
+    a cursor-resource file contains image data for cursors used by windows<br>
+    applications. the file consists of a cursor directory identifying the number<br>
+    and types of cursor images in the file, plus one or more cursor images. the<br>
+    default filename extension for a cursor-resource file is .cur.<br>
+    <br>
+    cursor directory<br>
+    <br>
+    each cursor-resource file starts with a cursor directory. the cursor<br>
+    directory, defined as a cursordir structure, specifies the number of cursors<br>
+    in the file and the dimensions and color format of each cursor image. the<br>
+    cursordir structure has the following form:<br>
+    <br>
+    <br>
+    typedef struct _cursordir {<br>
+    word cdreserved;<br>
+    word cdtype;<br>
+    word cdcount;<br>
+    cursordirentry cdentries[];<br>
+    } cursordir;<br>
+    <br>
+    following are the members in the cursordir structure: <br>
+    <br>
+    cdreserved reserved; must be zero. <br>
+    cdtype specifies the resource type. this member must be set to 2. <br>
+    cdcount specifies the number of cursors in the file. <br>
+    cdentries specifies an array of cursordirentry structures containing<br>
+    information about individual cursors. the cdcount member specifies the number<br>
+    of structures in the array.<br>
+    <br>
+    a cursordirentry structure specifies the dimensions and color format of a<br>
+    cursor image. the structure has the following form:<br>
+    <br>
+    <br>
+    <br>
+    typedef struct _cursordirentry {<br>
+    byte bwidth;<br>
+    byte bheight;<br>
+    byte bcolorcount;<br>
+    byte breserved;<br>
+    word wxhotspot;<br>
+    word wyhotspot;<br>
+    dword lbytesinres;<br>
+    dword dwimageoffset;<br>
+    } cursordirentry;<br>
+    <br>
+    following are the members in the cursordirentry structure: <br>
+    <br>
+    bwidth specifies the width of the cursor, in pixels. <br>
+    bheight specifies the height of the cursor, in pixels. <br>
+    bcolorcount reserved; must be zero. <br>
+    breserved reserved; must be zero.<br>
+    wxhotspot specifies the x-coordinate, in pixels, of the hot spot. <br>
+    wyhotspot specifies the y-coordinate, in pixels, of the hot spot. <br>
+    lbytesinres specifies the size of the resource, in bytes. <br>
+    dwimageoffset specifies the offset, in bytes, from the start of the file to<br>
+    the cursor image.<br>
+    <br>
+    cursor image<br>
+    <br>
+    each cursor-resource file contains one cursor image for each image identified<br>
+    in the cursor directory. a cursor image consists of a cursor-image header, a<br>
+    color table, an xor mask, and an and mask. the cursor image has the following<br>
+    form:<br>
+    <br>
+    <br>
+    <br>
+    bitmapinfoheader crheader;<br>
+    rgbquad crcolors[];<br>
+    byte crxor[];<br>
+    byte crand[];<br>
+    <br>
+    the cursor hot spot is a single pixel in the cursor bitmap that windows uses<br>
+    to track the cursor. the crxhotspot and cryhotspot members specify the x- and<br>
+    y-coordinates of the cursor hot spot. these coordinates are 16-bit integers.<br>
+    <br>
+    the cursor-image header, defined as a bitmapinfoheader structure, specifies<br>
+    the dimensions and color format of the cursor bitmap. only the bisize through<br>
+    bibitcount members and the bisizeimage member are used. the biheight member<br>
+    specifies the combined height of the xor and and masks for the cursor. this<br>
+    value is twice the height of the xor mask. the biplanes and bibitcount<br>
+    members must be 1. all other members (such as bicompression and<br>
+    biclrimportant) must be set to zero.<br>
+    <br>
+    the color table, defined as an array of rgbquad structures, specifies the<br>
+    colors used in the xor mask. for a cursor image, the table contains exactly<br>
+    two structures, since the bibitcount member in the cursor-image header is<br>
+    always 1.<br>
+    <br>
+    the xor mask, immediately following the color table, is an array of byte<br>
+    values representing consecutive rows of a bitmap. the bitmap defines the<br>
+    basic shape and color of the cursor image. as with the bitmap bits in a<br>
+    bitmap file, the bitmap data in a cursor-resource file is organized in scan<br>
+    lines, with each byte representing one or more pixels, as defined by the<br>
+    color format. for more information about these bitmap bits, see section 1.1,<br>
+    &quot;bitmap-file formats.&quot;<br>
+    <br>
+    the and mask, immediately following the xor mask, is an array of byte values<br>
+    representing a monochrome bitmap with the same width and height as the xor<br>
+    mask. the array is organized in scan lines, with each byte representing 8<br>
+    pixels.<br>
+    <br>
+    when windows draws a cursor, it uses the and and xor masks to combine the<br>
+    cursor image with the pixels already on the display surface. windows first<br>
+    applies the and mask by using a bitwise and operation; this preserves or<br>
+    removes existing pixel color. window then applies the xor mask by using a<br>
+    bitwise xor operation. this sets the final color for each pixel.<br>
+    <br>
+    the following illustration shows the xor and the and masks that create a<br>
+    cursor (measuring 8 pixels by 8 pixels) in the form of an arrow:<br>
+    <br>
+    following are the bit-mask values necessary to produce black, white,<br>
+    inverted, and transparent results:<br>
+    <br>
+    pixel result and maskxor mask<br>
+    <br>
+    black 0 0 <br>
+    white 0 1 <br>
+    transparent 1 0 <br>
+    inverted1 1 <br>
+    <br>
+    windows cursor selection<br>
+    <br>
+    if a cursor-resource file contains more than one cursor image, windows<br>
+    determines the best match for a particular display by examining the width and<br>
+    height of the cursor images.<br>
+    <br>
+    <br>
+    ==============================================================================<br>
+    <br>
+    <br>
+    bitmapfileheader (3.0)<br>
+    <br>
+    <br>
+    <br>
+    typedef struct tagbitmapfileheader { /* bmfh */<br>
+    uint bftype;<br>
+    dword bfsize;<br>
+    uint bfreserved1;<br>
+    uint bfreserved2;<br>
+    dword bfoffbits;<br>
+    } bitmapfileheader;<br>
+    <br>
+    the bitmapfileheader structure contains information about the type, size, and<br>
+    layout of a device-independent bitmap (dib) file.<br>
+    <br>
+    member description<br>
+    <br>
+    bftype specifies the type of file. this member must be bm. <br>
+    bfsize specifies the size of the file, in bytes. <br>
+    bfreserved1 reserved; must be set to zero. <br>
+    bfreserved2 reserved; must be set to zero.<br>
+    bfoffbits specifies the byte offset from the bitmapfileheader structure<br>
+    to the actual bitmap data in the file.<br>
+    <br>
+    comments<br>
+    <br>
+    a bitmapinfo or bitmapcoreinfo structure immediately follows the<br>
+    bitmapfileheader structure in the dib file.<br>
+    <br>
+    see also<br>
+    <br>
+    bitmapcoreinfo, bitmapinfo <br>
+    <br>
+    <br>
+    ==============================================================================<br>
+    bitmapinfo (3.0)<br>
+    <br>
+    <br>
+    <br>
+    typedef struct tagbitmapinfo { /* bmi */<br>
+    bitmapinfoheader bmiheader;<br>
+    rgbquad bmicolors[1];<br>
+    } bitmapinfo;<br>
+    <br>
+    the bitmapinfo structure fully defines the dimensions and color information<br>
+    for a windows 3.0 or later device-independent bitmap (dib).<br>
+    <br>
+    member description<br>
+    <br>
+    bmiheader specifies a bitmapinfoheader structure that contains<br>
+    information about the dimensions and color format of a dib.<br>
+    <br>
+    bmicolors specifies an array of rgbquad structures that define the<br>
+    colors in the bitmap.<br>
+    <br>
+    comments<br>
+    <br>
+    a windows 3.0 or later dib consists of two distinct parts: a bitmapinfo<br>
+    structure, which describes the dimensions and colors of the bitmap, and an<br>
+    array of bytes defining the pixels of the bitmap. the bits in the array are<br>
+    packed together, but each scan line must be zero-padded to end on a long<br>
+    boundary. segment boundaries, however, can appear anywhere in the bitmap. the<br>
+    origin of the bitmap is the lower-left corner.<br>
+    <br>
+    the bibitcount member of the bitmapinfoheader structure determines the number<br>
+    of bits which define each pixel and the maximum number of colors in the<br>
+    bitmap. this member may be set to any of the following values:<br>
+    <br>
+    value meaning<br>
+    <br>
+    1 the bitmap is monochrome, and the bmcicolors member must contain two<br>
+    entries. each bit in the bitmap array represents a pixel. if the bit is<br>
+    clear, the pixel is displayed with the color of the first entry in the<br>
+    bmcicolors table. if the bit is set, the pixel has the color of the second<br>
+    entry in the table.<br>
+    <br>
+    4 the bitmap has a maximum of 16 colors, and the bmcicolors member<br>
+    contains 16 entries. each pixel in the bitmap is represented by a four-bit<br>
+    index into the color table.<br>
+    <br>
+    for example, if the first byte in the bitmap is 0x1f, the byte represents two<br>
+    pixels. the first pixel contains the color in the second table entry, and the<br>
+    second pixel contains the color in the sixteenth table entry.<br>
+    <br>
+    8 the bitmap has a maximum of 256 colors, and the bmcicolors member<br>
+    contains 256 entries. in this case, each byte in the array represents a<br>
+    single pixel.<br>
+    <br>
+    24 the bitmap has a maximum of 2^24 colors. the bmcicolors member is<br>
+    null, and each 3-byte sequence in the bitmap array represents the relative<br>
+    intensities of red, green, and blue, respectively, of a pixel.<br>
+    <br>
+    the biclrused member of the bitmapinfoheader structure specifies the number<br>
+    of color indexes in the color table actually used by the bitmap. if the<br>
+    biclrused member is set to zero, the bitmap uses the maximum number of colors<br>
+    corresponding to the value of the bibitcount member.<br>
+    <br>
+    the colors in the bmicolors table should appear in order of importance.<br>
+    alternatively, for functions that use dibs, the bmicolors member can be an<br>
+    array of 16-bit unsigned integers that specify an index into the currently<br>
+    realized logical palette instead of explicit rgb values. in this case, an<br>
+    application using the bitmap must call dib functions with the wusage<br>
+    parameter set to dib_pal_colors.<br>
+    <br>
+    note: the bmicolors member should not contain palette indexes if the bitmap<br>
+    is to be stored in a file or transferred to another application. unless the<br>
+    application uses the bitmap exclusively and under its complete control, the<br>
+    bitmap color table should contain explicit rgb values.<br>
+    <br>
+    see also<br>
+    <br>
+    bitmapinfoheader, rgbquad <br>
+    <br>
+    ==============================================================================<br>
+    bitmapinfoheader (3.0)<br>
+    <br>
+    <br>
+    <br>
+    typedef struct tagbitmapinfoheader { /* bmih */<br>
+    dword bisize;<br>
+    long biwidth;<br>
+    long biheight;<br>
+    word biplanes;<br>
+    word bibitcount;<br>
+    dword bicompression;<br>
+    dword bisizeimage;<br>
+    long bixpelspermeter;<br>
+    long biypelspermeter;<br>
+    dword biclrused;<br>
+    dword biclrimportant;<br>
+    } bitmapinfoheader;<br>
+    <br>
+    the bitmapinfoheader structure contains information about the dimensions and<br>
+    color format of a windows 3.0 or later device-independent bitmap (dib).<br>
+    <br>
+    member description<br>
+    <br>
+    bisize specifies the number of bytes required by the<br>
+    bitmapinfoheader structure.<br>
+    <br>
+    biwidth specifies the width of the bitmap, in pixels. <br>
+    biheightspecifies the height of the bitmap, in pixels. <br>
+    <br>
+    biplanesspecifies the number of planes for the target device. this<br>
+    member must be set to 1.<br>
+    <br>
+    bibitcount specifies the number of bits per pixel. this value must be 1,<br>
+    4, 8, or 24.<br>
+    <br>
+    bicompression specifies the type of compression for a compressed bitmap. it<br>
+    can be one of the following values:<br>
+    <br>
+    value meaning<br>
+    <br>
+    bi_rgb specifies that the bitmap is not compressed. <br>
+    <br>
+    bi_rle8 specifies a run-length encoded format for bitmaps with 8 bits<br>
+    per pixel. the compression format is a 2-byte format consisting of a count<br>
+    byte followed by a byte containing a color index. for more information, see<br>
+    the following comments section.<br>
+    <br>
+    bi_rle4 specifies a run-length encoded format for bitmaps with 4 bits<br>
+    per pixel. the compression format is a 2-byte format consisting of a count<br>
+    byte followed by two word-length color indexes. for more information, see<br>
+    the following comments section.<br>
+    <br>
+    bisizeimage specifies the size, in bytes, of the image. it is valid to<br>
+    set this member to zero if the bitmap is in the bi_rgb format.<br>
+    <br>
+    bixpelspermeter specifies the horizontal resolution, in pixels per meter, of<br>
+    the target device for the bitmap. an application can use this value to select<br>
+    a bitmap from a resource group that best matches the characteristics of the<br>
+    current device.<br>
+    <br>
+    biypelspermeter specifies the vertical resolution, in pixels per meter, of<br>
+    the target device for the bitmap.<br>
+    <br>
+    biclrused specifies the number of color indexes in the color table<br>
+    actually used by the bitmap. if this value is zero, the bitmap uses the<br>
+    maximum number of colors corresponding to the value of the bibitcount member.<br>
+    for more information on the maximum sizes of the color table, see the<br>
+    description of the bitmapinfo structure earlier in this topic.<br>
+    <br>
+    if the biclrused member is nonzero, it specifies the actual number of colors<br>
+    that the graphics engine or device driver will access if the bibitcount<br>
+    member is less than 24. if bibitcount is set to 24, biclrused specifies the<br>
+    size of the reference color table used to optimize performance of windows<br>
+    color palettes. if the bitmap is a packed bitmap (that is, a bitmap in which<br>
+    the bitmap array immediately follows the bitmapinfo header and which is<br>
+    referenced by a single pointer), the biclrused member must be set to zero or<br>
+    to the actual size of the color table.<br>
+    <br>
+    biclrimportant specifies the number of color indexes that are considered<br>
+    important for displaying the bitmap. if this value is zero, all colors are<br>
+    important.<br>
+    <br>
+    comments<br>
+    <br>
+    the bitmapinfo structure combines the bitmapinfoheader structure and a color<br>
+    table to provide a complete definition of the dimensions and colors of a<br>
+    windows 3.0 or later dib. for more information about specifying a windows 3.0<br>
+    dib, see the description of the bitmapinfo structure.<br>
+    <br>
+    an application should use the information stored in the bisize member to<br>
+    locate the color table in a bitmapinfo structure as follows:<br>
+    <br>
+    pcolor = ((lpstr) pbitmapinfo + (word) (pbitmapinfo-&gt;bmiheader.bisize))<br>
+    <br>
+    windows supports formats for compressing bitmaps that define their colors<br>
+    with 8 bits per pixel and with 4 bits per pixel. compression reduces the disk<br>
+    and memory storage required for the bitmap. the following paragraphs describe<br>
+    these formats.<br>
+    <br>
+    bi_rle8<br>
+    <br>
+    when the bicompression member is set to bi_rle8, the bitmap is compressed<br>
+    using a run-length encoding format for an 8-bit bitmap. this format may be<br>
+    compressed in either of two modes: encoded and absolute. both modes can occur<br>
+    anywhere throughout a single bitmap.<br>
+    <br>
+    encoded mode consists of two bytes: the first byte specifies the number of<br>
+    consecutive pixels to be drawn using the color index contained in the second<br>
+    byte. in addition, the first byte of the pair can be set to zero to indicate<br>
+    an escape that denotes an end of line, end of bitmap, or a delta. the<br>
+    interpretation of the escape depends on the value of the second byte of the<br>
+    pair. the following list shows the meaning of the second byte:<br>
+    <br>
+    value meaning<br>
+    <br>
+    0 end of line. <br>
+    1 end of bitmap. <br>
+    2 delta. the two bytes following the escape contain unsigned values<br>
+    indicating the horizontal and vertical offset of the next pixel from the<br>
+    current position.<br>
+    <br>
+    absolute mode is signaled by the first byte set to zero and the second byte<br>
+    set to a value between 0x03 and 0xff. in absolute mode, the second byte<br>
+    represents the number of bytes that follow, each of which contains the color<br>
+    index of a single pixel. when the second byte is set to 2 or less, the escape<br>
+    has the same meaning as in encoded mode. in absolute mode, each run must be<br>
+    aligned on a word boundary. the following example shows the hexadecimal<br>
+    values of an 8-bit compressed bitmap:<br>
+    <br>
+    <br>
+    <br>
+    03 04 05 06 00 03 45 56 67 00 02 78 00 02 05 01<br>
+    02 78 00 00 09 1e 00 01<br>
+    <br>
+    this bitmap would expand as follows (two-digit values represent a color index<br>
+    for a single pixel):<br>
+    <br>
+    <br>
+    <br>
+    04 04 04<br>
+    06 06 06 06 06<br>
+    45 56 67<br>
+    78 78<br>
+    move current position 5 right and 1 down<br>
+    78 78<br>
+    end of line<br>
+    1e 1e 1e 1e 1e 1e 1e 1e 1e<br>
+    end of rle bitmap<br>
+    <br>
+    bi_rle4<br>
+    <br>
+    when the bicompression member is set to bi_rle4, the bitmap is compressed<br>
+    using a run-length encoding (rle) format for a 4-bit bitmap, which also uses<br>
+    encoded and absolute modes. in encoded mode, the first byte of the pair<br>
+    contains the number of pixels to be drawn using the color indexes in the<br>
+    second byte. the second byte contains two color indexes, one in its<br>
+    high-order nibble (that is, its low-order four bits) and one in its low-order<br>
+    nibble. the first of the pixels is drawn using the color specified by the<br>
+    high-order nibble, the second is drawn using the color in the low-order<br>
+    nibble, the third is drawn with the color in the high-order nibble, and so<br>
+    on, until all the pixels specified by the first byte have been drawn. in<br>
+    absolute mode, the first byte contains zero, the second byte contains the<br>
+    number of color indexes that follow, and subsequent bytes contain color<br>
+    indexes in their high- and low-order nibbles, one color index for each pixel.<br>
+    in absolute mode, each run must be aligned on a word boundary. the<br>
+    end-of-line, end-of-bitmap, and delta escapes also apply to bi_rle4.<br>
+    <br>
+    the following example shows the hexadecimal values of a 4-bit compressed<br>
+    bitmap:<br>
+    <br>
+    <br>
+    <br>
+    03 04 05 06 00 06 45 56 67 00 04 78 00 02 05 01<br>
+    04 78 00 00 09 1e 00 01<br>
+    <br>
+    this bitmap would expand as follows (single-digit values represent a color<br>
+    index for a single pixel):<br>
+    <br>
+    <br>
+    <br>
+    0 4 0<br>
+    0 6 0 6 0<br>
+    4 5 5 6 6 7<br>
+    7 8 7 8<br>
+    move current position 5 right and 1 down<br>
+    7 8 7 8<br>
+    end of line<br>
+    1 e 1 e 1 e 1 e 1<br>
+    end of rle bitmap<br>
+    <br>
+    see also<br>
+    <br>
+    bitmapinfo <br>
+    <br>
+    ==============================================================================<br>
+    rgbquad (3.0)<br>
+    <br>
+    <br>
+    <br>
+    typedef struct tagrgbquad { /* rgbq */<br>
+    byte rgbblue;<br>
+    byte rgbgreen;<br>
+    byte rgbred;<br>
+    byte rgbreserved;<br>
+    } rgbquad;<br>
+    <br>
+    the rgbquad structure describes a color consisting of relative intensities of<br>
+    red, green, and blue. the bmicolors member of the bitmapinfo structure<br>
+    consists of an array of rgbquad structures.<br>
+    <br>
+    member description<br>
+    <br>
+    rgbblue specifies the intensity of blue in the color. <br>
+    rgbgreenspecifies the intensity of green in the color. <br>
+    rgbred specifies the intensity of red in the color. <br>
+    rgbreserved not used; must be set to zero. <br>
+    <br>
+    see also<br>
+    <br>
+    bitmapinfo <br>
+    <br>
+    ==============================================================================<br>
+    rgb (2.x)<br>
+    <br>
+    colorref rgb(cred, cgreen, cblue)<br>
+    <br>
+    byte cred; /* red component of color */<br>
+    byte cgreen; /* green component of color */<br>
+    byte cblue; /* blue component of color */<br>
+    <br>
+    <br>
+    the rgb macro selects an rgb color based on the parameters supplied and the<br>
+    color capabilities of the output device.<br>
+    <br>
+    parameter description<br>
+    <br>
+    cred specifies the intensity of the red color field. <br>
+    cgreen specifies the intensity of the green color field. <br>
+    cblue specifies the intensity of the blue color field. <br>
+    <br>
+    returns<br>
+    <br>
+    the return value specifies the resultant rgb color. <br>
+    <br>
+    comments<br>
+    <br>
+    the intensity for each argument can range from 0 through 255. if all three<br>
+    intensities are specified as zero, the result is black. if all three<br>
+    intensities are specified as 255, the result is white.<br>
+    <br>
+    comments<br>
+    <br>
+    the rgb macro is defined in windows.h as follows: <br>
+    <br>
+    <br>
+    <br>
+    #define rgb(r,g,b) ((colorref)(((byte)(r)|((word)(g)&lt;&lt;8))| \<br>
+    (((dword)(byte)(b))&lt;&lt;16)))<br>
+    <br>
+    see also<br>
+    <br>
+    getbvalue, getgvalue, getrvalue, paletteindex, palettergb<br>
+    <br>
+    ==============================================================================<br>
+    bitmapcoreinfo (3.0)<br>
+    <br>
+    <br>
+    <br>
+    typedef struct tagbitmapcoreinfo { /* bmci */<br>
+    bitmapcoreheader bmciheader;<br>
+    rgbtriple bmcicolors[1];<br>
+    } bitmapcoreinfo;<br>
+    <br>
+    the bitmapcoreinfo structure fully defines the dimensions and color<br>
+    information for a device-independent bitmap (dib). windows applications<br>
+    should use the bitmapinfo structure instead of bitmapcoreinfo whenever<br>
+    possible.<br>
+    <br>
+    member description<br>
+    <br>
+    bmciheader specifies a bitmapcoreheader structure that contains<br>
+    information about the dimensions and color format of a dib.<br>
+    <br>
+    bmcicolors specifies an array of rgbtriple structures that define the<br>
+    colors in the bitmap.<br>
+    <br>
+    comments<br>
+    <br>
+    the bitmapcoreinfo structure describes the dimensions and colors of a bitmap.<br>
+    it is followed immediately in memory by an array of bytes which define the<br>
+    pixels of the bitmap. the bits in the array are packed together, but each<br>
+    scan line must be zero-padded to end on a long boundary. segment boundaries,<br>
+    however, can appear anywhere in the bitmap. the origin of the bitmap is the<br>
+    lower-left corner.<br>
+    <br>
+    the bcbitcount member of the bitmapcoreheader structure determines the number<br>
+    of bits that define each pixel and the maximum number of colors in the<br>
+    bitmap. this member may be set to any of the following values:<br>
+    <br>
+    value meaning<br>
+    <br>
+    1 the bitmap is monochrome, and the bmcicolors member must contain two<br>
+    entries. each bit in the bitmap array represents a pixel. if the bit is<br>
+    clear, the pixel is displayed with the color of the first entry in the<br>
+    bmcicolors table. if the bit is set, the pixel has the color of the second<br>
+    entry in the table.<br>
+    <br>
+    4 the bitmap has a maximum of 16 colors, and the bmcicolors member<br>
+    contains 16 entries. each pixel in the bitmap is represented by a four-bit<br>
+    index into the color table.<br>
+    <br>
+    for example, if the first byte in the bitmap is 0x1f, the byte represents two<br>
+    pixels. the first pixel contains the color in the second table entry, and the<br>
+    second pixel contains the color in the sixteenth table entry.<br>
+    <br>
+    8 the bitmap has a maximum of 256 colors, and the bmcicolors member<br>
+    contains 256 entries. in this case, each byte in the array represents a<br>
+    single pixel.<br>
+    <br>
+    24 the bitmap has a maximum of 2^24 colors. the bmcicolors member is<br>
+    null, and each 3-byte sequence in the bitmap array represents the relative<br>
+    intensities of red, green, and blue, respectively, of a pixel.<br>
+    <br>
+    the colors in the bmcicolors table should appear in order of importance.<br>
+    alternatively, for functions that use dibs, the bmcicolors member can be an<br>
+    array of 16-bit unsigned integers that specify an index into the currently<br>
+    realized logical palette instead of explicit rgb values. in this case, an<br>
+    application using the bitmap must call dib functions with the wusage<br>
+    parameter set to dib_pal_colors.<br>
+    <br>
+    note: the bmcicolors member should not contain palette indexes if the<br>
+    bitmap is to be stored in a file or transferred to another application.<br>
+    unless the application uses the bitmap exclusively and under its complete<br>
+    control, the bitmap color table should contain explicit rgb values.<br>
+    <br>
+    see also<br>
+    <br>
+    bitmapinfo, bitmapcoreheader, rgbtriple <br>
+    <br>
+    <br>
+    ==============================================================================<br>
+    bitmapcoreheader (3.0)<br>
+    <br>
+    <br>
+    <br>
+    typedef struct tagbitmapcoreheader { /* bmch */<br>
+    dword bcsize;<br>
+    short bcwidth;<br>
+    short bcheight;<br>
+    word bcplanes;<br>
+    word bcbitcount;<br>
+    } bitmapcoreheader;<br>
+    <br>
+    the bitmapcoreheader structure contains information about the dimensions and<br>
+    color format of a device-independent bitmap (dib). windows applications<br>
+    should use the bitmapinfoheader structure instead of bitmapcoreheader<br>
+    whenever possible.<br>
+    <br>
+    member description<br>
+    <br>
+    bcsize specifies the number of bytes required by the<br>
+    bitmapcoreheader structure.<br>
+    <br>
+    bcwidth specifies the width of the bitmap, in pixels. <br>
+    bcheightspecifies the height of the bitmap, in pixels. <br>
+    <br>
+    bcplanesspecifies the number of planes for the target device. this<br>
+    member must be set to 1.<br>
+    <br>
+    bcbitcount specifies the number of bits per pixel. this value must be 1,<br>
+    4, 8, or 24.<br>
+    <br>
+    comments<br>
+    <br>
+    the bitmapcoreinfo structure combines the bitmapcoreheader structure and a<br>
+    color table to provide a complete definition of the dimensions and colors of<br>
+    a dib. see the description of the bitmapcoreinfo structure for more<br>
+    information about specifying a dib.<br>
+    <br>
+    an application should use the information stored in the bcsize member to<br>
+    locate the color table in a bitmapcoreinfo structure with a method such as<br>
+    the following:<br>
+    <br>
+    <br>
+    <br>
+    lpcolor = ((lpstr) pbitmapcoreinfo + (uint) (pbitmapcoreinfo-&gt;bcsize))<br>
+    <br>
+    see also<br>
+    <br>
+    bitmapcoreinfo, bitmapinfoheader, bitmapinfoheader <br>
+    <br>
+    =============================================================================<br>
+    rgbtriple (3.0)<br>
+    <br>
+    <br>
+    <br>
+    typedef struct tagrgbtriple { /* rgbt */<br>
+    byte rgbtblue;<br>
+    byte rgbtgreen;<br>
+    byte rgbtred;<br>
+    } rgbtriple;<br>
+    <br>
+    the rgbtriple structure describes a color consisting of relative intensities<br>
+    of red, green, and blue. the bmcicolors member of the bitmapcoreinfo<br>
+    structure consists of an array of rgbtriple structures. windows applications<br>
+    should use the bitmapinfo structure instead of bitmapcoreinfo whenever<br>
+    possible. the bitmapinfo structure uses an rgbquad structure instead of the<br>
+    rgbtriple structure.<br>
+    <br>
+    member description<br>
+    <br>
+    rgbtbluespecifies the intensity of blue in the color. <br>
+    rgbtgreen specifies the intensity of green in the color. <br>
+    rgbtred specifies the intensity of red in the color.<br>
+    <br>
+    see also<br>
+    <br>
+    bitmapcoreinfo, bitmapinfo, rgbquad</td>
+  </tr>
+</table>
+</center></div>
+
+<p align="center"><a href="../index.htm">返回</a></p>
+</body>
+</html>
