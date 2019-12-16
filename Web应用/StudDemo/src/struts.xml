@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
+<struts>
+    <package name="Login" namespace="/" extends="struts-default">
+        <action name="listAll" class="com.stu.Action.StudentAction" method="listAll">
+            <result name="success">main.jsp</result>
+        </action>
+        <action name="addStu" class="com.stu.Action.StudentAction" method="addStu">
+            <result name="success">index.jsp</result>
+            <result name="input">addNew.jsp</result>
+        </action>
+        <action name="editStu" class="com.stu.Action.StudentAction" method="editStu">
+            <result name="success">index.jsp</result>
+            <result name="input">editStu.jsp</result>
+        </action>
+        <action name="deleteStu" class="com.stu.Action.StudentAction" method="deleteStu">
+            <result name="success">index.jsp</result>
+        </action>
+        <action name="goToEdit" class="com.stu.Action.StudentAction" method="goToEdit">
+            <result name="success">editStu.jsp</result>
+        </action>
+        <action name="goToUpdate" class="com.stu.Action.UploadAction" method="goToUpload">
+            <result name="success">upload.jsp</result>
+        </action>
+        <action name="upload" class="com.stu.Action.UploadAction" method="upload">
+            <param name="savePath">upload/</param>
+            <result name="success">/index.jsp</result>
+            <result name="input">/upload.jsp</result>
+            <interceptor-ref name="defaultStack">
+                <param name="fileUpload.maximumSize">1048576</param>
+                <param name="fileUpload.allowedTypes">image/bmp,image/jpeg,image/gif,image/png</param>
+            </interceptor-ref>
+        </action>
+    </package>
+</struts>
+
+
