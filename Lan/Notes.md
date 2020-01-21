@@ -7,3 +7,9 @@
 | prudent        | a. careful and sensible; marked by sound judgment                                                                                  |
 | eradicate      | To eradicate something means to get rid of it completely.                                                                          |
 | lurk           | If someone lurks somewhere, they wait there secretly so that they cannot be seen, usually because they intend to do something bad. |
+| posh           | elegant and fashionable                                                                                                            |
+| dough          | a flour mixture stiff enough to knead or roll; informal terms for money                                                            |
+| crisps         | a thin crisp slice of potato fried in deep fat                                                                                     |
+| mischievous    | naughtily or annoyingly playful                                                                                                    |
+| esbresso       | strong black coffee brewed by forcing hot water under pressure through finely ground coffee beans                                  |
+
