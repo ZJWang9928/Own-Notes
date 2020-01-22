@@ -28,4 +28,6 @@
 | maqet                 | we run/ will run/ ran                   |
 | blqet                 | you run/ will run/ ran                  |
 | jlylt                 | I walk/will walk                        |
-| jlyln.                | I live./ I am alive.                    |
+| jlyln                 | I live./ I am alive.                    |
+| jlvum                 | I work                                  |
+| blHegh                | you die                                 |
