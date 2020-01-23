@@ -12,4 +12,5 @@
 | crisps         | a thin crisp slice of potato fried in deep fat                                                                                     |
 | mischievous    | naughtily or annoyingly playful                                                                                                    |
 | esbresso       | strong black coffee brewed by forcing hot water under pressure through finely ground coffee beans                                  |
-
+| stanch         | stop the flow of a liquid                                                                                                          |
+| efficacy       | n. capacity or power to produce a desired effect                                                                                   |
